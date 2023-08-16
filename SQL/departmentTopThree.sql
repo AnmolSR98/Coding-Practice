@@ -1,28 +1,23 @@
-# Write your MySQL query statement below
 SELECT Department, Employee, Salary
-FROM
-# getting the three highest salaries from the IT deparment
-((SELECT id, 
-        (CASE WHEN departmentId = 1 THEN 'IT' 
+FROM 
+# getting the three highest salaries from the IT deparment using dense rank so it is inclusive
+((SELECT (CASE WHEN departmentId = 1 THEN 'IT' 
         WHEN departmentId = 2 THEN "Sales"
         ELSE NULL END) AS Department,
-        name AS Employee, salary as Salary
+        name AS Employee, salary as Salary, 
+        DENSE_RANK() OVER(ORDER BY salary DESC) as SalaryRanking
 FROM Employee
 WHERE departmentId = 1
-GROUP BY salary
-ORDER BY salary
-LIMIT 3)
-UNION 
-# uniting with the three highest from the Sales department
-(SELECT id, 
-        (CASE WHEN departmentId = 1 THEN 'IT' 
+ORDER BY salary DESC)
+# uniting with the equivalent table from the Sales department
+UNION
+(SELECT (CASE WHEN departmentId = 1 THEN 'IT' 
         WHEN departmentId = 2 THEN "Sales"
         ELSE NULL END) AS Department,
-        name AS Employee, salary as Salary
+        name AS Employee, salary as Salary, 
+        DENSE_RANK() OVER(ORDER BY salary DESC) as SalaryRanking
 FROM Employee
 WHERE departmentId = 2
-GROUP BY salary
-ORDER BY salary
-LIMIT 3)) AS Salaries
-GROUP BY id
-ORDER BY id;
+ORDER BY salary DESC)) AS TopSalaries
+# filtering out rank more than 3
+WHERE SalaryRanking <= 3;
