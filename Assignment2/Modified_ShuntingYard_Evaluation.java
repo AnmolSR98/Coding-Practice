@@ -29,7 +29,7 @@ public class Modified_ShuntingYard_Evaluation {
 
 			// basic error checking 
 			if (!acceptables.contains(elem)){
-				throw new Exception(String.format("The input string contains invalid character <%s>!", elem);
+				throw new Exception(String.format("The input string contains invalid character <%s>!", elem));
 			}
 			
 			// if the string elem is an operand, add it to the outputString
