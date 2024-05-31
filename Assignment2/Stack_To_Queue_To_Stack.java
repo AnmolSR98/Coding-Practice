@@ -82,19 +82,21 @@ public class Stack_To_Queue_To_Stack {
 		// P r i n t t h e g e n e r a t e d random numbers
 		System.out.println ( "Unsorted Numbers numbers:" ) ;
 		for ( int number : randomNumbers ) {
-			System.out.println ( number + " ") ;
+			System.out.println ( number ) ;
 		}
 		// C a l l t h e f u n c t i o n s t o e x e c u t e t h e s t e p s
 		Unsorted_Stack ( randomNumbers ) ;
 		System.out.println ( "Unsorted numbers in Stack:" ) ;
 		printArray ( randomNumbers ) ;
+		
 		Stack_To_Queue ( randomNumbers ) ;
 		System.out.println ( "Unsorted numbers in Queue:" ) ;
-	
 		printArray ( randomNumbers ) ;
+		
 		Sorting_Queue ( randomNumbers ) ;
 		System.out.println ( "Sorted numbers in Queue :" ) ;
 		printArray ( randomNumbers ) ;
+		
 		Sorted_Stack ( randomNumbers ) ;
 		System.out.println( "Sorted numbers in Stack :" ) ;
 		printArray ( randomNumbers ) ;
