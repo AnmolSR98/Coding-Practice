@@ -8,6 +8,9 @@ public class Modified_ShuntingYard_Evaluation {
 	
 	// creating a list of all the operators
 	static String[] operators = {"^", "*", "/", "+", "-"};
+
+	// string of acceptable symbols for error checking
+	static String acceptables = "0123456789^*/+-";
 	
 	// converting to postfix
 	public static String convertToPostfix(String expression) throws Exception{
@@ -23,6 +26,11 @@ public class Modified_ShuntingYard_Evaluation {
 		String outputString = "";
 		
 		for (String elem: expArray){
+
+			// basic error checking 
+			if (!acceptables.contains(elem)){
+				throw new Exception(String.format("The input string contains invalid character <%s>!", elem);
+			}
 			
 			// if the string elem is an operand, add it to the outputString
 			if (isOperand(elem)) { 
