@@ -1,4 +1,3 @@
-package sortingstack;
 // Anmol Ratol, 30231177
 // Creating an algorithm to simulate using a queue to sort values from a stack
 
