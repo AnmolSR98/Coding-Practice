@@ -1,4 +1,3 @@
-package shuntingyard;
 //Anmol Ratol, 30231177
 //Creating an algorithm to convert infix expressions to postfix expressions and then evaluate the postfix expressions
 
