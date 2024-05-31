@@ -6,8 +6,6 @@ import java.util.Stack;
 
 public class Modified_ShuntingYard_Evaluation {
 	
-	// string of symbols available
-	static String acceptables= "[0-9]^*/+-";
 	// creating a list of all the operators
 	static String[] operators = {"^", "*", "/", "+", "-"};
 	
@@ -18,8 +16,6 @@ public class Modified_ShuntingYard_Evaluation {
 		if (expression.length() == 0){
 			throw new Exception("The input string is empty!");
 		}
-		
-		
 		
 		// splitting the string into an array
 		String[] expArray = expression.split("");
@@ -148,12 +144,10 @@ public class Modified_ShuntingYard_Evaluation {
 	public static void main ( String [] args ) throws Exception {
 		String expression1 = "2+3*1" ;
 		String expression2 = "3*2^4-7" ;
-		String expression3 = "3*2^4-a" ;
 		String postfix1 = convertToPostfix ( expression1 ) ;
 		String postfix2 = convertToPostfix ( expression2 ) ;
-		String postfix3 = convertToPostfix ( expression3 ) ;
-		System.out.println ( expression1 + "−>Postfix: " + postfix1 + " , Evaluation: "  + evaluatePostfix ( postfix1 ) ) ;
-		System.out.println ( expression2 + "−>Postfix: " + postfix2 + " , Evaluation: "  + evaluatePostfix ( postfix2 ) ) ;
+		System.out.println ( expression1 + "−>Postfix: " + postfix1 + ", Evaluation: "  + evaluatePostfix ( postfix1 ) ) ;
+		System.out.println ( expression2 + "−>Postfix: " + postfix2 + ", Evaluation: "  + evaluatePostfix ( postfix2 ) ) ;
 	}
 	
 	
