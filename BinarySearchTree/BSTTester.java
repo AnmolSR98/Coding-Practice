@@ -19,11 +19,32 @@ public class BSTTester {
 		System.out.println(searchTree.contains(200));
 		searchTree.printTree();
 		System.out.println();
-		searchTree.RoLR(searchTree.root);
-		System.out.println();
-		searchTree.LRRo(searchTree.root);
-		System.out.println();
-		// bug with remove function 
+		searchTree.remove(1);
+		searchTree.remove(5);
+		System.out.println(searchTree.root.getData());
+		System.out.println(searchTree.contains(1));
+		searchTree.printTree();
+		searchTree.add(2);
+		searchTree.add(1);
+		searchTree.add(3);
+		searchTree.printTree();
+		searchTree.rotate(1, 4);
+		searchTree.printTree();
+		System.out.println(searchTree.root.getData());
+		System.out.println(searchTree.root.getRight().getData());
+		System.out.println(searchTree.root.getLeft().getData());
+		searchTree.rotate(1, 2);
+		searchTree.printTree();
+		System.out.println(searchTree.root.getData());
+		System.out.println(searchTree.root.getRight().getLeft().getData());
+		System.out.println(searchTree.root.getLeft().getData());
+		searchTree.rotate(0, 4);
+		searchTree.printTree();
+		System.out.println(searchTree.root.getData());
+		System.out.println(searchTree.root.getRight().getData());
+		System.out.println(searchTree.root.getLeft().getData());
+	
+		// bug with remove function [FIXED]
 	}
 	
 }

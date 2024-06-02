@@ -2,7 +2,7 @@ package llbst;
 
 public class LLBST <T extends Comparable> {
 	
-	private class Node{
+	class Node{
 		private Node right;
 		private Node left;
 		private T data;
@@ -64,6 +64,7 @@ public class LLBST <T extends Comparable> {
 	}
 	
 	private Node recAdd(T value, Node root) {
+		
 		if (root == null) {
 			root = new Node(value);
 		}
@@ -121,7 +122,7 @@ public class LLBST <T extends Comparable> {
 		}
 		
 		else {
-			tmp = getSuccessor(root.getRight());
+			tmp = getSuccessor(root);
 			root.setData(tmp);
 			root.setRight(recRemove(tmp, root.getRight()));
 			return root;
@@ -139,6 +140,7 @@ public class LLBST <T extends Comparable> {
 	
 	public void printTree() {
 		inOrderPrint(root);
+		System.out.println();
 	}
 	
 	private void inOrderPrint(Node root) {
@@ -165,8 +167,54 @@ public class LLBST <T extends Comparable> {
 		}
 	}
 	
-	public void rotate(int direction, T value) {
+	public void rotate(int direction, T value) throws Exception {
 		// 0 for left, 1 for right
+		if (contains(value) && direction == 1) {
+			root = rightRotate(value, root.getLeft(), root);
+		}
+		
+		else if(contains(value) && direction == 0) {
+			root = leftRotate(value, root.getRight(), root);
+		}
+		
+		else {
+			throw new Exception("Value is not in tree!");
+		}
 	}
 	
+	private Node rightRotate(T value, Node a, Node b) {
+		
+		if (a.getData().compareTo(value) == 0) {
+			b.setLeft(a.getRight());
+			a.setRight(b);
+		}
+		
+		else if (a.getData().compareTo(value) < 0){
+			return rightRotate(value, a.getLeft(), a);
+		}
+		
+		else {
+			return rightRotate(value, a.getRight(), a);
+		}
+		
+		return a;
+	}
+	
+	private Node leftRotate(T value, Node a, Node b) {
+		
+		if (a.getData().compareTo(value) == 0) {
+			b.setRight(a.getLeft());
+			a.setLeft(b);
+		}
+		
+		else if (a.getData().compareTo(value) < 0){
+			return leftRotate(value, a.getLeft(), a);
+		}
+		
+		else {
+			return leftRotate(value, a.getRight(), a);
+		}
+		
+		return a;
+	}
 }
