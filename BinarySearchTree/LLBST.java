@@ -13,32 +13,49 @@ public class LLBST <T extends Comparable> {
 		public Node getLeft() { return left;}
 		
 		public void setRight(Node newRight) {right = newRight;}
-		public void setLeft(Node newLeft) {right = newLeft;}
+		public void setLeft(Node newLeft) {left = newLeft;}
 		
 		public T getData(){return data;}
 		public void setData(T newData) {data = newData;}  
 	}
-	Node root;
+	public Node root;
 	
+	public LLBST() {}
 	public boolean isFull() {return false;}
 	public boolean isEmpty() {return (root == null);}
 	public void clear() {root = null;}
+	
+	public int size() {
+		return recSize(root);
+	}
+	
+	private int recSize(Node root) {
+		
+		if (root == null) {
+			return 0;
+		}
+		
+		else {
+			return recSize(root.getLeft()) + recSize(root.getRight()) + 1;
+		}
+	}
 	
 	public boolean contains(T value) {
 		return recContains(value, root);
 	}
 	
 	private boolean recContains(T value, Node root) {
-		if (root.getData() == value) { return true; }
 		
-		else if (root == null) { return false; }
+		if (root == null) { return false; }
+		
+		else if(root.getData().compareTo(value) == 0) { return true; }
 		
 		else if(value.compareTo(root.getData()) < 0) {
 			return recContains(value, root.getLeft());
 		}
 		
 		else {
-			return recContains(value, root.getLeft());
+			return recContains(value, root.getRight());
 		}
 	}
 	
@@ -60,10 +77,17 @@ public class LLBST <T extends Comparable> {
 		}
 		
 		return root;
+		
 	}
 	
-	public void remove(T value) {
-		root = recRemove(value, root);
+	public void remove(T value) throws Exception {
+		if (contains(value)) {
+			root = recRemove(value, root);
+		}
+		
+		else {
+			throw new Exception("The value is not in the tree!");
+		}
 	}
 	
 	private Node recRemove(T value, Node root) {
@@ -92,12 +116,12 @@ public class LLBST <T extends Comparable> {
 			return root.getRight();
 		}
 		
-		else if (root.getLeft() == null) {
+		else if (root.getRight() == null) {
 			return root.getLeft();
 		}
 		
 		else {
-			tmp = getSuccessor(root);
+			tmp = getSuccessor(root.getRight());
 			root.setData(tmp);
 			root.setRight(recRemove(tmp, root.getRight()));
 			return root;
@@ -117,12 +141,32 @@ public class LLBST <T extends Comparable> {
 		inOrderPrint(root);
 	}
 	
-	public void inOrderPrint(Node root) {
+	private void inOrderPrint(Node root) {
 		if (root != null) {
 			inOrderPrint(root.getLeft());
-			inOrderPrint(root);
+			System.out.print(root.getData() + ",");
 			inOrderPrint(root.getRight());
 		}
+	}
+	
+	public void LRRo(Node root) {
+		if (root != null) {
+			LRRo(root.getLeft());
+			LRRo(root.getRight());
+			System.out.print(root.getData() + ",");
+		}
+	}
+	
+	public void RoLR(Node root) {
+		if (root != null) {
+			System.out.print(root.getData() + ",");
+			RoLR(root.getLeft());
+			RoLR(root.getRight());
+		}
+	}
+	
+	public void rotate(int direction, T value) {
+		// 0 for left, 1 for right
 	}
 	
 }
