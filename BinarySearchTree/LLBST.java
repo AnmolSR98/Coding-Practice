@@ -217,4 +217,45 @@ public class LLBST <T extends Comparable> {
 		
 		return a;
 	}
+	
+	public T search(T value) {
+		return getNode(value, root);
+	}
+	
+	public T getNode(T value, Node root) {
+		
+		if (root == null) {
+			return null;
+		}
+		
+		else if (root.getData().compareTo(value) == 0) {
+			return root.getData();
+		}
+		
+		else if (root.getData().compareTo(value) < 0) {
+			return getNode(value, root.getLeft());
+		}
+		
+		else {
+			return getNode(value, root.getRight());
+		}
+	}
+	
+	public T getMin() {
+		Node tmp = root;
+		while (tmp.getLeft() != null) {
+			tmp = tmp.getLeft();
+		}
+		
+		return tmp.getData();
+	}
+	
+	public T getMax() {
+		Node tmp = root;
+		while (tmp.getRight() != null) {
+			tmp = tmp.getRight();
+		}
+		
+		return tmp.getData();
+	}
 }
