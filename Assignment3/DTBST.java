@@ -3,7 +3,8 @@ package Section2;
 import java.util.List;
 
 public class DTBST {
-	private TreeNode root = null;
+	// remember to change back to PRIVATE before submission
+	public TreeNode root = null;
 	
 	public DTBST() {
 	// Implement this constructor
@@ -27,9 +28,9 @@ public class DTBST {
 	*/
 	public boolean addEvent(Event event) throws Exception {
 		
+		// ie checking that the event is valid
 		if (event == null) {
 			throw new Exception("Event is null!");
-			
 		}
 		
 		if (event.startTime < 0) {
@@ -40,56 +41,33 @@ public class DTBST {
 			throw new Exception("Event duration cannot be negative!");
 		}
 		
-		TreeNode tmp = root;
-		TreeNode parent = root;
-		boolean loop = true;
-		boolean added = false;
-		
-		// remember how to update parent, maybe that would be better
-		while (loop) {
-			
-			// if a spot is found, then add the event (ALSO COVERS IF THE TREE IS EMPTY)
-			if (tmp == null) {
-				TreeNode newNode = new TreeNode(event);
-				// if the parent ie. root is null, make it equal to the newNode
-				if (parent == null) {
-					root = newNode;
-				}
-				
-				// if the parent event starts after, set the new event to the left
-				else if	(parent.event.startTime > event.startTime) {
-					parent.left = newNode;
-				}
-				
-				// if the parent event starts before, set the new event to the right
-				else {
-					parent.right = newNode;
-				}
-				
-				loop = false;
-				added = true;
-				
-			}
-			
-			// if the root event finishes before the new event starts, move along to the right
-			else if (root.event.startTime + root.event.duration < event.startTime) {
-				parent = tmp;
-				tmp = tmp.right;
-			}
-			
-			// if the root event starts after the new event finished, move it to the left
-			else if (root.event.startTime > event.startTime + event.duration) {
-				parent = tmp;
-				tmp = tmp.left;
-			}
-			
-			// if the root event has some overlap with the new event's time, kill the loop
-			else {
-				loop = false;
-			}
+		//System.out.println(checkEventConflict(event) + "|||" + event);
+		// if there are no conflicts, then add and return true;
+		if (!checkEventConflict(event)) {
+			root = recAdd(event, root);
+			return true;
 		}
 		
-		return added;
+		return false;
+	}
+	
+	private TreeNode recAdd(Event event, TreeNode root) {
+		
+		if (root == null) {
+			root = new TreeNode(event);
+		}
+		
+		else if (event.startTime + event.duration <= root.event.startTime) {
+			root.left = recAdd(event, root.left);
+		}
+		
+		// definitely an issue with inserting it on the very right, resulting in some kind of error
+		// else if (event.startTime >= root.event.startTime + root.event.duration) {
+		else {
+			root.right = recAdd(event, root.right);
+		}
+		
+		return root;
 	}
 
 	
@@ -108,54 +86,8 @@ public class DTBST {
 	* - Returns false if no event was found at the given time.
 	 * @throws Exception 
 	*/
-	// NEED TO FIX THIS SOON
 	public boolean deleteEvent(int time) throws Exception {
-		
-		if (time < 0) {
-			throw new Exception("Time cannot be negative!");
-		}
-		
-		TreeNode tmp = root; 
-		TreeNode parent = root;
-		boolean deleted = false;
-		boolean loop = true;
-		
-		while (loop) {
-			
-			// if an event is found that is going on at that time
-			if (tmp == null) {
-				return false;
-			}
-			
-			
-			else if ((tmp.event.startTime <= time) && (tmp.event.startTime + tmp.event.duration >= time)) {
-				
-				// if the event occurs before the parent, set the left to null, else set the right to null
-				if (parent.event.startTime > time) {
-					parent.left = null;
-					
-				}
-				
-				else {
-					parent.right = null;
-				}
-				
-				return true;
-			}
-			
-			// if the root event finishes before the new event starts, move along to the right
-			else if (root.event.startTime + root.event.duration < time) {
-				parent = tmp;
-				tmp = tmp.right;
-			}
-			
-			// if the root event starts after the new event finished, move it to the left
-			else {
-				parent = tmp;
-				tmp = tmp.left;
-			}
-						
-		}
+		return false;
 		
 	}
 	/**
@@ -184,9 +116,42 @@ public class DTBST {
 	* Postcondition:
 	* - Returns the event that is occurring at the specified time.
 	* - Returns null if no event is occurring at the specified time.
+	 * @throws Exception 
 	*/
-	public Event findEventAtTime(int time) {
-		return null;
+	public Event findEventAtTime(int time) throws Exception {
+		
+		if (time < 0) {
+			throw new Exception("Time must be greater than zero!");
+		}
+		
+		TreeNode eventNode = recSearch(time, root);
+		
+		
+		if (eventNode == null) {
+			return null;
+		}
+		
+		return eventNode.event;
+		
+	}
+	
+	private TreeNode recSearch(int time, TreeNode root) {
+		
+		if (root == null) {
+			return null;
+		}
+		
+		else if ((time >= root.event.startTime) && (time <= root.event.startTime + root.event.duration)) {
+			return root;
+		}
+		
+		else if (time < root.event.startTime) {
+			return recSearch(time, root.left);
+		}
+		
+		else {
+			return recSearch(time, root.right);
+		}
 	}
 	/**
 	* Returns the first event that starts after the specified time. Returns null if
@@ -211,7 +176,12 @@ public class DTBST {
 	*
 	* Postcondition:
 	* - Returns the first event that starts after the event with the specified name.
-	* - Returns null if no such event is found.
+	* - Returns null if no such event is found.if (root.left != null) {
+			System.out.println(root.left.event);
+			if (root.left.right != null) {
+				System.out.println(root.left.right.event);
+			}
+		}
 	*/
 	public Event findNextEvent(String eventName) {
 		return null;
@@ -260,7 +230,29 @@ public class DTBST {
 	* - Returns false if no conflict is found.
 	*/
 	public boolean checkEventConflict(Event e) {
-		return false;
+		
+		return recCheckConflict(e.startTime, root);
+	}
+	
+	private boolean recCheckConflict(int time, TreeNode root) {
+		
+		// if there is a null slot, then false
+		if (root == null) {
+			return false;
+		}
+		
+		// if there is some overlap, then return true, where the end points are not included
+		else if ((time > root.event.startTime) && (time < root.event.startTime + root.event.duration)) {
+			return true;
+		}
+		
+		else if (time <= root.event.startTime) {
+			return recCheckConflict(time, root.left);
+		}
+		
+		else  {
+			return recCheckConflict(time, root.right);
+		}
 	}
 	
 	/**
@@ -268,7 +260,7 @@ public class DTBST {
 	inclusive. If endTimeRange is negative, returns all events starting from
 	startTimeRange onwards.
 	*
-	* Precondition:
+	* Precondition:false
 	* - startTimeRange >= 0 (valid time in minutes since midnight).
 	* - endTimeRange >= startTimeRange or endTimeRange < 0 (indicating no upper
 	bound).
