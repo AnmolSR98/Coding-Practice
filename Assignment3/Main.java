@@ -18,7 +18,16 @@ public class Main {
 		
 		testTree.addEvent(new Event("Stand Up", 550, 10));
 		testTree.addEvent(new Event("Design Discussion", 960, 60));
-		printTree(root.right.right);
+		//printTree(root);
+		
+		testTree.deleteEvent(960);
+		testTree.deleteEvent(400);
+		testTree.deleteEvent(480);
+		
+		testTree.deleteEvent("Code Review");
+		testTree.deleteEvent("Team Meeting");
+		
+		printTree(root);
 		
 	}
 	
@@ -29,8 +38,8 @@ public class Main {
 	
 	private static void inOrderPrint(TreeNode root) {
 		if (root != null) {
-			System.out.println(root.event);
 			inOrderPrint(root.left);
+			System.out.println(root.event);
 			inOrderPrint(root.right);
 		}
 	}

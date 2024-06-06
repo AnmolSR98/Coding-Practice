@@ -57,12 +57,11 @@ public class DTBST {
 			root = new TreeNode(event);
 		}
 		
-		else if (event.startTime + event.duration <= root.event.startTime) {
+		else if (event.startTime < root.event.startTime) {
 			root.left = recAdd(event, root.left);
 		}
-		
 		// definitely an issue with inserting it on the very right, resulting in some kind of error
-		// else if (event.startTime >= root.event.startTime + root.event.duration) {
+		// definitely an issue with inserting it on the very right, resulting in some kind of error [RESOLVED]
 		else {
 			root.right = recAdd(event, root.right);
 		}
@@ -87,9 +86,77 @@ public class DTBST {
 	 * @throws Exception 
 	*/
 	public boolean deleteEvent(int time) throws Exception {
-		return false;
 		
+		if (time < 0) {
+			throw new Exception("Time cannot be negative!");
+		}
+		
+		Event event = findEventAtTime(time);
+		if (event == null) {
+			return false;
+		}
+		
+		root = recRemove(event, root);
+		
+		return true;
 	}
+	
+	private TreeNode recRemove(Event event, TreeNode root) {
+		if (root == null) {
+			return null;
+		}
+		
+		else if (root.event.startTime > event.startTime) {
+			root.left = recRemove(event, root.left);
+		}
+		
+		else if (root.event.startTime < event.startTime) {
+			root.right = recRemove(event, root.right);
+		}
+		
+		else {
+			root = removeNode(root);
+		}
+		
+		return root;
+	}
+	
+	private TreeNode removeNode(TreeNode root) {
+		TreeNode tmp;
+		if (root.left == null) {
+			return root.right;
+		}
+		
+		else if (root.right == null){
+			return root.left;
+		}
+		
+		else {
+			tmp = getSuccessor(root);
+			root.event = tmp.event;
+			root.right = recRemove(tmp.event, root.right);
+			return root;
+		}
+	}
+	
+	private TreeNode getSuccessor(TreeNode root) {
+		TreeNode tmp = root.right;
+		while (tmp.left != null) {
+			tmp = tmp.left;
+		}
+		
+		return tmp;
+	}
+	
+	private TreeNode getPredecessor(TreeNode root) {
+		TreeNode tmp = root.left;
+		while (tmp.right != null) {
+			tmp = tmp.right;
+		}
+		
+		return tmp;
+	}
+	
 	/**
 	* Deletes the event named "eventName". Returns true if successful, false if
 	unsuccessful.
@@ -101,10 +168,46 @@ public class DTBST {
 	* - If an event with the given name is found, it is removed from the tree.
 	* - Returns true if the event was successfully deleted.
 	* - Returns false if no event with the given name was found.
+	 * @throws Exception 
 	*/
-	// GOING TO HAVE TO DO THIS WITH SOME SORT OF INORDER TRAVERSAL THING
-	public boolean deleteEvent(String eventName) {
-		return false;
+	// GOING TO HAVE TO DO THIS WITH SOME SORT OF INORDER TRAVERSAL THING [DONE]
+	public boolean deleteEvent(String eventName) throws Exception {
+		
+		int startTime = getEventTime(eventName, root);
+		
+		if (startTime == -1) {
+			throw new Exception("There is no event with this name!");
+		}
+		
+		return deleteEvent(startTime);
+	}
+	
+	private int getEventTime(String eventName, TreeNode root) {
+		
+		if (root == null) {
+			return -1;
+		}
+		
+		else if (root.event.name.compareTo(eventName) == 0) {
+			return root.event.startTime;
+		}
+		
+		else {
+			int startTimeLeft = getEventTime(eventName, root.left);
+			int startTimeRight = getEventTime(eventName, root.right);
+			
+			if (startTimeLeft != -1) {
+				return startTimeLeft;
+			}
+			
+			else if (startTimeRight != -1) {
+				return startTimeRight;
+			}
+			
+		}
+		
+		return -1;
+		
 	}
 	/**
 	* Returns the event occurring at the specified time. Returns null if no event is
@@ -163,10 +266,39 @@ public class DTBST {
 	* Postcondition:
 	* - Returns the first event that starts after the specified time.
 	* - Returns null if no such event is found.
+	 * @throws Exception 
 	*/
-	public Event findNextEvent(int time) {
-		return null;
+	public Event findNextEvent(int time) throws Exception {
+		
+		if (time < 0) {
+			throw new Exception("Time must be greater than zero!");
+		}
+		
+		// this could be done with some sort of inorder traversal, where it terminates upon encountering the first event with later startTime
+		TreeNode node = recSearch(time, root);
+		TreeNode successor = getSuccessor(node);
+		
+		if (successor != null) {
+			return successor.event;
+		}
+		
+		return noRightSubtree(time, root).event;
 	}
+	
+	// implement something for finding the next largest startTime if there is no immediate subTree
+	public TreeNode noRightSubtree(int time, TreeNode root) {
+		
+		return root;
+		
+	}
+	
+	// implement something for finding the next largest startTime if there is no immediate subTree
+	public TreeNode noLeftSubtree(int time, TreeNode root) {
+			
+		return root;
+			
+	}
+	
 	/**
 	* Returns the first event that starts after the event with the specified name.
 	Returns null if no such event is found.
@@ -182,9 +314,16 @@ public class DTBST {
 				System.out.println(root.left.right.event);
 			}
 		}
+	 * @throws Exception 
 	*/
-	public Event findNextEvent(String eventName) {
-		return null;
+	// Have it get the time that the thing starts at first, then go searching
+	public Event findNextEvent(String eventName) throws Exception {
+		int startTime = getEventTime(eventName, root);
+		if (startTime == -1) {
+			return null;
+		}
+		
+		return findNextEvent(startTime);
 	}
 	/**
 	* Returns the event that occurred (started and finished) immediately before the
@@ -197,10 +336,26 @@ public class DTBST {
 	* Returns the event that occurred (started and finished) immediately before the
 	specified time. Returns null if no such event is found.
 	* - Returns null if no such event is found.
+	 * @throws Exception 
 	*/
-	public Event findPreviousEvent(int time) {
-		return null;
+	// Similar thing 
+	public Event findPreviousEvent(int time) throws Exception {
+		
+		if (time < 0) {
+			throw new Exception("Time must be greater than zero!");
+		}
+		
+		// this could be done with some sort of inorder traversal, where it terminates upon encountering the first event with later startTime
+		TreeNode node = recSearch(time, root);
+		TreeNode predecessor = getPredecessor(node);
+		
+		if (predecessor != null) {
+			return predecessor.event;
+		}
+		
+		return noLeftSubtree(time, root).event;
 	}
+	
 	/**
 	* Returns the event that occurred immediately before the event with the specified
 	name. Returns null if no such event is found.
@@ -212,9 +367,15 @@ public class DTBST {
 	* - Returns the event that occurred immediately before the event with the
 	specified name.
 	* - Returns null if no such event is found.
+	 * @throws Exception 
 	*/
-	public Event findPreviousEvent(String eventName) {
-		return null;
+	public Event findPreviousEvent(String eventName) throws Exception {
+		int startTime = getEventTime(eventName, root);
+		if (startTime == -1) {
+			return null;
+		}
+		
+		return findPreviousEvent(startTime);
 	}
 	/**
 	* Returns true if a conflict is found between event e and the events in the tree.
@@ -296,8 +457,8 @@ public class DTBST {
 	chronological order.
 	* - If end is negative, all events from start time onwards are included.
 	*/
-	private void collectEventsInRange(TreeNode node, int start, int end, List<Event>
-	events) {
-	// Implement this method
+	// Inorder traversal, add all that fit into the range since List is commutative [IMPLEMENT IT THIS WAY]
+	private void collectEventsInRange(TreeNode node, int start, int end, List<Event> events) {
+		// Implement this method
 	}
 }
