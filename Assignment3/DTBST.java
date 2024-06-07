@@ -59,9 +59,16 @@ public class DTBST {
 			root = new TreeNode(event);
 			if (direction == 0) {
 				root.leftThread = true;
+				root.rightThread = false;
+			}
+			
+			else if (direction == -1){
+				root.leftThread = false;
+				root.rightThread = false;
 			}
 			
 			else {
+				root.leftThread = false;
 				root.rightThread = true;
 			}
 		}
@@ -150,6 +157,11 @@ public class DTBST {
 	
 	private TreeNode getSuccessor(TreeNode root) {
 		TreeNode tmp = root.right;
+		
+		if (tmp == null){
+			return null;
+		}
+		
 		while (tmp.left != null) {
 			tmp = tmp.left;
 		}
@@ -159,6 +171,11 @@ public class DTBST {
 	
 	private TreeNode getPredecessor(TreeNode root) {
 		TreeNode tmp = root.left;
+		
+		if (tmp == null){
+			return null;
+		}
+		
 		while (tmp.right != null) {
 			tmp = tmp.right;
 		}
@@ -297,13 +314,42 @@ public class DTBST {
 	// implement something for finding the next largest startTime if there is no immediate subTree
 	public TreeNode noRightSubtree(int time, TreeNode root) {
 		
-		return root;
+		if (root.left == null) {
+			return root;
+		}
+		
+		else if (root.left.event.startTime == time) {
+			return root;
+		}
+		
+		else if (time < root.event.startTime) {
+			return noRightSubtree(time, root.left);
+		}
+		
+		else {
+			return noRightSubtree(time, root.right);
+		}
+		
 	}
 	
-	// implement something for finding the next largest startTime if there is no immediate subTree
-	public TreeNode noLeftSubtree(int time) {
+	// implement something for finding the next smallest startTime if there is no immediate subTree
+	public TreeNode noLeftSubtree(int time, TreeNode root) {
 		
-		return root;
+		if (root.right == null) {
+			return root;
+		}
+		
+		else if (root.right.event.startTime == time) {
+			return root;
+		}
+		
+		else if (time < root.event.startTime) {
+			return noLeftSubtree(time, root.left);
+		}
+		
+		else {
+			return noLeftSubtree(time, root.right);
+		}
 			
 	}
 	
@@ -361,7 +407,7 @@ public class DTBST {
 			return predecessor.event;
 		}
 		
-		return noLeftSubtree(time).event;
+		return noLeftSubtree(time, root).event;
 	}
 	
 	/**
@@ -464,7 +510,7 @@ public class DTBST {
 	* - events is not null.
 	*
 	* Postcondition:
-	* - Events in the specified time range are added to the list â€™eventsâ€™ in
+	* - Events in the specified time range are added to the list ’events’ in
 	chronological order.
 	* - If end is negative, all events from start time onwards are included.
 	*/

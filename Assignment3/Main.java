@@ -19,7 +19,11 @@ public class Main {
 		testTree.addEvent(new Event("Stand Up", 550, 10));
 		testTree.addEvent(new Event("Design Discussion", 960, 60));
 		
+		printTree(root);
+		
 		System.out.println(testTree.findEventAtTime(645));
+		
+		// EVERYTHING ELSE IS WORKING FINE EXCEPT FOR THESE SPECIFIC LINES  
 		
 		System.out.println(testTree.findNextEvent("Lunch Break"));
 		
@@ -30,6 +34,8 @@ public class Main {
 		System.out.println(testTree.findPreviousEvent(490));
 		
 		System.out.println(testTree.findEventAtTime(490));
+		
+		// THIS IS GOOD
 		
 		testTree.deleteEvent("Design Discussion");
 		
@@ -42,7 +48,6 @@ public class Main {
 		System.out.println(testTree.getEventsInRange(480, 1020));
 		
 		System.out.println(testTree.getEventsInRange(0, 720));
-		printTree(root);
 	}
 	
 	private static void printTree(TreeNode root) {
