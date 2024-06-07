@@ -511,7 +511,7 @@ public class DTBST {
 	* - events is not null.
 	*
 	* Postcondition:
-	* - Events in the specified time range are added to the list ’events’ in
+	* - Events in the specified time range are added to the list Â’eventsÂ’ in
 	chronological order.
 	* - If end is negative, all events from start time onwards are included.
 	*/
