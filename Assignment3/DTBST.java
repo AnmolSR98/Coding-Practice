@@ -1,6 +1,7 @@
 package Section2;
 
 import java.util.List;
+import java.util.ArrayList;
 
 public class DTBST {
 	// remember to change back to PRIVATE before submission
@@ -44,26 +45,34 @@ public class DTBST {
 		//System.out.println(checkEventConflict(event) + "|||" + event);
 		// if there are no conflicts, then add and return true;
 		if (!checkEventConflict(event)) {
-			root = recAdd(event, root);
+			root = recAdd(event, root, -1);
 			return true;
 		}
 		
 		return false;
 	}
 	
-	private TreeNode recAdd(Event event, TreeNode root) {
+	// 0 for left, 1 for right, -1 for root
+	private TreeNode recAdd(Event event, TreeNode root, int direction) {
 		
 		if (root == null) {
 			root = new TreeNode(event);
+			if (direction == 0) {
+				root.leftThread = true;
+			}
+			
+			else {
+				root.rightThread = true;
+			}
 		}
 		
 		else if (event.startTime < root.event.startTime) {
-			root.left = recAdd(event, root.left);
+			root.left = recAdd(event, root.left, 0);
 		}
 		// definitely an issue with inserting it on the very right, resulting in some kind of error
 		// definitely an issue with inserting it on the very right, resulting in some kind of error [RESOLVED]
 		else {
-			root.right = recAdd(event, root.right);
+			root.right = recAdd(event, root.right, 1);
 		}
 		
 		return root;
@@ -289,12 +298,11 @@ public class DTBST {
 	public TreeNode noRightSubtree(int time, TreeNode root) {
 		
 		return root;
-		
 	}
 	
 	// implement something for finding the next largest startTime if there is no immediate subTree
-	public TreeNode noLeftSubtree(int time, TreeNode root) {
-			
+	public TreeNode noLeftSubtree(int time) {
+		
 		return root;
 			
 	}
@@ -353,7 +361,7 @@ public class DTBST {
 			return predecessor.event;
 		}
 		
-		return noLeftSubtree(time, root).event;
+		return noLeftSubtree(time).event;
 	}
 	
 	/**
@@ -438,7 +446,10 @@ public class DTBST {
 		//List<Event> events = new ArrayList<>();
 		//collectEventsInRange(root, startTimeRange, endTimeRange, events);
 		//return events;
-		return null;
+		//return null;
+		List<Event> events = new ArrayList<>();
+		collectEventsInRange(root, startTimeRange, endTimeRange, events);
+		return events;
 	}
 	/**
 	* Returns a list of events occurring between the "start" and "end" times in
@@ -460,5 +471,16 @@ public class DTBST {
 	// Inorder traversal, add all that fit into the range since List is commutative [IMPLEMENT IT THIS WAY]
 	private void collectEventsInRange(TreeNode node, int start, int end, List<Event> events) {
 		// Implement this method
+		if (node != null) {
+			
+			collectEventsInRange(node.left, start, end, events);
+			
+			if ((node.event.startTime + node.event.duration >= start) && ((node.event.startTime <= end) || (end < 0))) {
+				events.add(node.event);
+			}
+			
+			collectEventsInRange(node.right, start, end, events);
+		}
+		
 	}
 }

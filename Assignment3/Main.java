@@ -18,17 +18,31 @@ public class Main {
 		
 		testTree.addEvent(new Event("Stand Up", 550, 10));
 		testTree.addEvent(new Event("Design Discussion", 960, 60));
-		//printTree(root);
 		
-		testTree.deleteEvent(960);
-		testTree.deleteEvent(400);
-		testTree.deleteEvent(480);
+		System.out.println(testTree.findEventAtTime(645));
 		
-		testTree.deleteEvent("Code Review");
-		testTree.deleteEvent("Team Meeting");
+		System.out.println(testTree.findNextEvent("Lunch Break"));
 		
+		System.out.println(testTree.findPreviousEvent("Client Call"));
+		
+		System.out.println(testTree.findPreviousEvent(410));
+		
+		System.out.println(testTree.findPreviousEvent(490));
+		
+		System.out.println(testTree.findEventAtTime(490));
+		
+		testTree.deleteEvent("Design Discussion");
+		
+		testTree.deleteEvent(565);
+		
+		testTree.deleteEvent(625);
+		
+		testTree.addEvent(new Event("Wrap Up Meeting", 1010, 15));
+		
+		System.out.println(testTree.getEventsInRange(480, 1020));
+		
+		System.out.println(testTree.getEventsInRange(0, 720));
 		printTree(root);
-		
 	}
 	
 	private static void printTree(TreeNode root) {
