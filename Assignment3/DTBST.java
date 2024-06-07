@@ -333,22 +333,23 @@ public class DTBST {
 	}
 	
 	// implement something for finding the next smallest startTime if there is no immediate subTree
-	public TreeNode noLeftSubtree(int time, TreeNode root) {
+	public TreeNode getSmallestNext(int time, TreeNode root) {
 		
-		if (root.right == null) {
+		if (root == null) {
+			return null;
+		}
+		
+		else if (root.right.event.startTime == time){
 			return root;
 		}
 		
-		else if (root.right.event.startTime == time) {
-			return root;
+		else if (root.event.startTime > time){
+			return getSmallestNext(time, root.left);
 		}
 		
-		else if (time < root.event.startTime) {
-			return noLeftSubtree(time, root.left);
-		}
 		
-		else {
-			return noLeftSubtree(time, root.right);
+		else {	
+			return getSmallestNext(time, root.right);
 		}
 			
 	}
@@ -407,7 +408,7 @@ public class DTBST {
 			return predecessor.event;
 		}
 		
-		return noLeftSubtree(time, root).event;
+		return getSmallestNext(time, root).event;
 	}
 	
 	/**
@@ -429,7 +430,7 @@ public class DTBST {
 			return null;
 		}
 		
-		return findPreviousEvent(startTime);
+		return findPreviousEvent(startTime - 1);
 	}
 	/**
 	* Returns true if a conflict is found between event e and the events in the tree.

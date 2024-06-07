@@ -35,6 +35,8 @@ public class Main {
 		
 		System.out.println(testTree.findEventAtTime(490));
 		
+		System.out.println();
+		
 		// THIS IS GOOD
 		
 		testTree.deleteEvent("Design Discussion");
