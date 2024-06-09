@@ -5,7 +5,10 @@ public class Task {
 	int priority;
 	String description;
 	
-	public Task() {
+	public Task(int ident, int prior, String descr) {
+		id = ident;
+		priority = prior;
+		description = descr;
 	}
 	
 	@Override
