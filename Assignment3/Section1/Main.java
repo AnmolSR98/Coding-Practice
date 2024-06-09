@@ -1,68 +1,92 @@
-package Section2;
+// Anmol Ratol 30231177
+// A main class to test the double threaded binary search tree
+
+package Section1;
 
 public class Main {
 	
+	// the main method
 	public static void main(String[] args) throws Exception {
 		DTBST testTree = new DTBST();
 		
-		// For 1 through to 8 in the assignment
+		// 1. through 7. are just adding a bunch of events
+		// 1. 
 		testTree.addEvent(new Event("Project Kickoff", 480, 60));
-		TreeNode root = testTree.root;
+		// 2.
 		testTree.addEvent(new Event("Team Meeting", 600, 30));
+		// 3.
 		testTree.addEvent(new Event("Client Call", 630, 45));
-	
+		// 4.
 		testTree.addEvent(new Event("Lunch Break", 400, 60));
-		// Issue here, doesn't get added, seems to be an issue with the conflict checker
-		// Never mind, seems to be an issue with the adder
+		// 5.
 		testTree.addEvent(new Event("Code Review", 465, 480));
-		
+		// 6.
 		testTree.addEvent(new Event("Stand Up", 550, 10));
+		// 7.
 		testTree.addEvent(new Event("Design Discussion", 960, 60));
 		
-		printTree(root);
+		// 8. Adding an event emergency meeting, and printing conflict if add fails
+		if (!testTree.addEvent(new Event("Emergency Meeting", 610, 15))) {
+			System.out.println("Conflict!");
+		}
 		
+		// 9. Getting the event at 645
 		System.out.println(testTree.findEventAtTime(645));
 		
-		// EVERYTHING ELSE IS WORKING FINE EXCEPT FOR THESE SPECIFIC LINES  
+		// 10. Getting the event immediately after lunch break
+		Event afterLunch = testTree.findNextEvent("Lunch Break");
+		if (afterLunch != null) {
+			System.out.println(afterLunch);
+		}
 		
-		System.out.println(testTree.findNextEvent("Lunch Break"));
+		else {
+			System.out.println("No Such Event");
+		}
 		
-		System.out.println(testTree.findPreviousEvent("Client Call"));
+		// 11. Getting the event immediately after client call
+		Event beforeClient = testTree.findPreviousEvent("Client Call");
+		if (beforeClient != null) {
+			System.out.println(beforeClient);
+		}
 		
+		else {
+			System.out.println("No Such Event");
+		}
+		
+		// 12.
 		System.out.println(testTree.findPreviousEvent(410));
 		
+		// 13.
 		System.out.println(testTree.findPreviousEvent(490));
 		
+		// 14.
 		System.out.println(testTree.findEventAtTime(490));
 		
-		System.out.println();
+		// 15.
+		if (!testTree.deleteEvent("Design Discussion")) {
+			System.out.println("No Such Event!");
+		}
 		
-		// THIS IS GOOD
+		// 16.
+		if (!testTree.deleteEvent(565)) {
+			System.out.println("No Such Event!");
+		}
 		
-		testTree.deleteEvent("Design Discussion");
+		// 17.
+		if (!testTree.deleteEvent(625)) {
+			System.out.println("No Such Event!");
+		}
 		
-		testTree.deleteEvent(565);
+		// 18.
+		if(!testTree.addEvent(new Event("Wrap Up Meeting", 1010, 15))) {
+			System.out.println("Conflict");
+		}
 		
-		testTree.deleteEvent(625);
-		
-		testTree.addEvent(new Event("Wrap Up Meeting", 1010, 15));
-		
+		// 19.
 		System.out.println(testTree.getEventsInRange(480, 1020));
 		
+		// 20.
 		System.out.println(testTree.getEventsInRange(0, 720));
-	}
-	
-	private static void printTree(TreeNode root) {
-		inOrderPrint(root);
-		System.out.println();
-	}
-	
-	private static void inOrderPrint(TreeNode root) {
-		if (root != null) {
-			inOrderPrint(root.left);
-			System.out.println(root.event);
-			inOrderPrint(root.right);
-		}
 	}
 
 }
