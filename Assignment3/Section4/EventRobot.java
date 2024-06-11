@@ -1,6 +1,10 @@
 package Section4;
 
 public class EventRobot {
+	
+	private int getVertex(int n) {
+		return n-1;
+	}
 /**
 * Calculates minimum required charge for robots.
 *
@@ -24,52 +28,55 @@ public class EventRobot {
 		
 		// now comes the implementation of the bellman ford algorithm
 		// initializing the graph
+		// filling the predecessors array with -1s and the distances with maxes 
 		for (int vertex: vertices) {
-			distances[vertex - 1] = 1001;
-			predecessors[vertex - 1] = -1;
+			distances[getVertex(vertex)] = 1000000;
+			predecessors[getVertex(vertex)] = -1;
 		}
 		
-		distances[headquarters - 1] = 0;
+		// set the distances from the source to the source as 0, since no edges need be traversed
+		distances[getVertex(headquarters)] = 0;
 		
-		// checking the distances for each vertex
+		// repeating the following process for each vertex
 		for (int k = 0; k < vertices.length - 1; k++) {
+			// for each edge/pathway, get the minimum value of the distance to the destination
+			// whether that be the distance of the destination from the hq, or the distance from the source
+			// from the hq plus the weight of the edge that leads to the destination
 			for (int l = 0; l < pathways.length; l++) {
-				if (distances[pathways[l][0] - 1] + pathways[l][2] < distances[pathways[l][1] - 1]) {
-					 distances[pathways[l][1] - 1]  = distances[pathways[l][0] - 1] + pathways[l][2];
-					 predecessors[pathways[l][1] - 1] = distances[pathways[l][0] - 1];
+				
+				int distance_src = distances[getVertex(pathways[l][0])];
+				int distance_dest = distances[getVertex(pathways[l][1])];
+				int weight = pathways[l][2];
+				
+				// if the distance from the source plus the weight of the edge is less than the distance to the destination
+				// then update the value
+				if (distance_src + weight < distance_dest) {
+					
+					// update the distances, and then update the predecessor
+					distances[getVertex(pathways[l][1])] = distance_src + weight;
+					predecessors[getVertex(pathways[l][1])] = vertices[getVertex(pathways[l][0])];
 				}
 			}
 		}
 		
-		// checking for negative weight cycles
-		for (int m = 0; m < pathways.length; m++) {
-			if (distances[pathways[m][0] - 1] + pathways[m][2] < distances[pathways[m][1] - 1]) {
-				predecessors[pathways[m][1] - 1] = distances[pathways[m][0] - 1];
-				
-				boolean[] nodesVisited = new boolean[n];
-				nodesVisited[pathways[m][1] - 1] = true;
-				int immPred = pathways[m][0] - 1;
-				while (nodesVisited[immPred]) {
-					nodesVisited[immPred] = true;
-					immPred = predecessors[immPred];
-				}
-				
-				// ncycle := u
-				vertices[pathways[m][1] - 1] = predecessors[pathways[m][0] -1];
-				while (vertices[pathways[m][1] - 1] != predecessors[pathways[m][0] -1]) {
-					//ncycle := concatenate([v], ncycle)
-					vertices[pathways[m][1] - 1]  = predecessors[vertices[pathways[m][1] - 1]];
-				}
-				
-				// error "graph contains a negative weight cycle, ncycle"
-				
-			}
+		// Need to insert code to filter out negative cycles here, then finished
+		
+		for (int i = 0; i< distances.length; i++) {
+			System.out.print(distances[i] + ",");
 		}
 		
+		System.out.println();
+		
+		for (int i = 0; i< distances.length; i++) {
+			System.out.print(predecessors[i] + ",");
+		}
+		
+		System.out.println();
+
 		// checking for the maximum distance in the distance array
-		int maxDistance = -1000;
+		int maxDistance = -10000000;
 		for (int distance: distances) {
-			if (maxDistance < distance) {
+			if (maxDistance < distance){
 				maxDistance = distance;
 			}
 			
@@ -78,23 +85,4 @@ public class EventRobot {
 		return maxDistance;
 	}
 	
-	public static void main() {
-		
-		int[][] testPaths1 = {{1, 2, 4}};
-		int n1 = 2;
-		int h1 = 1;
-		
-		int[][] testPaths2 = {{1, 2, 4}};
-		int n2 = 2;
-		int h2 = 2;
-		
-		int[][] testPaths3 = {{2, 1, 3}, {2, 3, 2}, {3, 4, 5}};
-		int n3 = 4;
-		int h3 = 2;
-		
-		int[][] testPaths4 = {{2, 1, 3}, {2, 3, 2}, {3, 4, -2}, {2, 4, 5}};
-		int n4 = 4;
-		int h4 = 2;
-		
-	}
 }
