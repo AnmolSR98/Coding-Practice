@@ -4,20 +4,18 @@ public class GraphTester {
 	
 	public static void main(String[] args) {
 		
-		AdjacencyList testGraph = new AdjacencyList(6);
-		testGraph.addConnection(0, 1, 1);
+		AdjacencyList testGraph = new AdjacencyList(8);
 		testGraph.addConnection(0, 2, 1);
-		testGraph.addConnection(0, 3, 1);
-		testGraph.addConnection(0, 4, 1);
-		testGraph.addConnection(1, 3, 1);
-		testGraph.addConnection(3, 4, 1);
-		testGraph.addConnection(4, 2, 1);
-		testGraph.addConnection(4, 5, 1);
-		
-		System.out.println(testGraph);
-		System.out.println(testGraph.DFS(0));
-		System.out.println(testGraph.BFS(0));
-		
+		testGraph.addConnection(2, 6, 1);
+		testGraph.addConnection(1, 6, 1);
+		testGraph.addConnection(5, 6, 1);
+		testGraph.addConnection(4, 6, 1);
+		System.out.println(testGraph.TopologicalSort());
+		System.out.println(testGraph.isStronglyConnected());
+		int[] paths = testGraph.shortestPath(1);
+		for (int elem: paths) {
+			System.out.print(elem + ", ");
+		}
 	}
 
 }
