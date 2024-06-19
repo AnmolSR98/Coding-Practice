@@ -2,12 +2,12 @@ package hash;
 
 import java.util.LinkedList;
 
-public abstract class GenericHashClass<T extends Comparable>{
+public class DivisionMethodHash<T extends Comparable>{
 	LinkedList[] list;
 	
 	
-	public GenericHashClass(int size) {
-		LinkedList[] list = new LinkedList[size];
+	public DivisionMethodHash(int size) {
+		list = new LinkedList[size];
 		
 		for (int i = 0; i < size; i++) {
 			list[i] = new LinkedList<T>();
@@ -16,7 +16,7 @@ public abstract class GenericHashClass<T extends Comparable>{
 	}
 	
 	public int Hash(T data) {
-		return -1;
+		return (int) (data) % list.length;
 	}
 	
 	public void add(T data) {

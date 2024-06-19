@@ -2,11 +2,12 @@ package hash;
 
 import java.util.LinkedList;
 
-public abstract class GenericHashClass<T extends Comparable>{
+public abstract class StringHash<T extends Comparable>{
 	LinkedList[] list;
+	int size = 100;
 	
 	
-	public GenericHashClass(int size) {
+	public StringHash() {
 		LinkedList[] list = new LinkedList[size];
 		
 		for (int i = 0; i < size; i++) {
@@ -15,16 +16,16 @@ public abstract class GenericHashClass<T extends Comparable>{
 		
 	}
 	
-	public int Hash(T data) {
-		return -1;
+	public int Hash(String data) {
+		return (int) data.hashCode() % size;
 	}
 	
-	public void add(T data) {
+	public void add(String data) {
 		
 		list[Hash(data)].add(data);
 	}
 	
-	public void remove(T data) {
+	public void remove(String data) {
 		
 		LinkedList location = list[Hash(data)];
 		location.remove(data);
