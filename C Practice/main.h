@@ -1,6 +1,6 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-void doSomething();
+int* twoSum(int* nums, int target);
 
 #endif
