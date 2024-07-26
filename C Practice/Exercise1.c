@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "main.h"
+#include "main1.h"
 #define SIZE 2
 
 int main(){
