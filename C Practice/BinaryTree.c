@@ -1,4 +1,7 @@
 #include <stdio.h>
+#define intSize 4
+#define pointerSize 8
+
 
 struct node {
     int data;
@@ -10,9 +13,11 @@ struct binarySearchTree {
     struct node root;
 };
 
+
 int main() {
     struct node testNode = {50, NULL, NULL};
-    struct binarySearchTree testTree = {testNode};
-    printf("The value of the node is: %d\n", testTree.root);
+    struct binarySearchTree testTree;
+    testTree.root = testNode;
+    printf("The value of the node is: %d\n", testTree.root.data);
     return 0;
 }
