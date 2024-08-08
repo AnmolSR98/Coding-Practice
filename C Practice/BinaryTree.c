@@ -1,23 +1,41 @@
 #include <stdio.h>
-#define intSize 4
-#define pointerSize 8
-
+#include <stdlib.h>
 
 struct node {
     int data;
-    struct node *left;
-    struct node *right;
+    struct node *left, *right;
 };
 
-struct binarySearchTree {
-    struct node root;
-};
+void addNode(int newData, struct node *root) {
+    
+    struct node *temp = root;
+    printf("First");
+    while (temp->data != 0){
+        printf("Coolio");
+        if (newData < temp->data){
+            temp = temp->left;
+        }
 
+        else{
+            temp = temp->right;
+        }
+    }
+
+    struct node *newNode = (struct node *) malloc(sizeof(struct node)); 
+    newNode->data = newData;
+
+    temp = newNode;
+
+    return;
+
+}
 
 int main() {
-    struct node testNode = {50, NULL, NULL};
-    struct binarySearchTree testTree;
-    testTree.root = testNode;
-    printf("The value of the node is: %d\n", testTree.root.data);
+
+    struct node *testTree = (struct node *) malloc(sizeof(struct node));
+    testTree->data = 50;
+    printf("whatevs");
+    addNode(48, testTree);
+    printf("The value of the node is: %d\n", (testTree->left));
     return 0;
 }
