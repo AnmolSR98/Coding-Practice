@@ -96,6 +96,22 @@ struct node *getChild(struct node *root){
     return root->right;
 }
 
+struct node *getPredecessor(struct node *root){
+    
+    struct node* temp = root;
+    struct node* next = root;
+
+    next = next->left;
+
+    if (next != NULL){
+        while (next->right != NULL){
+            next = next->right;
+        }
+    }
+
+    return next;
+}
+
 
 struct node *getSuccessor(struct node *root){
     
@@ -122,7 +138,23 @@ void deleteNode(struct node *root, int targetValue){
 
     // case where the root is targeted
     if (targetValue == root->data) {
+
         struct node *successor = getSuccessor(root);
+        struct node *predecessor = getPredecessor(root);
+
+        // case where no successor exists
+        if (successor == NULL) {
+             if (predecessor == NULL) {
+                 root->data == NULL;
+             }
+
+             else {
+                 root->data = root->left->data;
+                 root->left = NULL;
+             }
+
+             
+        }
         successor->left = root->left;
 
         printf("%d", successor->data);
@@ -177,7 +209,7 @@ void deleteNode(struct node *root, int targetValue){
             parent->right = next->left;
         }
     }
- contains(testTree, 50));
+ 
     else {
         if (!child) {
             parent->left = successor;
