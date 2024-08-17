@@ -96,81 +96,71 @@ struct node *getChild(struct node *root){
     return root->right;
 }
 
+// both of the following functions also detach, so be careful in use
 struct node *getPredecessor(struct node *root){
-    
-    struct node* temp = root;
-    struct node* next = root;
 
+    struct node* next = root;
+    int child = 0;
+    struct node* parent = next;
     next = next->left;
 
     if (next != NULL){
         while (next->right != NULL){
+            parent = next;
             next = next->right;
+            child = 0;
         }
     }
 
+    if (child == 0){
+        parent->left = NULL;
+    }
+
+    else{
+        parent->right = NULL;
+    }
+
+
     return next;
 }
-
 
 struct node *getSuccessor(struct node *root){
     
-    struct node* temp = root;
     struct node* next = root;
-
+    int child = 1;
+    struct node* parent = next;
     next = next->right;
 
     if (next != NULL){
+
         while (next->left != NULL){
+            parent = next;
             next = next->left;
+            child = 0;
         }
+    }
+
+    if (child == 0){
+        parent->left = NULL;
+    }
+
+    else{
+        parent->right = NULL;
     }
 
     return next;
 }
 
+// majorly fix this up, still needs a polish for when the root is deleted and only has a left child
 void deleteNode(struct node *root, int targetValue){
 
-    if (!contains(root, targetValue)){
-        printf("Value is not in the tree!\n");
-        return;
-    }
-
-    // case where the root is targeted
-    if (targetValue == root->data) {
-
-        struct node *successor = getSuccessor(root);
-        struct node *predecessor = getPredecessor(root);
-
-        // case where no successor exists
-        if (successor == NULL) {
-             if (predecessor == NULL) {
-                 root->data == NULL;
-             }
-
-             else {
-                 root->data = root->left->data;
-                 root->left = NULL;
-             }
-
-             
-        }
-        successor->left = root->left;
-
-        printf("%d", successor->data);
-
-        if (root->right != successor){
-            successor->right = root->right;
-        } 
-
-        root->data = successor->data;
-
-        return;
-    }
-
-    struct node *parent = root;
+    struct node *parent = NULL;
     struct node *next = root;
     int child = 0;
+
+    if (!contains(root, targetValue)){
+        return;
+    }
 
     // take the last node that is not null to store as temp 
     while (next->data != targetValue) {
@@ -190,40 +180,56 @@ void deleteNode(struct node *root, int targetValue){
 
     struct node *successor = getSuccessor(next);
 
-    if ((next->left == NULL) && (next->right == NULL)) {
-        if (!child){
-            parent->left = NULL;
-        }
+    // case where the node is the root
+    if (parent == NULL){
 
-        else{
-            parent->right = NULL;
-        }
-    }
-
-    else if (getSuccessor(next) == NULL){
-        if (!child) {
-            parent->left = next->left;
-        }
-
-        else{
-            parent->right = next->left;
-        }
-    }
- 
-    else {
-        if (!child) {
-            parent->left = successor;
-        }
-
-        else{
-            parent->right = successor;
-        }
-
-        successor->left = next->left;
-
-        if (next->right != successor){
+        printf("1\n");
+        if (successor != NULL) {
+            next->data = successor->data;
             successor->right = next->right;
-        }   
+        }
+
+        else {
+            struct node* predecessor = getPredecessor(next);
+
+            if (predecessor != NULL) {
+                next->data = predecessor->data;
+                predecessor->left = next->left;
+            }
+
+            // case where the node ends being a singleton
+            else{
+                next = NULL;
+            }
+        }
+    }
+
+    // case where the node has no successor
+    else if (successor == NULL){
+
+        printf("2\n");
+        struct node* predecessor = getPredecessor(next);
+
+        if (predecessor != NULL){
+            next->data = predecessor->data;
+        }
+
+        // case without predecessor, ie. it is a leaf
+        else {
+            if (child == 0) {
+                parent->left = NULL;
+            }
+
+            else{
+                parent->right = NULL;
+            }
+        }
+    }
+
+    // has a successor
+    else {
+        printf("3\n");
+        next->data = successor->data;
     }
 
     return;
@@ -240,10 +246,23 @@ int main() {
     addNode(52, testTree);
     printTree(testTree);
     printf("The size of the tree is: %d\n", size(testTree));
-    printf("Does it contain %d? %d\n", 50, contains(testTree, 50));
-    deleteNode(testTree, 50);
-    printf("Does it contain %d? %d\n", 50, contains(testTree, 50));
-    printf("%d", testTree->data);
-    //printTree(testTree);
+
+    int delete = 60;
+    printf("Does it contain %d? %d\n", delete, contains(testTree, delete));
+    deleteNode(testTree, delete);
+    printf("Does it contain %d? %d\n", delete, contains(testTree, delete));
+    printTree(testTree);
+
+    delete = 56;
+    printf("Does it contain %d? %d\n", delete, contains(testTree, delete));
+    deleteNode(testTree, delete);
+    printf("Does it contain %d? %d\n", delete, contains(testTree, delete));
+    printTree(testTree);
+
+    delete = 50;
+    printf("Does it contain %d? %d\n", delete, contains(testTree, delete));
+    deleteNode(testTree, delete);
+    printf("Does it contain %d? %d\n", delete, contains(testTree, delete));
+    printTree(testTree);
     return 0;
 }
