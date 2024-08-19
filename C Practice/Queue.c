@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// need to free up nodes that get deleted ie. deallocate memory [X]
+
 struct node {
     int data;
     struct node* next;
@@ -23,9 +25,7 @@ int isEmpty(struct queue* someQueue) {
 // 0 in this reading means false
 int isFull(struct queue* someQueue) {
     return 0;
-}if (isEmpty(someQueue)){
-        return;
-    }    
+}
 
 // if it is not empty, cycle to the next 
 void enqueue(struct queue* someQueue, int someData){
@@ -49,21 +49,21 @@ void enqueue(struct queue* someQueue, int someData){
 }
 
 // dequeue provided that the queue is not empty, cycle the head forward
-struct node* dequeue(struct queue* someQueue, int data) {
+int dequeue(struct queue* someQueue, int data) {
 
     if (isEmpty(someQueue)){
         return (-1);
     }    
 
-    struct node* returnNode = someQueue->head;
-
+    struct node* temp = someQueue->head;
+    int returnData = temp->data;
     someQueue->head = someQueue->head->next;
-
-    return returnNode;
+    free(temp);
+    return returnData;
 }
 
 
-// write some test code and then we're golden
+
 int main() {
     return 0;
 }
