@@ -4,67 +4,87 @@
 // gonna have to search up how to do generics in C for this
 
 struct node {
-    void* firstData;
-    void* secondData;
+    char* firstData;
+    int secondData;
+    struct node* next;
 };
 
 struct map {
-    struct node* Nodes;
-    int currentIndex;
-    int length;
+    struct node* head;
+    int size;
 };
 
-struct map* createMap(int size){
+struct map* createMap(){
 
-    struct map* newMap = (struct map*) malloc(size*sizeof(struct node));
-    struct node nodesArray[size];
-    newMap->Nodes = (struct node*) nodesArray;
-    newMap->length = size;
-    newMap->currentIndex = 0;
-
+    struct map* newMap = (struct map*) malloc(sizeof(struct map));
+    newMap->size = 0;
 }
 
-int size(struct map* someMap){
-    return someMap->currentIndex;
-}
 
-int length(struct map* someMap){
-    return someMap->length;
-}
-
-void addData(struct map* someMap, void* type1, void* type2) {
-    
-    if (length(someMap) == size(someMap)) {return (-1);}
+void addData(struct map* someMap, char* type1, int type2) {
  
     struct node* newNode = (struct node*) malloc(sizeof(struct node));
     newNode->firstData = type1;
     newNode->secondData = type2;
-    someMap->Nodes[someMap->currentIndex] = newNode;
-    someMap->currentIndex += 1;
+
+    if (someMap->size == 0) {
+        someMap->head = newNode;
+    }
+
+    else {
+        struct node* temp = someMap->head;
+        int i = 0;
+        while (i < size(someMap)){
+            temp = temp->next;
+            i += 1;
+        }
+
+        temp->next = newNode;
+    }
+
+    someMap->size += 1;
 
 }
 
-void removeData(struct map* someMap, void* someData){
+void removeData(struct map* someMap, char* someData){
     
-    if (someMap->currentIndex == 0) {return (-1);}
+    if (someMap->size == 0) {return;}
     
-    int i;
-    for (i = 0; i < someMap->currentIndex; i++) {
-        if (someMap->Nodes[i] == someData){
+    struct node* temp = someMap->head;
+    struct node* nextNode = temp->next;
+
+    while (nextNode != NULL) {
+
+        if (someMap->firstData == someData){
             someMap->Nodes[i] = someMap->Nodes[someMap->currentIndex];
             someMap->currentIndex -= 1;
         }
+
+        temp = nextNode;
+        nextNode = next->next;
+
     }
 
     return;
 }
 
-void* getData(struct map* someMap, void* someData){
+int getData(struct map* someMap, char* someData){
     int i;
-    for (i = 0; i < someMap->currentIndex; i++) {
-        if (someMap->Nodes[i] == someData){
+    while (i < someMap->size) {
+
+        if (someMap->size == someData){
             return (struct node*) someMap->Nodes[i];
         }
+
+        i += 1;
     }
 
+}
+
+int main(){
+
+    struct map* test = createMap(10);
+    addData(test, "Breakfast", (int) 10);
+    printf("%d", getData(test, "Breakfast"));
+    return 0;
 }
