@@ -1,83 +1,98 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
+#include <math.h>
 
-// designing own atoi function
+// designing own atoi function [COMPLETED]
 
 bool isDigit(char someChar) {
-    if (someChar == '1') {return true;}
-    else if (someChar == '2') {return true;}
-    else if (someChar == '3') {return true;}
-    else if (someChar == '4') {return true;}
-    else if (someChar == '5') {return true;}
-    else if (someChar == '6') {return true;}
-    else if (someChar == '7') {return true;}
-    else if (someChar == '8') {return true;}
-    else if (someChar == '9') {return true;}
-    else if (someChar == '0') {return true;}
-    else {return false;}
+
+    bool isDigit = false;
+
+    switch(someChar){
+        case '1': isDigit = true; break;
+        case '2': isDigit = true; break;
+        case '3': isDigit = true; break;
+        case '4': isDigit = true; break;
+        case '5': isDigit = true; break;
+        case '6': isDigit = true; break;
+        case '7': isDigit = true; break;
+        case '8': isDigit = true; break;
+        case '9': isDigit = true; break;
+        case '0': isDigit = true; break;
+    }
+
+    return isDigit;
 }
 
 int getNumFromChar(char someChar){
 
-    if (someChar == '1') {return 1;}
-    else if (someChar == '2') {return 2;}
-    else if (someChar == '3') {return 3;}
-    else if (someChar == '4') {return 4;}
-    else if (someChar == '5') {return 5;}
-    else if (someChar == '6') {return 6;}
-    else if (someChar == '7') {return 7;}
-    else if (someChar == '8') {return 8;}
-    else if (someChar == '9') {return 9;}
-    else if (someChar == '0') {return 0;}
-    else {return (-1);}
+    int num = 0;
 
+    switch(someChar){
+        case '1': num = 1; break;
+        case '2': num = 2; break;            
+        case '3': num = 3; break;
+        case '4': num = 4; break;
+        case '5': num = 5; break;
+        case '6': num = 6; break;
+        case '7': num = 7; break;
+        case '8': num = 8; break;
+        case '9': num = 9; break;
+    }
+
+    return num;
 }
 
 int myAtoi(char* s){
 
-    int length = sizeof(s);
-    int i;
+    int i = 0;
     int value = 0;
-    bool isPositive;
+    bool isPositive = true;
     bool isLeading = true;
-    printf("%d\n", length);
+    bool hasNegativeSign = false;
 
-    // issue where it is not reading the end of the string
-    for (i = 0; i < length; i++) {
-
+    // issue where it is not reading the end of the string, started using -96 to represent a null terminator in a char array
+    while (s[i] != -96) {
+        
+        // if digit, add it to the current value
         if (isDigit(s[i])){
-            printf("1\n");
             isLeading = false;
             value = value*10 + getNumFromChar(s[i]);
         }
 
+        // bunch of statements
+        // to read past whitespace
         else if ((s[i] == ' ') && (isLeading)){
-            printf("2\n");
             isLeading = true;
         }
 
+        // checking for signs
         else if ((s[i] == '+') && (isLeading)) {
-            printf("3\n");
+            isLeading = false;
             isPositive = true;
         }
 
         else if ((s[i] == '-') && (isLeading)) {
-            printf("4\n");
+            isLeading = false;
             isPositive = false;
+            hasNegativeSign = true;
         }
 
-        else if (s[i] == (char)0){
-            printf("5\n");
-        }
+        // read past ending whitespace
+        else if ((s[i] == ' ') && (!isLeading)){} 
+
+        else if (s[i] == 0) {}
 
         else {
-            printf("6\n");
             return 0;
         }
 
-    }
+        i++;
+    }           
 
+    // making these numbers the appropriate sign
     if (isPositive){
         return value;
     }
@@ -89,7 +104,8 @@ int myAtoi(char* s){
 }
 
 int main(){
-    char test[6] = "  +542";
-    printf("%d\n", myAtoi((char*)test));
+    char test1[5] = "542";
+    printf("Value of inputted string is: %d\n", myAtoi(test1));
+
     return 0;
 }
