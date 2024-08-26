@@ -5,7 +5,7 @@
 #include <time.h>
 
 // writing code for a min heap
-// gonna need a fix for what to do for NULLs
+// gonna need a fix for what to do for NULLs [DONE]
 
 struct heap{
     int* someArray;
@@ -114,14 +114,28 @@ int pop(struct heap* someHeap){
 
     while (i < someHeap->size) {
 
-        if (array[getRightChild(i)] < array[getLeftChild(i)]) {
-            swap(i, getRightChild(i), array);
-            i = getRightChild(i);
+        if (getRightChild(i) < someHeap->length) {
+            
+            if (array[getLeftChild(i)] < array[getRightChild(i)]){
+                swap(i, getLeftChild(i), array);
+                i = getLeftChild(i);
+            }
+
+            else {
+                swap(i, getRightChild(i), array);
+                i = getRightChild(i);
+            }
+
+        }
+
+        else if (getLeftChild(i) < someHeap->length) {
+
+            swap(i, getLeftChild(i), array);
+            i = getLeftChild(i);
         }
 
         else {
-            swap(i, getLeftChild(i), array);
-            i = getLeftChild(i);
+            i = someHeap->size;
         }
 
     }
@@ -132,32 +146,5 @@ int pop(struct heap* someHeap){
     return returnValue;
 }
 
-int main(){
 
-    int length = 16;
-    struct heap* test = createHeap(length);
-    int i;
-    srand(time(NULL));
-
-    for (i = 0; i < length; i++){
-        
-        int r = rand() % 100;
-        printf("%d ", r);
-        addValue(r, test);
-    }
-
-    printf("\n");
-
-    for (i = 0; i < length; i++){
-        printf("%d ", test->someArray[i]);
-    }
-
-    printf("\n");
-
-    while (!isEmpty(test)) {
-        printf("%d ", pop(test));
-    }
-
-    return 0;
-}
 
