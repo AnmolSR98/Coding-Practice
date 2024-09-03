@@ -4,6 +4,8 @@
 #include "../Structures/BinaryTree.c"
 #include "../Structures/SinglyLinkedList.c"
 
+// file for the conversion of sorted linked list to binary search tree, but this only works for positive numbers
+
 int getMiddle(struct SinglyLinkedList* llist, int length) {
 
     if (length == 1) {
@@ -59,7 +61,7 @@ struct treeNode* sortedListToBST(struct SinglyLinkedList* llist){
     int i;
 
     for (i = 0; i < length; i++) {
-        getMiddle(llist, length - i);
+        addNode(getMiddle(llist, length - i), tree);
     }
 
     return tree;
