@@ -4,17 +4,39 @@
 #include "../Structures/BinaryTree.c"
 #include "../Structures/SinglyLinkedList.c"
 
-int getValueAtPosition(struct SinglyLinkedList* llist, int position) {
+int getMiddle(struct SinglyLinkedList* llist, int length) {
+
+    if (length == 1) {
+        struct node* temp = llist->head;
+        int value = temp->data;
+        free(temp);
+        return value;
+    }
 
     struct node* temp = llist->head;
+    struct node* prev = NULL;
     int currentPos = 0;
+    int middle = (length - 1) / 2;
 
-    while (currentPos != position) {
+    while (currentPos != middle) {
+        prev = temp;
         temp = temp->next;
         currentPos++;
     }
 
-    return temp->data;
+    if (prev != NULL) {
+        prev->next = temp->next;
+    }
+
+    else {
+        llist->head = llist->head->next;
+    }
+
+
+    int value = temp->data;
+    free(temp);
+
+    return value;
 }
 
 int getLength(struct SinglyLinkedList* llist) {
@@ -34,24 +56,20 @@ struct treeNode* sortedListToBST(struct SinglyLinkedList* llist){
 
     int length = getLength(llist);
     struct treeNode* tree =  (struct treeNode*) malloc( sizeof(struct treeNode) );
-    int middle = (length - 1) / 2;
     int i;
-    int currentNode = middle - 1;
 
-    for (i = 0; i < middle; i++) {
-        addNode(tree, getValueAtPosition(llist, i));
+    for (i = 0; i < length; i++) {
+        getMiddle(llist, length - i);
     }
 
-    for (i = middle; i < length; i++) {
-
-    }
+    return tree;
 
 }
 
 int main() {
 
     int length = 5;
-    int someList[5] = {-10, -3, 0, 5, 9};
+    int someList[5] = {1, 2, 3, 4, 5};
     int i;
 
     struct SinglyLinkedList* test = (struct SinglyLinkedList*) malloc(sizeof(struct SinglyLinkedList));
@@ -61,8 +79,9 @@ int main() {
         add(test, someList[i]);
     }
 
-    testTree = 
-    
+    testTree = sortedListToBST(test);
 
+    printTree(testTree);
+    
     return 0;
 }
