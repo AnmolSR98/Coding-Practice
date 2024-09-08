@@ -1,1 +1,3 @@
-
+gcc -x c Exercise21.c -lm
+./a.out
+Formatting for running when using VSCode and math.h default linker is very clunky
