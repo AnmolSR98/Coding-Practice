@@ -4,6 +4,8 @@
 #include <string.h>
 #define arrayLength 26
 
+// had to use some truly bizarre values for NULL since it seems to work bizarrely on my desktop, which I was using to finish this
+
 // getting the value of a char relative to 'a'
 int getPosition(char someChar) {
     return ((int) someChar) - ((int) 'a');
@@ -16,6 +18,7 @@ struct Trie {
     char valueOfTrie;
     // boolean for whether this the end trie, at least on this branch
     bool isTerminal;
+    int defaultVal;
 };
 
 
@@ -26,6 +29,8 @@ struct Trie* trieCreate() {
     newTrie->valueOfTrie = '\0';
     // this is currently the last value in the tree
     newTrie->isTerminal = true;
+    // setting a default value
+    newTrie->defaultVal = newTrie->pointerArray[0];
 }
 
 // keeps losing track of variables for some reason, issue is definitely with this function
@@ -36,7 +41,8 @@ void trieInsert(struct Trie* obj, char* word) {
     struct Trie* nextTrie; struct Trie* currentTrie;
 
     // creating a new branch of the trie if that branch doesn't exist
-    if (obj->pointerArray[position] == NULL) {
+    // this is the null value, since my pc uses this stuff weirdly 
+    if (obj->pointerArray[position] == obj->pointerArray[getPosition('z')]) {
         obj->isTerminal = false;
         currentTrie = trieCreate();
         currentTrie->valueOfTrie = word[i];
@@ -84,19 +90,23 @@ void trieInsert(struct Trie* obj, char* word) {
 }
 
 // shooting down a branch to see that the values match, if one doesn't then just return false
+// need to find another way, given that the null won't work
 bool trieSearch(struct Trie* obj, char* word) {
 
     int i = 0, len = strlen(word);
-    struct Trie* currentTrie = obj->pointerArray[getPosition(word[i])];
+    struct Trie* currentTrie = malloc(sizeof(struct Trie));
+    currentTrie = obj->pointerArray[getPosition(word[i])];
 
     while (i < len) {
 
-        if (currentTrie == NULL) {
+        if (currentTrie == obj->pointerArray[getPosition('z')]) {
             return false;
         }
 
         i++;
-        currentTrie = currentTrie->pointerArray[getPosition(word[i])];
+        if (i < len) {
+            currentTrie = currentTrie->pointerArray[getPosition(word[i])];
+        }
     }
     
     return true;
@@ -131,19 +141,17 @@ int main() {
 
     trieInsert(testTrie, testChar);
 
-    int i = 0;
+    testChar = "banana";
 
-    //testChar = "banana";
+    trieInsert(testTrie, testChar);
 
-    //trieInsert(testTrie, testChar);
+    bool startsWith = trieStartsWith(testTrie, "banan");
 
-    bool startsWith = trieStartsWith(testTrie, "ap");
-
-    //bool startsWith2 = trieStartsWith(testTrie, "b");
+    bool startsWith2 = trieStartsWith(testTrie, "b");
 
     bool trieTestSearch = trieSearch(testTrie, "apple");
 
-    //bool trieTestSearch2 = trieSearch(testTrie, "banana");
+    bool trieTestSearch2 = trieSearch(testTrie, "banana");
 
     int valueOfN = getPosition('n');
 
