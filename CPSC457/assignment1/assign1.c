@@ -36,42 +36,47 @@ struct process* createProcess(char* pid, char* arrival, char* time, char* burst)
 int main() {
 
     // most crucial thing right now is to get the number of lines in an input file
+    // PROCESSES ARE BEING READ IN CORRECTLY 
+    // maybe use feof to determine end of file
 
     // https://stackoverflow.com/questions/12911299/read-csv-file-in-c
     // perhaps change to another name otherwise it may not work properly when TA has to run[]
+    
+    // actual input file
     FILE* inputCSV = fopen("input.csv", "r");
-
-    struct process** processesArray[1001];
-
+    // array of pointers to processes
+    struct process* processArray[1000];
     // ie an array to temporarily hold each string before it is converted to an 
     char inputString[buffer];
-    char inputString2[buffer];
-    // array to hold 4 strings
-    char* cycler;
+    // array to hold the strings from cycler, which are then passed on the createProcess
     char holderArray[numAttr][expectedLength]; 
     // an array to run for as many lines are in the input file
     int i = 0;
     // fgets seems to divy it up by \n anyways, run a for loop here
     while (i < 1001) {
         
+        // reads in lines from csv line by line
         fgets(inputString, buffer, inputCSV);
-        // need to use strtok 
-        cycler = strtok(inputString, ",");
-        //use this to cycle it through
-        strcpy(holderArray[pid_column], cycler);
+        // using strtok to cycle through the various process attributes
+        strcpy(holderArray[pid_column], strtok(inputString, ","));
         strcpy(holderArray[arr_column], strtok(NULL, ","));
         strcpy(holderArray[tim_column], strtok(NULL, ","));
         strcpy(holderArray[bur_column], strtok(NULL, ","));
 
-        processArray[i] = createProcess(holderArray[pid_column], holderArray[arr_column], holderArray[tim_column], holderArray[bur_column]);
+        // adds them provided we are past the first line, so the text won't be added as an entry
+        if (i > 0) {
+            processArray[i - 1] = createProcess(holderArray[pid_column], holderArray[arr_column], holderArray[tim_column], holderArray[bur_column]);
+        }
 
-        printf("%s\n", holderArray[pid_column]);
+        // continue on through the lines
         i++;
     }
 
+    int test = 999;
+    printf("The id of process %d is: %d\n", test, processArray[test]->pid);
 
+    // closing the input csv
     fclose(inputCSV);
-    // end of snippet from above site
 
     return 0;
 }
