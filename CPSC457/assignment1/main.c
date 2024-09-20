@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include "process.c"
+#include "fcfs.c"
+#include "main.h"
 #define buffer 64
 #define numAttr 4
 #define expectedLength 16
@@ -11,18 +12,22 @@
 #define tim_column 2
 #define bur_column 3
 
+struct process* createProcess(char* pid, char* arrival, char* time, char* burst) {
 
-double priority(struct process* someProcess) {
+    struct process* newProcess = malloc(sizeof(struct process));
 
-    return 1 / (someProcess->pid);
+    newProcess->pid = atoi(pid);
+    newProcess->arrival = atoi(arrival);
+    newProcess->timeTilFirstResp = atoi(time);
+    newProcess->burstLength = atoi(burst);
+
+    return newProcess;
 }
+
+// INPUT IS ACTUALLY SPECIFIED WITHIN THE ASSIGNMENT
 
 // might be substantially more efficient and readable to divy up each portion of the following 
 // functions into their own c file
-
-void FCFS(){
-    // just ordered the way they were read in
-}
 
 void SPN(){
     // organizes the queue by whichever one has the shortest burst time
@@ -86,6 +91,8 @@ int main() {
 
     // closing the input csv
     fclose(inputCSV);
+
+    fcfs(processArray, 1000);
 
     return 0;
 }
