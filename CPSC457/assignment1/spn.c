@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "main.h"
+#include "heap.c"
 #define buffer 64
 #define numAttr 4
 #define expectedLength 16
@@ -11,19 +12,10 @@
 #define tim_column 2
 #define bur_column 3
 
-struct process* createProcess(char* pid, char* arrival, char* time, char* burst) {
 
-    struct process* newProcess = malloc(sizeof(struct process));
+// going to have to use a heap sort first
 
-    newProcess->pid = atoi(pid);
-    newProcess->arrival = atoi(arrival);
-    newProcess->timeTilFirstResp = atoi(time);
-    newProcess->burstLength = atoi(burst);
-
-    return newProcess;
-}
-
-void fcfs(struct process** procArray, int length) {
+void spn(struct process** procArray, int length) {
 
     // all of these are in milliseconds
     char* firstLine = "Id, Arrival, Burst, Start, Finish, Wait, Turnaround, Response Time\n";
@@ -35,6 +27,21 @@ void fcfs(struct process** procArray, int length) {
     int id, arrival, burst, start, finish, wait, turnaround, respTime;
     // defining a bunch of the values to determine averages
     float totalWaitingTime, totalTurnTime, totalRespTime;
+
+    //INSERT SORTING ALGORITHM HERE
+    struct heap* procHeap = createHeap(length);
+
+    printSequence(procArray, length);
+
+    for (i = 0; i < length; i++) {
+        addProc(procArray[i], procHeap);
+    }
+
+    for (i = 0; i < length; i++) {
+        procArray[i] = pop(procHeap);
+    }
+
+    i = 0;
 
     // printing the initial sequence
     printSequence(procArray, length);
@@ -107,9 +114,9 @@ int main() {
     fclose(inputCSV);
 
     // working well enough
-    fcfs(processArray, 1000);
+    //fcfs(processArray, 1000);
 
+    spn(processArray, 1000);
 
     return 0;
 }
-

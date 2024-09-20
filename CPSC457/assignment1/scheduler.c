@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include "fcfs.c"
+//#include "fcfs.c"
 #include "main.h"
+//#include "spn.c"
 #define buffer 64
 #define numAttr 4
 #define expectedLength 16
@@ -28,10 +29,6 @@ struct process* createProcess(char* pid, char* arrival, char* time, char* burst)
 
 // might be substantially more efficient and readable to divy up each portion of the following 
 // functions into their own c file
-
-void SPN(){
-    // organizes the queue by whichever one has the shortest burst time
-}
 
 void nonPreEmptivePriority() {
     // done using the priority function from above
@@ -92,7 +89,9 @@ int main() {
     // closing the input csv
     fclose(inputCSV);
 
-    fcfs(processArray, 1000);
+    // working well enough
+    //fcfs(processArray, 1000);
+
 
     return 0;
 }
