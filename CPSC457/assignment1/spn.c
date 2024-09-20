@@ -32,10 +32,14 @@ void spn(struct process** procArray, int length) {
     struct heap* procHeap = createHeap(length);
 
     printSequence(procArray, length);
+    printf("\n");
 
     for (i = 0; i < length; i++) {
         addProc(procArray[i], procHeap);
     }
+
+    printSequence(procHeap->someArray, length);
+    printf("\n");
 
     for (i = 0; i < length; i++) {
         procArray[i] = pop(procHeap);
@@ -47,9 +51,13 @@ void spn(struct process** procArray, int length) {
     printSequence(procArray, length);
     printf("\n");
 
+    printSequence(procHeap->someArray, length);
+    printf("\n");
+
     // printing the first line of the table
     printf(firstLine);
 
+    i = length;
     while (i < length) {
 
         id = procArray[i]->pid; arrival = procArray[i]->arrival; burst = procArray[i]->burstLength;

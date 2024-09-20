@@ -4,7 +4,7 @@
 #define pos_int 2147483647
 #include "main.h"
 
-
+// just need to fix pop function, then spn is good to go
 
 // code for a min heap of processes, sorted by burst length
 
@@ -110,6 +110,8 @@ int addProc(struct process* someProcess, struct heap* someHeap){
 }
 
 // bug is occuring here with regards to actually popping, may have to use place holder processes here
+// something else is occuring now, some error when it gets close to the end values
+// also error where it continues to sprinkle in values incorrectly
 struct process* pop(struct heap* someHeap){
 
     if (isEmpty(someHeap)) {
