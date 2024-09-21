@@ -26,24 +26,19 @@ void spn(struct process** procArray, int length) {
     // listing off a bunch of the vars to be printed    
     int id, arrival, burst, start, finish, wait, turnaround, respTime;
     // defining a bunch of the values to determine averages
-    float totalWaitingTime, totalTurnTime, totalRespTime;
+    double totalWaitingTime, totalTurnTime, totalRespTime;
 
     //INSERT SORTING ALGORITHM HERE
     struct heap* procHeap = createHeap(length);
-
-    printSequence(procArray, length);
-    printf("\n");
 
     for (i = 0; i < length; i++) {
         addProc(procArray[i], procHeap);
     }
 
-    printSequence(procHeap->someArray, length);
-    printf("\n");
-
     for (i = 0; i < length; i++) {
         procArray[i] = pop(procHeap);
     }
+
 
     i = 0;
 
@@ -51,13 +46,10 @@ void spn(struct process** procArray, int length) {
     printSequence(procArray, length);
     printf("\n");
 
-    printSequence(procHeap->someArray, length);
-    printf("\n");
-
     // printing the first line of the table
     printf(firstLine);
 
-    i = length;
+    i = 0;
     while (i < length) {
 
         id = procArray[i]->pid; arrival = procArray[i]->arrival; burst = procArray[i]->burstLength;
@@ -114,9 +106,6 @@ int main() {
         // continue on through the lines
         i++;
     }
-
-    int test = 999;
-    printf("The id of process %d is: %d\n", test, processArray[test]->pid);
 
     // closing the input csv
     fclose(inputCSV);

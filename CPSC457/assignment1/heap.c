@@ -56,7 +56,7 @@ struct heap* createHeap(int length){
 }
 
 int getParent(int index){
-    return ( index / 2 );
+    return ( (index - 1) / 2 );
 }
 
 int getRightChild(int index) {
@@ -126,7 +126,7 @@ struct process* pop(struct heap* someHeap){
 
     while (i < someHeap->size) {
 
-        if (getRightChild(i) < someHeap->length) {
+        if (getRightChild(i) < someHeap->size) {
             
             if (array[getLeftChild(i)]->burstLength < array[getRightChild(i)]->burstLength){
                 swap(i, getLeftChild(i), array);
@@ -140,13 +140,18 @@ struct process* pop(struct heap* someHeap){
 
         }
 
-        else if (getLeftChild(i) < someHeap->length) {
+        else if (getLeftChild(i) < someHeap->size) {
 
             swap(i, getLeftChild(i), array);
             i = getLeftChild(i);
         }
 
         else {
+
+            if (i != someHeap->size - 1) {
+                swap(i, someHeap->size - 1, array);
+            }
+
             i = someHeap->size;
         }
 
