@@ -16,11 +16,11 @@ void printSequence(struct process** procArray, int length) {
 
     while (i < length) {
         if (i == length - 1) {
-            printf("%d", procArray[i]->burstLength);
+            printf("%d", procArray[i]->pid);
         }
 
         else {
-            printf("%d, ", procArray[i]->burstLength);
+            printf("%d, ", procArray[i]->pid);
         }
 
         i++;

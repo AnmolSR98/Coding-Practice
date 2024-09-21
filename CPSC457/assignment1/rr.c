@@ -26,27 +26,7 @@ struct process* createProcess(char* pid, char* arrival, char* time, char* burst)
     return newProcess;
 }
 
-void swap(int a, int b, struct process** array){
-
-    struct process* temp = array[a];
-    array[a] = array[b];
-    array[b] = temp;
-}
-
-void insertionSort(struct process** procArray, int length) {
-
-    int i = 1, j;
-    while (i < length) {
-        j = i;
-        while ((j > 0) && (procArray[j - 1]->burstLength > procArray[j]->burstLength)) {
-            swap(j, j - 1, procArray);
-            j--;
-        }
-        i++;
-    }
-}
-
-void spn(struct process** procArray, int length) {
+void rr(struct process** procArray, int length) {
 
     // all of these are in milliseconds
     char* firstLine = "Id, Arrival, Burst, Start, Finish, Wait, Turnaround, Response Time\n";
@@ -138,7 +118,7 @@ int main() {
     // working well enough
     //fcfs(processArray, 1000);
 
-    spn(processArray, 1000);
+    rr(processArray, 1000);
 
     return 0;
 }

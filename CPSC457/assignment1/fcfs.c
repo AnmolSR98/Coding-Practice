@@ -43,12 +43,15 @@ void fcfs(struct process** procArray, int length) {
     // printing the first line of the table
     printf(firstLine);
 
+    int currentTime = 0;
     while (i < length) {
 
         id = procArray[i]->pid; arrival = procArray[i]->arrival; burst = procArray[i]->burstLength;
         start = arrival; finish = arrival + burst; wait = 0; turnaround = burst; respTime = 0;
 
-        totalWaitingTime += wait; totalTurnTime += turnaround; totalRespTime += respTime;
+        currentTime += burst;
+
+        totalWaitingTime += currentTime; totalTurnTime += turnaround; totalRespTime += respTime;
 
         printf(standard, id, arrival, burst, start, finish, wait, turnaround, respTime);
 

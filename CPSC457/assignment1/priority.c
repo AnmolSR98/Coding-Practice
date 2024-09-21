@@ -12,7 +12,7 @@
 #define bur_column 3
 
 
-// going to have to use a insertion sort first
+// going to have to use a heap sort first
 
 struct process* createProcess(char* pid, char* arrival, char* time, char* burst) {
 
@@ -24,6 +24,11 @@ struct process* createProcess(char* pid, char* arrival, char* time, char* burst)
     newProcess->burstLength = atoi(burst);
 
     return newProcess;
+}
+
+double getPriority(struct process* someProcess) {
+    double priority = 1 / someProcess->pid;
+    return (1 / someProcess->pid);
 }
 
 void swap(int a, int b, struct process** array){
@@ -38,7 +43,7 @@ void insertionSort(struct process** procArray, int length) {
     int i = 1, j;
     while (i < length) {
         j = i;
-        while ((j > 0) && (procArray[j - 1]->burstLength > procArray[j]->burstLength)) {
+        while ((j > 0) && (getPriority(procArray[j - 1]) > getPriority(procArray[j]))) {
             swap(j, j - 1, procArray);
             j--;
         }
@@ -46,7 +51,8 @@ void insertionSort(struct process** procArray, int length) {
     }
 }
 
-void spn(struct process** procArray, int length) {
+
+void priority(struct process** procArray, int length) {
 
     // all of these are in milliseconds
     char* firstLine = "Id, Arrival, Burst, Start, Finish, Wait, Turnaround, Response Time\n";
@@ -59,10 +65,7 @@ void spn(struct process** procArray, int length) {
     // defining a bunch of the values to determine averages
     double totalWaitingTime, totalTurnTime, totalRespTime;
 
-    //INSERT SORTING ALGORITHM HERE
     insertionSort(procArray, length);
-
-    i = 0;
 
     // printing the initial sequence
     printSequence(procArray, length);
@@ -138,7 +141,7 @@ int main() {
     // working well enough
     //fcfs(processArray, 1000);
 
-    spn(processArray, 1000);
+    priority(processArray, 1000);
 
     return 0;
 }
