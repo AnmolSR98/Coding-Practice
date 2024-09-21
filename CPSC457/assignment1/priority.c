@@ -27,8 +27,8 @@ struct process* createProcess(char* pid, char* arrival, char* time, char* burst)
 }
 
 double getPriority(struct process* someProcess) {
-    double priority = 1 / someProcess->pid;
-    return (1 / someProcess->pid);
+    double priority = 1.0 / someProcess->pid;
+    return (1.0 / someProcess->pid);
 }
 
 void swap(int a, int b, struct process** array){
