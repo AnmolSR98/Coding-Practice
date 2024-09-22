@@ -48,7 +48,7 @@ void insertionSort(struct process** procArray, int length) {
 void fcfs(struct process** procArray, int length) {
 
     // all of these are in milliseconds
-    char* firstLine = "Id, Arrival, Burst, Start, Finish, Wait, Turnaround, Response Time\n";
+    char* firstLine = "   Id, Arrival, Burst, Start, Finish, Wait, Turnaround, Response Time\n";
     char* standard =  "%2d, %7d, %5d, %5d, %6d, %4d, %10d, %13d\n";
     char* finalThree ="\nAverage waiting time: %5.2f ms\nAverage turnaround time: %5.2f ms\nAverage response time: %5.2f ms\n";
     int i;
@@ -75,11 +75,13 @@ void fcfs(struct process** procArray, int length) {
 
         currentTime += burst;
 
+        i++;
+
         totalWaitingTime += wait; totalTurnTime += turnaround; totalRespTime += respTime;
 
+        printf("%3d: ", i);
         printf(standard, id, arrival, burst, start, finish, wait, turnaround, respTime);
 
-        i++;
     }
 
     // converting these to the averages, ought to update the variable names

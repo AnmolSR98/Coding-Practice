@@ -26,6 +26,27 @@ struct process* createProcess(char* pid, char* arrival, char* time, char* burst)
     return newProcess;
 }
 
+int getIndexOfLastArrivedProcess(struct process** procArray, int time, int arrayLength) {
+
+    int i = 0;
+    while (procArray[i]->arrival < time) {
+        if (i == arrayLength - 1) {
+            return arrayLength - 1;
+        }
+        i++;
+    }
+
+    return i;
+}
+
+void copyArray(struct process** original, struct process** duplicate, int length) {
+
+    int i;
+    for (i = 0; i < length; i++) {
+        duplicate[i] = original[i];
+    }
+}
+
 void swap(int a, int b, struct process** array){
 
     struct process* temp = array[a];
@@ -49,7 +70,7 @@ void insertionSort(struct process** procArray, int lower, int upper) {
 void spn(struct process** procArray, int length) {
 
     // all of these are in milliseconds
-    char* firstLine = "Id, Arrival, Burst, Start, Finish, Wait, Turnaround, Response Time\n";
+    char* firstLine = "   Id, Arrival, Burst, Start, Finish, Wait, Turnaround, Response Time\n";
     char* standard =  "%2d, %7d, %5d, %5d, %6d, %4d, %10d, %13d\n";
     char* finalThree ="\nAverage waiting time: %5.2f ms\nAverage turnaround time: %5.2f ms\nAverage response time: %5.2f ms\n";
     int i;
@@ -59,7 +80,9 @@ void spn(struct process** procArray, int length) {
     // defining a bunch of the values to determine averages
     double totalWaitingTime, totalTurnTime, totalRespTime;
 
-    struct process* holderArray[1000];
+    struct process* duplicateArray[1000];
+    
+    copyArray(procArray, duplicateArray, 1000);
 
     i = 0;
 
@@ -73,28 +96,29 @@ void spn(struct process** procArray, int length) {
     int currentTime = 0;
     i = 0;
     int max = 0;
-    struct process* current;
 
     while (i < length) {
+
+        max = 0;
 
         id = procArray[i]->pid; arrival = procArray[i]->arrival; burst = procArray[i]->burstLength;
         start = currentTime; finish = start + burst; wait = start - arrival; turnaround = burst; respTime = start + procArray[i]->timeTilFirstResp;
 
+        i++;
+
         currentTime += burst;
         
         if (max < length) {
-            while (procArray[max]->arrival <= currentTime) {
-                max++;
-            }
+            max = getIndexOfLastArrivedProcess(duplicateArray, currentTime, length);
         }
 
         insertionSort(procArray, i, max);
 
         totalWaitingTime += currentTime; totalTurnTime += turnaround; totalRespTime += respTime;
 
+        printf("%3d: ", i);
         printf(standard, id, arrival, burst, start, finish, wait, turnaround, respTime);
 
-        i++;
     }
 
     // converting these to the averages, ought to update the variable names
