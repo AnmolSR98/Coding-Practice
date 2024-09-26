@@ -6,18 +6,27 @@
 // need to free up nodes that get deleted ie. deallocate memory [X]
 
 struct node {
-    struct process* process;
+    struct process* storedProcess;
     struct node* next;
 };
 
 struct queue {
     struct node* head;
+    int size;
 };
+
+struct queue* createQueue() {
+
+    struct queue* newQueue = (struct queue*) malloc(sizeof(struct queue));
+    newQueue->head = NULL;
+    newQueue->size = 0;
+
+}
 
 // returns false only if head is uninitialized
 bool isEmpty(struct queue* someQueue) {
     
-    if (someQueue->head != NULL){
+    if (someQueue->head == NULL){
         return true;
     }
 
@@ -32,35 +41,38 @@ bool isFull(struct queue* someQueue) {
 // if it is not empty, cycle to the next 
 void enqueue(struct queue* someQueue, struct process* someProcess){
     
-    if (isEmpty(someQueue)){
-        return;
-    }    
-
     struct node* temp = someQueue->head;
-
-    while (temp->next != NULL){
-        temp = temp->next;
-    }
+    someQueue->size += 1;
 
     struct node *newNode = (struct node*) malloc(sizeof(struct node));
-    newNode->process = someProcess;
-    
+    newNode->storedProcess = someProcess;
+    newNode->next = NULL;
+
     if (isEmpty(someQueue)){
+        someQueue->head = newNode;
         return;
     }    
 
-    temp->next = newNode;
+    else {
+
+        while (temp->next != NULL){
+            temp = temp->next;
+        }
+
+        temp->next = newNode;
+    }
 }
 
 // dequeue provided that the queue is not empty, cycle the head forward
-struct process* dequeue(struct queue* someQueue, int data) {
+struct process* dequeue(struct queue* someQueue) {
 
     if (isEmpty(someQueue)){
         return NULL;
     }    
 
+    someQueue->size -= 1;
     struct node* temp = someQueue->head;
-    struct process* returnData = temp->process;
+    struct process* returnData = temp->storedProcess;
     someQueue->head = someQueue->head->next;
     free(temp);
     return returnData;

@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #include <string.h>
 #include "main.h"
-#include "queue.c"
 #define buffer 64
 #define numAttr 4
 #define expectedLength 16
@@ -11,6 +10,9 @@
 #define arr_column 1
 #define tim_column 2
 #define bur_column 3
+
+
+// going to have to use a insertion sort first
 
 struct totalProcess* createTotalProcess(int pid) {
 
@@ -43,48 +45,13 @@ void updateTotal(struct totalProcess* someTotal, int arrive, int burst, int star
 
     someTotal->finish = finish;
 
-    // this has to be updated to account for processes being sat on the wait for much longer, will almost certainly involve using
-    // the previous end time 
     someTotal->wait = finish - arrive - burst;
 
     someTotal->turnaround = finish - arrive;
 
-    if ((someTotal->response == -1) && (response > 0)) {
-        someTotal->response = response - arrive;
+    if (someTotal->response == -1) {
+        someTotal->response = response;
     }
-
-}
-
-int subtractZeroFloor(int minuend, int subtrahend) {
-
-    if (minuend - subtrahend < 0) {
-        return 0;
-    }
-
-    return (minuend - subtrahend);
-}
-
-int letInProcesses(struct queue* someQueue, struct process** procArray, int currentTime, int currentIndex, int length) {
-
-    int i = currentIndex;
-    bool loop = true;
-    while (loop) {
-
-        if (i >= length) {
-            loop = false;
-        }
-
-        else if (procArray[i]->arrival < currentTime) {
-            enqueue(someQueue, procArray[i]); 
-            i++;
-        }
-        
-        else {
-            loop = false;
-        }
-    }
-
-    return i;
 
 }
 
@@ -96,36 +63,74 @@ struct process* createProcess(char* pid, char* arrival, char* time, char* burst)
     newProcess->arrival = atoi(arrival);
     newProcess->timeTilFirstResp = atoi(time);
     newProcess->burstLength = atoi(burst);
-    newProcess->timeRemaining = newProcess->burstLength;
-    newProcess->hasResponded = false;
 
     return newProcess;
 }
 
-void rr(struct process** procArray, int length, int quantum) {
+int getIndexOfLastArrivedProcess(struct process** procArray, int time, int arrayLength) {
 
-    // setting up a queue for processes still active, and setting up another one for processes that are completed
-    struct queue* procQueue = createQueue();
-    struct queue* completedQueue = createQueue();
-    struct process* currentProc = (struct process*) malloc(sizeof(struct process));
+    int i = 0;
+    while (procArray[i]->arrival < time) {
+        if (i == arrayLength - 1) {
+            return arrayLength - 1;
+        }
+        i++;
+    }
 
-    procQueue->head = NULL;
+    return i;
+}
+
+void copyArray(struct process** original, struct process** duplicate, int length) {
+
+    int i;
+    for (i = 0; i < length; i++) {
+        duplicate[i] = original[i];
+    }
+}
+
+double getEstimatedNextBurst(int burst, double t_n, double alpha) {
+
+    double t_next = alpha * burst + (1 - alpha) * t_n;
+
+    return t_next;
+}
+
+void swap(int a, int b, struct process** array){
+
+    struct process* temp = array[a];
+    array[a] = array[b];
+    array[b] = temp;
+}
+
+void insertionSort(struct process** procArray, int lower, int upper, double t_n, double alpha) {
+
+    int i = lower + 1, j;
+    while (i < upper + 1) {
+        j = i;
+        while ((j > lower) && (getEstimatedNextBurst(procArray[j - 1]->burstLength, t_n, alpha) > getEstimatedNextBurst(procArray[j]->burstLength, t_n, alpha) )) {
+            swap(j, j - 1, procArray);
+            j--;
+        }
+        i++;
+    }
+}
+
+void srt(struct process** procArray, int length, double alpha) {
 
     // all of these are in milliseconds
-    char* firstLine = "Id, Arrival, Burst, Start, Finish, Wait, Turnaround, Response Time\n";
-    char* standard =  "%3d, %7d, %5d, %5d, %6d, %4d, %10d, %13d\n";
-    char* finalThree ="Average waiting time: %5.2f ms\nAverage turnaround time: %5.2f ms\nAverage response time: %5.2f ms\n";
-    int i = 0;
+    char* firstLine = "  Id, Arrival, Burst, Start, Finish, Wait, Turnaround, Response Time\n";
+    char* standard =  "%4d, %7d, %5d, %5d, %6d, %4d, %10d, %13d\n";
+    char* finalThree ="\nAverage waiting time: %5.2f ms\nAverage turnaround time: %5.2f ms\nAverage response time: %5.2f ms\n";
+    int i;
 
     // listing off a bunch of the vars to be printed    
     int id, arrival, burst, start, finish, wait, turnaround, respTime;
     // defining a bunch of the values to determine averages
     double totalWaitingTime, totalTurnTime, totalRespTime;
 
-    // initializing the queue
-    enqueue(procQueue, procArray[0]);
-    // setting the current time to the value of the arrival of the first process
-    int currentTime = procArray[0]->arrival;
+    struct process* duplicateArray[1000];
+    
+    copyArray(procArray, duplicateArray, 1000);
 
     int numUniqueProcs = 50;
 
@@ -134,49 +139,45 @@ void rr(struct process** procArray, int length, int quantum) {
         totalsArray[i] = createTotalProcess(i+1);
     }
 
-    // printing the initial sequence
+    // printing the initial sequence, unnecessary remove from all
     printSequence(procArray, length);
     printf("\n");
 
     // printing the first line of the table
     printf(firstLine);
 
+    struct process* currentProc;
+    int currentTime = procArray[0]->arrival;
     i = 0;
+    double t_0 = 10;
+    double t_n = t_0;
+    int max = 0;
 
-    while (!isEmpty(procQueue)) {
+    while (i < length) {
 
-        currentProc = dequeue(procQueue);
+        max = 0;
+        currentProc = procArray[i];
 
-        id = currentProc->pid; arrival = currentProc->arrival; burst = quantum;
-        start = currentTime, respTime = -1;
+        id = currentProc->pid; arrival = currentProc->arrival; burst = currentProc->burstLength;
+        start = currentTime; finish = start + burst; wait = start - arrival; turnaround = finish - arrival; respTime = start + currentProc->timeTilFirstResp;
         
-        //start = currentTime; wait = start + burst; turnaround = quantum; respTime = 0;
+        // updating the value of t_n for each process 
+        t_n = getEstimatedNextBurst(currentProc->burstLength, t_n, alpha);
+
+
+        i++;
+
+        currentTime += burst;
         
-        if (currentProc->timeRemaining - quantum > 0) {
-            currentTime += quantum;
-            i = letInProcesses(procQueue, procArray, currentTime, i, length);       
-            enqueue(procQueue, currentProc);
-            currentProc->timeTilFirstResp -= quantum; 
-            currentProc->timeRemaining -= quantum;
+        if (max < length) {
+            max = getIndexOfLastArrivedProcess(duplicateArray, currentTime, length);
         }
 
-        else  {
-            currentTime += currentProc->timeRemaining;
-            burst = currentProc->timeRemaining;
-            i = letInProcesses(procQueue, procArray, currentTime, i, length);
-            currentProc->timeTilFirstResp -= currentProc->timeRemaining;   
-            currentProc->timeRemaining = 0;
-            enqueue(completedQueue, currentProc);
-        }
+        insertionSort(procArray, i, max, t_n, alpha);
 
-        if (currentProc->timeTilFirstResp <= 0) {
-            respTime = currentTime + currentProc->timeTilFirstResp;
-            currentProc->hasResponded = true;
-        }
-
-        finish = currentTime;
-
+        // updating the values for the total processes
         updateTotal(totalsArray[id - 1], arrival, burst, start, finish, respTime);
+
     }
 
     struct totalProcess* currentTotal = (struct totalProcess*) malloc(sizeof(struct totalProcess));
@@ -239,7 +240,7 @@ int main() {
     // working well enough
     //fcfs(processArray, 1000);
 
-    rr(processArray, 1000, 10);
+    srt(processArray, 1000, 0.1);
 
     return 0;
 }

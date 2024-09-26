@@ -14,6 +14,47 @@
 
 // going to have to use a insertion sort first
 
+struct totalProcess* createTotalProcess(int pid) {
+
+    struct totalProcess* newTotalProcess = malloc(sizeof(struct totalProcess));
+
+    newTotalProcess->pid = pid;
+    newTotalProcess->arrive = -1;
+    newTotalProcess->burst = 0;
+    newTotalProcess->start = -1;
+    newTotalProcess->finish = 0;
+    newTotalProcess->wait = 0;
+    newTotalProcess->turnaround = 0;
+    newTotalProcess->response = -1;
+
+    return newTotalProcess;
+}
+
+void updateTotal(struct totalProcess* someTotal, int arrive, int burst, int start, int finish, int response) {
+
+
+    if (someTotal->arrive == -1) {
+        someTotal->arrive = arrive;
+    }
+    
+    if (someTotal->start == -1) {
+        someTotal->start = start;
+    }
+
+    someTotal->burst += burst;
+
+    someTotal->finish = finish;
+
+    someTotal->wait = start - arrive;
+
+    someTotal->turnaround = finish - arrive;
+
+    if (someTotal->response == -1) {
+        someTotal->response = response - arrive;
+    }
+
+}
+
 struct process* createProcess(char* pid, char* arrival, char* time, char* burst) {
 
     struct process* newProcess = malloc(sizeof(struct process));
@@ -70,8 +111,8 @@ void insertionSort(struct process** procArray, int lower, int upper) {
 void spn(struct process** procArray, int length) {
 
     // all of these are in milliseconds
-    char* firstLine = "   Id, Arrival, Burst, Start, Finish, Wait, Turnaround, Response Time\n";
-    char* standard =  "%2d, %7d, %5d, %5d, %6d, %4d, %10d, %13d\n";
+    char* firstLine = "  Id, Arrival, Burst, Start, Finish, Wait, Turnaround, Response Time\n";
+    char* standard =  "%4d, %7d, %5d, %5d, %6d, %4d, %10d, %13d\n";
     char* finalThree ="\nAverage waiting time: %5.2f ms\nAverage turnaround time: %5.2f ms\nAverage response time: %5.2f ms\n";
     int i;
 
@@ -84,7 +125,12 @@ void spn(struct process** procArray, int length) {
     
     copyArray(procArray, duplicateArray, 1000);
 
-    i = 0;
+    int numUniqueProcs = 50;
+
+    struct totalProcess* totalsArray[50];
+    for (i = 0; i < numUniqueProcs; i++) {
+        totalsArray[i] = createTotalProcess(i+1);
+    }
 
     // printing the initial sequence
     printSequence(procArray, length);
@@ -93,16 +139,18 @@ void spn(struct process** procArray, int length) {
     // printing the first line of the table
     printf(firstLine);
 
-    int currentTime = 0;
+    struct process* currentProc;
+    int currentTime = procArray[0]->arrival;
     i = 0;
     int max = 0;
 
     while (i < length) {
 
         max = 0;
+        currentProc = procArray[i];
 
-        id = procArray[i]->pid; arrival = procArray[i]->arrival; burst = procArray[i]->burstLength;
-        start = currentTime; finish = start + burst; wait = start - arrival; turnaround = burst; respTime = start + procArray[i]->timeTilFirstResp;
+        id = currentProc->pid; arrival = currentProc->arrival; burst = currentProc->burstLength;
+        start = currentTime; finish = start + burst; wait = start - arrival; turnaround = finish - arrival; respTime = start + currentProc->timeTilFirstResp;
 
         i++;
 
@@ -114,15 +162,22 @@ void spn(struct process** procArray, int length) {
 
         insertionSort(procArray, i, max);
 
-        totalWaitingTime += currentTime; totalTurnTime += turnaround; totalRespTime += respTime;
-
-        printf("%3d: ", i);
-        printf(standard, id, arrival, burst, start, finish, wait, turnaround, respTime);
+        // updating the values for the total processes
+        updateTotal(totalsArray[id - 1], arrival, burst, start, finish, respTime);
 
     }
 
+    struct totalProcess* currentTotal = (struct totalProcess*) malloc(sizeof(struct totalProcess));
+    for (i = 0; i < numUniqueProcs; i++) {
+        // printing off a new column
+        currentTotal = totalsArray[i];
+        // updating the totals
+        totalWaitingTime += currentTotal->wait; totalTurnTime += currentTotal->turnaround; totalRespTime += currentTotal->response;
+        printf(standard, currentTotal->pid, currentTotal->arrive, currentTotal->burst, currentTotal->start, currentTotal->finish, currentTotal->wait, currentTotal->turnaround, currentTotal->response);
+    }
+
     // converting these to the averages, ought to update the variable names
-    totalWaitingTime /= length; totalTurnTime /= length; totalRespTime /= length;
+    totalWaitingTime /= numUniqueProcs; totalTurnTime /= numUniqueProcs; totalRespTime /= numUniqueProcs;
 
     printf(finalThree, totalWaitingTime, totalTurnTime, totalRespTime);
 }

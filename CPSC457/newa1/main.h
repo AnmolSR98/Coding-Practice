@@ -8,9 +8,24 @@ struct process {
     int timeTilFirstResp;
     int burstLength;
     int timeRemaining;
-    int totalWaitTime;
+    int prevEndTime;
+    bool hasResponded;
 };
 
+struct totalProcess {
+
+    int pid;
+    int arrive;
+    int burst;
+    int start;
+    int finish;
+    int wait;
+    int turnaround;
+    int response;
+
+};
+
+// going to have to get implement this into the while loop for each of the individual files, as it is executing and calculating
 void printSequence(struct process** procArray, int length) {
 
     printf("seq = [ ");
