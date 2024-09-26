@@ -15,8 +15,9 @@
 void insertionSortSPN(struct process** procArray, int lower, int upper) {
 
     int i = lower + 1, j;
-    while (i < upper + 1) {
+    while (i < upper) {
         j = i;
+        // have to modify this to also sort by id in the case of a tie
         while ((j > lower) && (procArray[j - 1]->burstLength > procArray[j]->burstLength)) {
             swap(j, j - 1, procArray);
             j--;
@@ -69,7 +70,7 @@ void spn(struct process** procArray, int length) {
             max = getIndexOfLastArrivedProcess(duplicateArray, currentTime, length);
         }
 
-        insertionSortSPN(procArray, i, max);
+        insertionSortSPN(procArray, i, max + 1);
 
         // updating the values for the total processes
         updateTotal(totalsArray[id - 1], arrival, burst, start, finish, respTime);

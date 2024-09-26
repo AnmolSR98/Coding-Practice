@@ -37,12 +37,12 @@ void priority(struct process** procArray, int length) {
     // listing off a bunch of the vars to be printed    
     int id, arrival, burst, start, finish, wait, turnaround, respTime;
 
-    struct process* duplicateArray[1000];
-    copyArray(procArray, duplicateArray, 1000);
+    struct process* duplicateArray[length];
+    copyArray(procArray, duplicateArray, length);
 
     int numUniqueProcs = 50;
 
-    struct totalProcess* totalsArray[50];
+    struct totalProcess* totalsArray[numUniqueProcs];
     for (i = 0; i < numUniqueProcs; i++) {
         totalsArray[i] = createTotalProcess(i+1);
     }
@@ -72,7 +72,7 @@ void priority(struct process** procArray, int length) {
             max = getIndexOfLastArrivedProcess(duplicateArray, currentTime, length);
         }
 
-        insertionSortPriority(procArray, i, max);
+        insertionSortPriority(procArray, i, max + 1);
 
         // updating the values for the total processes
         updateTotal(totalsArray[id - 1], arrival, burst, start, finish, respTime);

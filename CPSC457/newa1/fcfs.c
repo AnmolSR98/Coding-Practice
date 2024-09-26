@@ -11,6 +11,8 @@
 #define tim_column 2
 #define bur_column 3
 
+// have to modify to resolve ties in id, where a few processes arrive at the same time, highest id ought to go first
+
 void fcfs(struct process** procArray, int length) {
 
     int i;
@@ -26,7 +28,7 @@ void fcfs(struct process** procArray, int length) {
 
     int numUniqueProcs = 50;
 
-    struct totalProcess* totalsArray[50];
+    struct totalProcess* totalsArray[numUniqueProcs];
     for (i = 0; i < numUniqueProcs; i++) {
         totalsArray[i] = createTotalProcess(i+1);
     }
