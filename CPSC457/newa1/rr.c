@@ -83,8 +83,6 @@ void rr(struct process** procArray, int length, int quantum) {
 
     // listing off a bunch of the vars to be printed    
     int id, arrival, burst, start, finish, wait, turnaround, respTime;
-    // defining a bunch of the values to determine averages
-    double totalWaitingTime, totalTurnTime, totalRespTime;
 
     // initializing the queue
     enqueue(procQueue, procArray[0]);
@@ -98,14 +96,9 @@ void rr(struct process** procArray, int length, int quantum) {
         totalsArray[i] = createTotalProcess(i+1);
     }
 
-    // printing the initial sequence
-    printSequence(procArray, length);
-    printf("\n");
-
-    // printing the first line of the table
-    printf(firstLine);
-
     i = 0;
+
+    printf("seq = [");
 
     while (!isEmpty(procQueue)) {
 
@@ -141,19 +134,16 @@ void rr(struct process** procArray, int length, int quantum) {
         finish = currentTime;
 
         updateTotalRR(totalsArray[id - 1], arrival, burst, start, finish, respTime);
+
+        if (!isEmpty(procQueue)) {
+            printf("%d, ", id);
+        }
+
+        else {
+            printf("%d]\n", id);
+        }
+    
     }
 
-    struct totalProcess* currentTotal = (struct totalProcess*) malloc(sizeof(struct totalProcess));
-    for (i = 0; i < numUniqueProcs; i++) {
-        // printing off a new column
-        currentTotal = totalsArray[i];
-        // updating the totals
-        totalWaitingTime += currentTotal->wait; totalTurnTime += currentTotal->turnaround; totalRespTime += currentTotal->response;
-        printf(standard, currentTotal->pid, currentTotal->arrive, currentTotal->burst, currentTotal->start, currentTotal->finish, currentTotal->wait, currentTotal->turnaround, currentTotal->response);
-    }
-
-    // converting these to the averages, ought to update the variable names
-    totalWaitingTime /= numUniqueProcs; totalTurnTime /= numUniqueProcs; totalRespTime /= numUniqueProcs;
-
-    printf(finalThree, totalWaitingTime, totalTurnTime, totalRespTime);
+    printTable(totalsArray, numUniqueProcs);
 }

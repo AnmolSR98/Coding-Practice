@@ -138,4 +138,26 @@ void printSequence(struct process** procArray, int length) {
     printf("]\n");
 }
 
+void printTable(struct totalProcess** totalsArray, int length) {
+
+    printf(firstLine);
+    double totalWaitingTime, totalTurnTime, totalRespTime;
+    struct totalProcess* currentTotal = (struct totalProcess*) malloc(sizeof(struct totalProcess));
+    int i;
+    for (i = 0; i < length; i++) {
+        // printing off a new column
+        currentTotal = totalsArray[i];
+        // updating the totals
+        totalWaitingTime += currentTotal->wait; totalTurnTime += currentTotal->turnaround; totalRespTime += currentTotal->response;
+        printf(standard, currentTotal->pid, currentTotal->arrive, currentTotal->burst, currentTotal->start, currentTotal->finish, currentTotal->wait, currentTotal->turnaround, currentTotal->response);
+    }
+    printf(tableCloser);
+
+    // converting these to the averages, ought to update the variable names
+    totalWaitingTime /= length; totalTurnTime /= length; totalRespTime /= length;
+
+    printf(finalThree, totalWaitingTime, totalTurnTime, totalRespTime);
+
+}
+
 #endif

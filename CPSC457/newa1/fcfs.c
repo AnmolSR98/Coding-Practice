@@ -17,8 +17,6 @@ void fcfs(struct process** procArray, int length) {
 
     // listing off a bunch of the vars to be printed    
     int id, arrival, burst, start, finish, wait, turnaround, respTime;
-    // defining a bunch of the values to determine averages
-    float totalWaitingTime, totalTurnTime, totalRespTime;
 
     // feeding the input array into a queue
     struct queue* procQueue = createQueue();
@@ -66,20 +64,6 @@ void fcfs(struct process** procArray, int length) {
         }
     }
 
-    printf(firstLine);
-    struct totalProcess* currentTotal = (struct totalProcess*) malloc(sizeof(struct totalProcess));
-    for (i = 0; i < numUniqueProcs; i++) {
-        // printing off a new column
-        currentTotal = totalsArray[i];
-        // updating the totals
-        totalWaitingTime += currentTotal->wait; totalTurnTime += currentTotal->turnaround; totalRespTime += currentTotal->response;
-        printf(standard, currentTotal->pid, currentTotal->arrive, currentTotal->burst, currentTotal->start, currentTotal->finish, currentTotal->wait, currentTotal->turnaround, currentTotal->response);
-    }
-    printf(tableCloser);
-
-    // converting these to the averages, ought to update the variable names
-    totalWaitingTime /= numUniqueProcs; totalTurnTime /= numUniqueProcs; totalRespTime /= numUniqueProcs;
-
-    printf(finalThree, totalWaitingTime, totalTurnTime, totalRespTime);
+    printTable(totalsArray, numUniqueProcs);
 }
 

@@ -31,8 +31,6 @@ void spn(struct process** procArray, int length) {
 
     // listing off a bunch of the vars to be printed    
     int id, arrival, burst, start, finish, wait, turnaround, respTime;
-    // defining a bunch of the values to determine averages
-    double totalWaitingTime, totalTurnTime, totalRespTime;
 
     struct process* duplicateArray[1000];
     
@@ -45,17 +43,15 @@ void spn(struct process** procArray, int length) {
         totalsArray[i] = createTotalProcess(i+1);
     }
 
-    // printing the initial sequence
-    printSequence(procArray, length);
-    printf("\n");
-
-    // printing the first line of the table
-    printf(firstLine);
+    // for the print sequence
+    printf("seq = [");
 
     struct process* currentProc;
     int currentTime = procArray[0]->arrival;
     i = 0;
     int max = 0;
+
+    // some sort of bug with response times
 
     while (i < length) {
 
@@ -78,19 +74,15 @@ void spn(struct process** procArray, int length) {
         // updating the values for the total processes
         updateTotal(totalsArray[id - 1], arrival, burst, start, finish, respTime);
 
+        if (i < length) {
+            printf("%d, ", id);
+        }
+
+        else {
+            printf("%d]\n", id);
+        }
+
     }
 
-    struct totalProcess* currentTotal = (struct totalProcess*) malloc(sizeof(struct totalProcess));
-    for (i = 0; i < numUniqueProcs; i++) {
-        // printing off a new column
-        currentTotal = totalsArray[i];
-        // updating the totals
-        totalWaitingTime += currentTotal->wait; totalTurnTime += currentTotal->turnaround; totalRespTime += currentTotal->response;
-        printf(standard, currentTotal->pid, currentTotal->arrive, currentTotal->burst, currentTotal->start, currentTotal->finish, currentTotal->wait, currentTotal->turnaround, currentTotal->response);
-    }
-
-    // converting these to the averages, ought to update the variable names
-    totalWaitingTime /= numUniqueProcs; totalTurnTime /= numUniqueProcs; totalRespTime /= numUniqueProcs;
-
-    printf(finalThree, totalWaitingTime, totalTurnTime, totalRespTime);
+    printTable(totalsArray, numUniqueProcs);
 }

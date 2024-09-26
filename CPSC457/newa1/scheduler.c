@@ -61,7 +61,7 @@ int main() {
     // closing the input csv
     fclose(inputCSV);
 
-    fcfs(processArray, 1000);
+    spn(processArray, 1000);
 
 
     return 0;
