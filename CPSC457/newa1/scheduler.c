@@ -27,8 +27,10 @@ int main(int argc, char** argv) {
 
     // https://stackoverflow.com/questions/12911299/read-csv-file-in-c
     // perhaps change to another name otherwise it may not work properly when TA has to run[]
-    int length = 1000;
+    int length = 1000; int extraIn;
+    char* procType; char* inputArr; 
 
+    /** 
     // have to change to account for the fact that rr and srt take an additional argument in
     if ( ( (strcmp(argv[1], "rr") == 0) || (strcmp(argv[1], "srt") == 0) ) ) {
         
@@ -37,7 +39,9 @@ int main(int argc, char** argv) {
             return 0;
         }
 
-        char* inputArr = argv[3];
+        extraIn = atoi(argv[2]);
+        procType = argv[1];
+        inputArr = argv[3];
 
     }
 
@@ -46,9 +50,13 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    char* procType = argv[1];
+    else {
+        procType = argv[1];
+        inputArr = argv[2];
+    }**/
 
-    char* inputArr = argv[2];
+   inputArr = "input.csv";
+   procType = "spn";
 
     // actual input file
     FILE* inputCSV = fopen(inputArr, "r");
@@ -84,7 +92,7 @@ int main(int argc, char** argv) {
     fclose(inputCSV);
 
     if (strcmp(procType, "rr") == 0) {
-        rr(processArray, length, 10);
+        rr(processArray, length, extraIn);
     }
 
     else if (strcmp(procType, "fcfs") == 0) {

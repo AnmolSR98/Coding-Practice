@@ -78,6 +78,7 @@ void spn(struct process** procArray, int length) {
 
         currentTime += burst;
         
+        // note to self, max returns the index of the next process that hasnt arrived yet, maybe opt to rename it, fixed now
         if (max < length) {
             max = getIndexOfLastArrivedProcess(duplicateArray, currentTime, length);
         }

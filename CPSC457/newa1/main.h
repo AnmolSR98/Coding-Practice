@@ -52,7 +52,7 @@ int getIndexOfLastArrivedProcess(struct process** procArray, int time, int array
         i++;
     }
 
-    return i;
+    return i - 1;
 }
 
 struct totalProcess* createTotalProcess(int pid) {
