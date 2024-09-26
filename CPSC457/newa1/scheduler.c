@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
     }**/
 
    inputArr = "input.csv";
-   procType = "spn";
+   procType = "priority";
 
     // actual input file
     FILE* inputCSV = fopen(inputArr, "r");
