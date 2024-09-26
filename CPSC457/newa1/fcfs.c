@@ -33,15 +33,11 @@ void fcfs(struct process** procArray, int length) {
         totalsArray[i] = createTotalProcess(i+1);
     }
 
-    // printing the initial sequence
-    printSequence(procArray, length);
-    printf("\n");
-
-    // printing the first line of the table
-    printf(firstLine);
-
     struct process* currentProc;
     int currentTime = procArray[0]->arrival;
+    
+    // for the print sequence
+    printf("seq = [");
 
     while (!isEmpty(procQueue)) {
 
@@ -59,8 +55,18 @@ void fcfs(struct process** procArray, int length) {
 
         // updating the current time
         currentTime += burst;
+
+        // printing the value of the process that was just completed
+        if (!isEmpty(procQueue)) {
+            printf("%d, ", id);
+        }
+
+        else {
+            printf("%d]\n", id);
+        }
     }
 
+    printf(firstLine);
     struct totalProcess* currentTotal = (struct totalProcess*) malloc(sizeof(struct totalProcess));
     for (i = 0; i < numUniqueProcs; i++) {
         // printing off a new column
@@ -69,6 +75,7 @@ void fcfs(struct process** procArray, int length) {
         totalWaitingTime += currentTotal->wait; totalTurnTime += currentTotal->turnaround; totalRespTime += currentTotal->response;
         printf(standard, currentTotal->pid, currentTotal->arrive, currentTotal->burst, currentTotal->start, currentTotal->finish, currentTotal->wait, currentTotal->turnaround, currentTotal->response);
     }
+    printf(tableCloser);
 
     // converting these to the averages, ought to update the variable names
     totalWaitingTime /= numUniqueProcs; totalTurnTime /= numUniqueProcs; totalRespTime /= numUniqueProcs;

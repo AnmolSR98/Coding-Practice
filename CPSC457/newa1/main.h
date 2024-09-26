@@ -4,9 +4,11 @@
 #include "queue.c"
 
 // all of these are in milliseconds
-    char* firstLine = "  Id, Arrival, Burst, Start, Finish, Wait, Turnaround, Response Time\n";
-    char* standard =  "%4d, %7d, %5d, %5d, %6d, %4d, %10d, %13d\n";
-    char* finalThree ="Average waiting time: %5.2f\nAverage turnaround time: %5.2f\nAverage response time: %5.2f\n";
+char* firstLine = 
+"+----+---------+-------+-------+--------+-------+-------------+---------------+\n| Id | Arrival | Burst | Start | Finish | Wait  | Turnaround  | Response Time |\n+----+---------+-------+-------+--------+-------+-------------+---------------+\n";
+char* standard =  "| %2d | %7d | %5d | %5d | %6d | %5d | %11d | %13d |\n";
+char* tableCloser = "+----+---------+-------+-------+--------+-------+-------------+---------------+\n";
+char* finalThree ="Average waiting time: %5.2f\nAverage turnaround time: %5.2f\nAverage response time: %5.2f\n";
 
 struct process {
 
