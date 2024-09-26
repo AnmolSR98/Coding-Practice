@@ -2,9 +2,13 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-//#include "fcfs.c"
 #include "main.h"
-//#include "spn.c"
+
+#include "fcfs.c"
+#include "spn.c"
+#include "rr.c"
+#include "priority.c"
+
 #define buffer 64
 #define numAttr 4
 #define expectedLength 16
@@ -12,35 +16,6 @@
 #define arr_column 1
 #define tim_column 2
 #define bur_column 3
-
-struct process* createProcess(char* pid, char* arrival, char* time, char* burst) {
-
-    struct process* newProcess = malloc(sizeof(struct process));
-
-    newProcess->pid = atoi(pid);
-    newProcess->arrival = atoi(arrival);
-    newProcess->timeTilFirstResp = atoi(time);
-    newProcess->burstLength = atoi(burst);
-
-    return newProcess;
-}
-
-// INPUT IS ACTUALLY SPECIFIED WITHIN THE ASSIGNMENT
-
-// might be substantially more efficient and readable to divy up each portion of the following 
-// functions into their own c file
-
-void nonPreEmptivePriority() {
-    // done using the priority function from above
-}
-
-void preEmptivePriority() {
-    // done using round robin, done from quanta size of 1 to 100
-}
-
-void exponentialAveraging() {
-    // done using formula in slides to predict which one will have the shortest time
-}
 
 
 
@@ -83,14 +58,10 @@ int main() {
         i++;
     }
 
-    int test = 999;
-    printf("The id of process %d is: %d\n", test, processArray[test]->pid);
-
     // closing the input csv
     fclose(inputCSV);
 
-    // working well enough
-    //fcfs(processArray, 1000);
+    rr(processArray, 1000, 10);
 
 
     return 0;
