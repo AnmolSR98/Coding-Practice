@@ -117,27 +117,6 @@ void updateTotal(struct totalProcess* someTotal, int arrive, int burst, int star
 
 }
 
-// going to have to get implement this into the while loop for each of the individual files, as it is executing and calculating
-void printSequence(struct process** procArray, int length) {
-
-    printf("seq = [ ");
-    int i = 0;
-
-    while (i < length) {
-        if (i == length - 1) {
-            printf("%d", procArray[i]->pid);
-        }
-
-        else {
-            printf("%d, ", procArray[i]->pid);
-        }
-
-        i++;
-    }
-
-    printf("]\n");
-}
-
 void printTable(struct totalProcess** totalsArray, int length) {
 
     printf(firstLine);

@@ -19,7 +19,7 @@
 
 
 
-int main() {
+int main(int argc, char** argv) {
 
     // most crucial thing right now is to get the number of lines in an input file
     // PROCESSES ARE BEING READ IN CORRECTLY 
@@ -27,11 +27,33 @@ int main() {
 
     // https://stackoverflow.com/questions/12911299/read-csv-file-in-c
     // perhaps change to another name otherwise it may not work properly when TA has to run[]
-    
+    int length = 1000;
+
+    // have to change to account for the fact that rr and srt take an additional argument in
+    if ( ( (strcmp(argv[1], "rr") == 0) || (strcmp(argv[1], "srt") == 0) ) ) {
+        
+        if (argc != 4) {
+            printf("Incorrect number of input arguments given!\n");
+            return 0;
+        }
+
+        char* inputArr = argv[3];
+
+    }
+
+    else if (argc != 3) {
+        printf("Incorrect number of input arguments given!\n");
+        return 0;
+    }
+
+    char* procType = argv[1];
+
+    char* inputArr = argv[2];
+
     // actual input file
-    FILE* inputCSV = fopen("input.csv", "r");
+    FILE* inputCSV = fopen(inputArr, "r");
     // array of pointers to processes
-    struct process* processArray[1000];
+    struct process* processArray[length];
     // ie an array to temporarily hold each string before it is converted to an 
     char inputString[buffer];
     // array to hold the strings from cycler, which are then passed on the createProcess
@@ -39,7 +61,7 @@ int main() {
     // an array to run for as many lines are in the input file
     int i = 0;
     // fgets seems to divy it up by \n anyways, run a for loop here
-    while (i < 1001) {
+    while (i < length + 1) {
         
         // reads in lines from csv line by line
         fgets(inputString, buffer, inputCSV);
@@ -61,8 +83,26 @@ int main() {
     // closing the input csv
     fclose(inputCSV);
 
-    spn(processArray, 1000);
+    if (strcmp(procType, "rr") == 0) {
+        rr(processArray, length, 10);
+    }
 
+    else if (strcmp(procType, "fcfs") == 0) {
+        fcfs(processArray,  length);
+    }
+
+    else if (strcmp(procType, "spn") == 0) {
+        spn(processArray,  length);
+    }
+
+    else if (strcmp(procType, "priority") == 0) {
+        priority(processArray,  length);
+    }
+
+    // change this one too later, change it to SRT once correctly implemented
+    else if (strcmp(procType, "srt") == 0) {
+        priority(processArray, length);
+    }
 
     return 0;
 }

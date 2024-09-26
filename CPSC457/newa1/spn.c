@@ -17,10 +17,22 @@ void insertionSortSPN(struct process** procArray, int lower, int upper) {
     int i = lower + 1, j;
     while (i < upper) {
         j = i;
-        // have to modify this to also sort by id in the case of a tie
-        while ((j > lower) && (procArray[j - 1]->burstLength > procArray[j]->burstLength)) {
-            swap(j, j - 1, procArray);
-            j--;
+        // have to modify this to also sort by id in the case of a tie [DONE]
+        while ((j > lower) && (procArray[j - 1]->burstLength >= procArray[j]->burstLength)) {
+            
+            if ( (procArray[j - 1]->burstLength == procArray[j]->burstLength) && (procArray[j - 1]->pid < procArray[j]->pid) ) {
+                swap(j, j - 1, procArray);
+                j--;
+            }
+
+            else if (procArray[j - 1]->burstLength > procArray[j]->burstLength) {
+                swap(j, j - 1, procArray);
+                j--;
+            }
+
+            else {
+                j--;
+            }
         }
         i++;
     }
