@@ -4,15 +4,16 @@
 #include <string.h>
 #include "main.h"
 
+// bounded insertion sort that sorts array by burst length, with lower ids being prioritized in the case of a tie
 void insertionSortSPN(struct process** procArray, int lower, int upper) {
 
     int i = lower + 1, j;
     while (i < upper) {
         j = i;
-        // have to modify this to also sort by id in the case of a tie [DONE]
+        
         while ((j > lower) && (procArray[j - 1]->burstLength >= procArray[j]->burstLength)) {
             
-            if ( (procArray[j - 1]->burstLength == procArray[j]->burstLength) && (procArray[j - 1]->pid < procArray[j]->pid) ) {
+            if ( (procArray[j - 1]->burstLength == procArray[j]->burstLength) && (procArray[j - 1]->pid > procArray[j]->pid) ) {
                 swap(j, j - 1, procArray);
                 j--;
             }
@@ -30,9 +31,10 @@ void insertionSortSPN(struct process** procArray, int lower, int upper) {
     }
 }
 
-void spn(struct process** procArray, int length) {
+void spn(struct process** procArray, int length, int numUniqueProcs) {
 
-    int i;
+    // variable to count the number of processes to be completed
+    int i = 0;
 
     // listing off a bunch of the vars to be printed    
     int id, arrival, burst, start, finish, wait, turnaround, respTime;
@@ -40,8 +42,6 @@ void spn(struct process** procArray, int length) {
     struct process* duplicateArray[1000];
     
     copyArray(procArray, duplicateArray, 1000);
-
-    int numUniqueProcs = 50;
 
     struct totalProcess* totalsArray[50];
     for (i = 0; i < numUniqueProcs; i++) {
@@ -51,35 +51,46 @@ void spn(struct process** procArray, int length) {
     // for the print sequence
     printf("seq = [");
 
+    // creating a holder variable, starting the whole thing off at the exact point where the first process arrives 
     struct process* currentProc;
     int currentTime = procArray[0]->arrival;
-    i = 0;
+
+    // a variable to keep track of which processes have come in
     int max = 0;
 
-    // some sort of bug with response times
+    // again, write something for potential gaps
 
+    // while not all of the processes are done
     while (i < length) {
 
+        // reset the value of max to 0
         max = 0;
+
+        // read in the next process
         currentProc = procArray[i];
 
+        // define a bunch of variables 
         id = currentProc->pid; arrival = currentProc->arrival; burst = currentProc->burstLength;
         start = currentTime; finish = start + burst; wait = start - arrival; turnaround = finish - arrival; respTime = start + currentProc->timeTilFirstResp;
 
+        // move onto the next process
         i++;
 
+        // 
         currentTime += burst;
         
-        // note to self, max returns the index of the next process that hasnt arrived yet, maybe opt to rename it, fixed now
+        // if not all of the processes, have entered determine the index of the last process to have arrived
         if (max < length) {
             max = getIndexOfLastArrivedProcess(duplicateArray, currentTime, length);
         }
 
+        // insertion sort according to job time, simulating the sorting the ready queue by job time,
         insertionSortSPN(procArray, i, max + 1);
 
         // updating the values for the total processes
         updateTotal(totalsArray[id - 1], arrival, burst, start, finish, respTime);
 
+        // printing off the sequence
         if (i < length) {
             printf("%d, ", id);
         }
@@ -90,5 +101,6 @@ void spn(struct process** procArray, int length) {
 
     }
 
+    // print the final values
     printTable(totalsArray, numUniqueProcs);
 }

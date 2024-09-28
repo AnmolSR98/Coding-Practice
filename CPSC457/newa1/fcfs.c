@@ -4,30 +4,33 @@
 #include <string.h>
 #include "main.h"
 
-// have to modify to resolve ties in id, where a few processes arrive at the same time, highest id ought to go first [DONE]
-
+// a bounded insertion sort to ensure that processes with a lower priority go first in the case of there being a tie in arrival time
 void insertionSortFCFS(struct process** procArray, int lower, int upper) {
 
     int i = lower + 1, j;
     while (i < upper) {
+        
         j = i;
-        // have to modify this to also sort by id in the case of a tie
-        while ( (j > lower) && (procArray[j - 1]->arrival == procArray[j]->arrival) && (procArray[j - 1]->pid < procArray[j]->pid) ) {
+    
+        while ( (j > lower) && (procArray[j - 1]->arrival == procArray[j]->arrival) && (procArray[j - 1]->pid > procArray[j]->pid) ) {
             swap(j, j - 1, procArray);
             j--;
         }
+
         i++;
     }
-
 }
 
-void fcfs(struct process** procArray, int length) {
+// the actual first come first serve function
+void fcfs(struct process** procArray, int length, int numUniqueProcs) {
 
+    // i to count the number of processes that have been read in
     int i;
 
-    // listing off a bunch of the vars to be printed    
+    // variables to be used in calculations later on   
     int id, arrival, burst, start, finish, wait, turnaround, respTime;
 
+    // sorting the array
     insertionSortFCFS(procArray, 0, length);
 
     // feeding the input array into a queue
@@ -36,13 +39,16 @@ void fcfs(struct process** procArray, int length) {
         enqueue(procQueue, procArray[i]);
     }
 
-    int numUniqueProcs = 50;
+    // creating a queue of completed processes
+    struct queue* completedQueue = createQueue();
 
+    // creating a bunch of totalProcesses, which contains the information for each id
     struct totalProcess* totalsArray[numUniqueProcs];
     for (i = 0; i < numUniqueProcs; i++) {
         totalsArray[i] = createTotalProcess(i+1);
     }
 
+    // start the simulation off at the point where the first 
     struct process* currentProc;
     int currentTime = procArray[0]->arrival;
     
@@ -74,8 +80,11 @@ void fcfs(struct process** procArray, int length) {
         else {
             printf("%d]\n", id);
         }
+
+        // in the case where there no are elements within do this urgently[]
     }
 
+    // printing off the 50 line table that contains a summary of each process
     printTable(totalsArray, numUniqueProcs);
 }
 
