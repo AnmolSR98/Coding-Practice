@@ -8,6 +8,7 @@
 #include "spn.c"
 #include "rr.c"
 #include "priority.c"
+#include "srt.c"
 
 #define buffer 64
 #define numAttr 4
@@ -56,7 +57,7 @@ int main(int argc, char** argv) {
     }**/
 
    inputArr = "input.csv";
-   procType = "priority";
+   procType = "srt";
 
     // actual input file
     FILE* inputCSV = fopen(inputArr, "r");
@@ -109,7 +110,7 @@ int main(int argc, char** argv) {
 
     // change this one too later, change it to SRT once correctly implemented
     else if (strcmp(procType, "srt") == 0) {
-        priority(processArray, length);
+        srt(processArray, length, 0.5);
     }
 
     return 0;

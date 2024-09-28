@@ -3,13 +3,6 @@
 #include <stdbool.h>
 #include <string.h>
 #include "main.h"
-#define buffer 64
-#define numAttr 4
-#define expectedLength 16
-#define pid_column 0
-#define arr_column 1
-#define tim_column 2
-#define bur_column 3
 
 // have to modify to resolve ties in id, where a few processes arrive at the same time, highest id ought to go first [DONE]
 

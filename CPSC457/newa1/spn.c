@@ -3,14 +3,6 @@
 #include <stdbool.h>
 #include <string.h>
 #include "main.h"
-#define buffer 64
-#define numAttr 4
-#define expectedLength 16
-#define pid_column 0
-#define arr_column 1
-#define tim_column 2
-#define bur_column 3
-
 
 void insertionSortSPN(struct process** procArray, int lower, int upper) {
 

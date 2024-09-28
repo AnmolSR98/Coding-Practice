@@ -17,7 +17,6 @@ struct process {
     int timeTilFirstResp;
     int burstLength;
     int timeRemaining;
-    int prevEndTime;
     bool hasResponded;
 };
 
@@ -31,6 +30,10 @@ struct totalProcess {
     int wait;
     int turnaround;
     int response;
+    double prevBurst;
+    double actualRemainingTime;
+    double estimatedRemainingTime;
+    double exponentialAverage;
 
 };
 
@@ -67,6 +70,8 @@ struct totalProcess* createTotalProcess(int pid) {
     newTotalProcess->wait = 0;
     newTotalProcess->turnaround = 0;
     newTotalProcess->response = -1;
+    newTotalProcess->estimatedRemainingTime = -1;
+    newTotalProcess->prevBurst = -1;
 
     return newTotalProcess;
 }
