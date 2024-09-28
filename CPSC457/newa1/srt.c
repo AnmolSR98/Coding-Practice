@@ -12,9 +12,9 @@
 #define bur_column 3
 
 
-double getEstimatedNextBurst(int burst, double t_n, double alpha) {
+double getEstimatedNextBurst(int burst, double T_n, double alpha) {
 
-    double t_next = alpha * burst + (1 - alpha) * t_n;
+    double t_next = alpha * burst + (1 - alpha) * T_n;
 
     return t_next;
 }
@@ -55,10 +55,11 @@ void srt(struct process** procArray, int length, double alpha) {
     struct process* currentProc;
     int currentTime = procArray[0]->arrival;
     i = 0;
-    double t_0 = 10;
-    double t_n = t_0;
+    double T_0 = 10;
+    double T_next = T_0;
     int max = 0;
 
+    // going to have to increment this so that it goes up by 1, also simulate waiting in the case of no processes arriving for the other ones
     while (i < length) {
 
         max = 0;
@@ -68,8 +69,7 @@ void srt(struct process** procArray, int length, double alpha) {
         start = currentTime; finish = start + burst; wait = start - arrival; turnaround = finish - arrival; respTime = start + currentProc->timeTilFirstResp;
         
         // updating the value of t_n for each process 
-        t_n = getEstimatedNextBurst(currentProc->burstLength, t_n, alpha);
-
+        T_next = getEstimatedNextBurst(currentProc->burstLength, T_next, alpha);
 
         i++;
 
@@ -79,7 +79,7 @@ void srt(struct process** procArray, int length, double alpha) {
             max = getIndexOfLastArrivedProcess(duplicateArray, currentTime, length);
         }
 
-        insertionSort(procArray, i, max, t_n, alpha);
+        insertionSortSRT(procArray, i, max, T_next, alpha);
 
         // updating the values for the total processes
         updateTotal(totalsArray[id - 1], arrival, burst, start, finish, respTime);
