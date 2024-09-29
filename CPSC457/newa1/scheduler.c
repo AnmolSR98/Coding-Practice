@@ -24,7 +24,7 @@
 int main(int argc, char** argv) {
     
     // some variables to hold data, and the number of lines in the input file and the num of unique processes
-    int length = 1000; int numUniqueProcs = 50; int extraIn;
+    int length = 1000; int numUniqueProcs = 50; double extraIn;
     char* procType; char* inputArr; 
 
     // statement to handle for round robin and shortest remaining time calls
@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
         }
 
         // 
-        extraIn = atoi(argv[2]);
+        extraIn = atof(argv[2]);
         procType = argv[1];
         inputArr = argv[3];
 
@@ -54,7 +54,13 @@ int main(int argc, char** argv) {
         procType = argv[1];
         inputArr = argv[2];
     }
-   
+
+   /** 
+   procType = "srt";
+   inputArr = "input.csv";
+   double alpha = 0.5;
+   */
+
     // the following snippet of lines, until the fclose statement borrow heavily from this page on stack overflow: // https://stackoverflow.com/questions/12911299/read-csv-file-in-c
 
     // opening input file
@@ -113,7 +119,7 @@ int main(int argc, char** argv) {
     else if (strcmp(procType, "srt") == 0) {
 
         // extra in being the potential optional parameter given
-        int alpha = extraIn;
+        double alpha = extraIn;
 
         srt(processArray, length, numUniqueProcs, alpha);
     }

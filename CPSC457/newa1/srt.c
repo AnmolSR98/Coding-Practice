@@ -4,8 +4,8 @@
 #include <string.h>
 #include "main.h"
 
-// need to work on updating ties and wait times []
 
+// function to update the exponential average
 double updateExponentialAverage(double burst, double T_n, double alpha) {
 
     double t_next = alpha * burst + (1 - alpha) * T_n;
@@ -31,11 +31,11 @@ void updateTotalSRT(struct totalProcess* someTotal, int arrive, int totalBurst, 
     // this has to be updated to account for processes being sat on the wait for much longer, will almost certainly involve using
     // the previous end time
     if (prevEndTime == -1) {
-        someTotal->wait += (start - prevEndTime);
+        someTotal->wait += (start - arrive);
     }
 
     else {
-        someTotal->wait += (start - arrive);
+        someTotal->wait += (start - prevEndTime);
     }
 
     someTotal->turnaround = finish - arrive;
@@ -55,7 +55,7 @@ void updateTotalSRT(struct totalProcess* someTotal, int arrive, int totalBurst, 
     someTotal->actualRemainingTime -= burst;
 
     // checking that if the estimatedRemainingTime equals zero, we recalculate the estimated average
-    if (someTotal->actualRemainingTime == 0) {
+    if (someTotal->actualRemainingTime <= 0) {
         someTotal->exponentialAverage = updateExponentialAverage(someTotal->prevBurst, someTotal->exponentialAverage, alpha);
         someTotal->estimatedRemainingTime = someTotal->exponentialAverage;
         // set someTotal->prevBurst to -1 to indicate that it has been uninitialized, so that the if statement will be triggered the next
@@ -72,15 +72,15 @@ void insertionSortSRT(struct process** procArray, struct totalProcess** totalsAr
         j = i;
         while ((j > lower) && (totalsArray[procArray[j - 1]->pid - 1]->estimatedRemainingTime >= totalsArray[procArray[j]->pid - 1]->estimatedRemainingTime)) {
         
-            // fixing the tie issues
+            // in the case of a tie, prioritize the lower ids
             if (totalsArray[procArray[j - 1]->pid - 1]->estimatedRemainingTime == totalsArray[procArray[j]->pid - 1]->estimatedRemainingTime) {
                 if (procArray[j - 1]->pid > procArray[j]->pid) {
                     swap(j, j - 1, procArray);
-                    j--;
                 }
+                j--;
             }
            
-            else if (totalsArray[procArray[j - 1]->pid - 1]->estimatedRemainingTime >= totalsArray[procArray[j]->pid - 1]->estimatedRemainingTime) {  
+            else if (totalsArray[procArray[j - 1]->pid - 1]->estimatedRemainingTime > totalsArray[procArray[j]->pid - 1]->estimatedRemainingTime) {  
                 swap(j, j - 1, procArray);
                 j--;
             }
@@ -93,8 +93,10 @@ void insertionSortSRT(struct process** procArray, struct totalProcess** totalsAr
     }
 }
 
+// function for simulating the shortest remaining time
 double* srt(struct process** procArray, int length, int numUniqueProcs, double alpha) {
 
+    // to keep track of position
     int i;
 
     // listing off a bunch of the vars to be printed    
@@ -104,10 +106,7 @@ double* srt(struct process** procArray, int length, int numUniqueProcs, double a
 
     struct process* duplicateArray[length];
     
-    copyArray(procArray, duplicateArray, length);
-
-    int numUniqueProcs = 50;
-    
+    // the initial value of the predicted time
     double T_0 = 10;
 
     struct totalProcess* totalsArray[50];
@@ -134,27 +133,36 @@ double* srt(struct process** procArray, int length, int numUniqueProcs, double a
     // going to have to increment this so that it goes up by 1, also simulate waiting in the case of no processes arriving for the other ones
     while (i < length) {
 
+
         max = 0;
+
+        // get the current process
         currentProc = procArray[i];
 
+        // potentially skip ahead to the arrival of the next process, if necessary
         currentTime = maximum(currentProc->arrival, currentTime);
 
+        // get the values of the current process
         id = currentProc->pid; arrival = currentProc->arrival; burst = step;
         start = currentTime; finish = start + burst; wait = start - arrival; turnaround = finish - arrival; respTime = start + currentProc->timeTilFirstResp;
         
         // incrementing the currentTime by the step 
         currentTime += step;
 
+        // updating the totals
         updateTotalSRT(totalsArray[id - 1], arrival, currentProc->burstLength, burst, start, finish, respTime, alpha, currentProc->prevEndTime);
 
+        // updating the previous end tiem
         currentProc->prevEndTime = currentTime;
 
+        // if the process has been completed, then increment i
         if (totalsArray[id - 1]->actualRemainingTime == 0) {
             i++;
         }
         
+        // let the processes in
         if (max < length) {
-            max = getIndexOfLastArrivedProcess(duplicateArray, currentTime, length);
+            max = getIndexOfLastArrivedProcess(procArray, currentTime, length);
         }
 
         // in this case, we want to include the lowest index, since it may not have actually terminated yet
