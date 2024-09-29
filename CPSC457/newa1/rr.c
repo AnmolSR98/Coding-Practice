@@ -124,7 +124,7 @@ double* rr(struct process** procArray, int length, int quantum, int numUniquePro
     i = 0;
 
     // printing sequence
-    // printf("seq = [");
+    printf("seq = [");
 
     while (!isEmpty(procQueue)) {
 
@@ -179,14 +179,13 @@ double* rr(struct process** procArray, int length, int quantum, int numUniquePro
         currentProc->prevEndTime = currentTime;
 
         // print the sequence
-        /** 
         if (!isEmpty(procQueue)) {
             printf("%d, ", id);
         }
 
         else {
             printf("%d]\n", id);
-        }*/
+        }
 
         // case to increment the current time in the case where the processor has to wait for a procss to arrive
         // if not all the processes are done, and the procQueue is empty

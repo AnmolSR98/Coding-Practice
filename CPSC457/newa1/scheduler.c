@@ -4,12 +4,14 @@
 #include <string.h>
 #include "main.h"
 
+// including the other c files
 #include "fcfs.c"
 #include "spn.c"
 #include "rr.c"
 #include "priority.c"
 #include "srt.c"
 
+// a bunch of variables with regards to the csv that is to be read in
 #define buffer 64
 #define numAttr 4
 #define expectedLength 16
@@ -18,68 +20,53 @@
 #define tim_column 2
 #define bur_column 3
 
-void printArray(double* someArray, int length) {
-    printf("[ ");
-    int i = 0;
-    for (i = 0; i < length; i++) {
-
-        if (i != length - 1) {
-            printf("%10.5f, ", someArray[i]);
-        }
-
-        else {
-            printf("%10.5f]\n", someArray[i]);
-        }
-    }
-
-
-}
 
 int main(int argc, char** argv) {
-    // most crucial thing right now is to get the number of lines in an input file
-    // PROCESSES ARE BEING READ IN CORRECTLY 
-    // maybe use feof to determine end of file
-
-    // https://stackoverflow.com/questions/12911299/read-csv-file-in-c
-    // perhaps change to another name otherwise it may not work properly when TA has to run[]
+    
+    // some variables to hold data, and the number of lines in the input file and the num of unique processes
     int length = 1000; int numUniqueProcs = 50; int extraIn;
     char* procType; char* inputArr; 
 
+    // statement to handle for round robin and shortest remaining time calls
     if ( ( (strcmp(argv[1], "rr") == 0) || (strcmp(argv[1], "srt") == 0) ) ) {
         
+        // error handling for the above two types
         if (argc != 4) {
-            printf("Incorrect number of input arguments given!\n");
+            printf("Incorrect number of input arguments given! Correct format is: ./scheduler processType parameter inputfile!\n");
             return 0;
         }
 
+        // 
         extraIn = atoi(argv[2]);
         procType = argv[1];
         inputArr = argv[3];
 
     }
 
+    // error handling for the other 3 types
     else if (argc != 3) {
-        printf("Incorrect number of input arguments given!\n");
+        printf("Incorrect number of input arguments given! Correct format is: ./scheduler processType inputfile!\n\n");
         return 0;
     }
 
+    // statements for the other 3 types
     else {
         procType = argv[1];
         inputArr = argv[2];
     }
    
+    // the following snippet of lines, until the fclose statement borrow heavily from this page on stack overflow: // https://stackoverflow.com/questions/12911299/read-csv-file-in-c
 
-    // actual input file
+    // opening input file
     FILE* inputCSV = fopen(inputArr, "r");
     // array of pointers to processes
     struct process* processArray[length];
-    // ie an array to temporarily hold each string before it is converted to an 
+    // ie an array to temporarily hold each string before it is converted to a process
     char inputString[buffer];
     // array to hold the strings from cycler, which are then passed on the createProcess
     char holderArray[numAttr][expectedLength]; 
-    // an array to run for as many lines are in the input file
+    // to keep track of what line we are at
     int i = 0;
-    // fgets seems to divy it up by \n anyways, run a for loop here
     while (i < length + 1) {
         
         // reads in lines from csv line by line
@@ -102,8 +89,10 @@ int main(int argc, char** argv) {
     // closing the input csv
     fclose(inputCSV);
 
+    // if else statements to run the chosen simulator
     if (strcmp(procType, "rr") == 0) {
 
+        // extra in being the potential optional parameter given
         int quantum = extraIn;
 
         rr(processArray, length, quantum, numUniqueProcs);
@@ -121,32 +110,12 @@ int main(int argc, char** argv) {
         priority(processArray,  length, numUniqueProcs);
     }
 
-    // change this one too later, change it to SRT once correctly implemented
     else if (strcmp(procType, "srt") == 0) {
 
-        srt(processArray, length, numUniqueProcs, 0.5);
+        // extra in being the potential optional parameter given
+        int alpha = extraIn;
 
-        /** 
-        double waitTimes[11];
-        double turnTimes[11];
-        double respTimes[11];
-        double* latestSRT = malloc(sizeof(double) * 3);
-
-        double alpha = 0.0;
-
-        int i = 0;
-        for (alpha = 0.0; alpha <= 1.0; alpha += 0.1) {
-            latestSRT = srt(processArray, length, alpha); 
-            waitTimes[i] = latestSRT[0];
-            turnTimes[i] = latestSRT[1];
-            respTimes[i] = latestSRT[2];
-
-            i++;
-        }
-
-        printArray(waitTimes, 11);
-        printArray(turnTimes, 11);
-        printArray(respTimes, 11);*/
+        srt(processArray, length, numUniqueProcs, alpha);
     }
 
     return 0;

@@ -1,6 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+// including queue.c for use in functions later in main.h
 #include "queue.c"
 
 // strings to be used for the print statements all of these are in milliseconds
@@ -157,7 +158,7 @@ void updateTotal(struct totalProcess* someTotal, int arrive, int burst, int star
 // print function to be used after all processes have been completed
 double* printTable(struct totalProcess** totalsArray, int length) {
 
-    //printf(firstLine);
+    printf(firstLine);
     double totalWaitingTime, totalTurnTime, totalRespTime;
     struct totalProcess* currentTotal = (struct totalProcess*) malloc(sizeof(struct totalProcess));
     int i;
@@ -166,9 +167,9 @@ double* printTable(struct totalProcess** totalsArray, int length) {
         currentTotal = totalsArray[i];
         // updating the totals
         totalWaitingTime += currentTotal->wait; totalTurnTime += currentTotal->turnaround; totalRespTime += currentTotal->response;
-        //printf(standard, currentTotal->pid, currentTotal->arrive, currentTotal->burst, currentTotal->start, currentTotal->finish, currentTotal->wait, currentTotal->turnaround, currentTotal->response);
+        printf(standard, currentTotal->pid, currentTotal->arrive, currentTotal->burst, currentTotal->start, currentTotal->finish, currentTotal->wait, currentTotal->turnaround, currentTotal->response);
     }
-    //printf(tableCloser);
+    printf(tableCloser);
 
     // converting these to the averages, ought to update the variable names
     totalWaitingTime /= length; totalTurnTime /= length; totalRespTime /= length;
