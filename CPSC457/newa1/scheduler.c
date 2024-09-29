@@ -45,8 +45,6 @@ int main(int argc, char** argv) {
     int length = 1000; int numUniqueProcs = 50; int extraIn;
     char* procType; char* inputArr; 
 
-    /** 
-    // have to change to account for the fact that rr and srt take an additional argument in
     if ( ( (strcmp(argv[1], "rr") == 0) || (strcmp(argv[1], "srt") == 0) ) ) {
         
         if (argc != 4) {
@@ -68,10 +66,7 @@ int main(int argc, char** argv) {
     else {
         procType = argv[1];
         inputArr = argv[2];
-    }**/
-
-   inputArr = "input.csv";
-   procType = "rr";
+    }
    
 
     // actual input file
@@ -109,9 +104,9 @@ int main(int argc, char** argv) {
 
     if (strcmp(procType, "rr") == 0) {
 
-        int quantum = 11;
+        int quantum = extraIn;
 
-        rr(processArray, length, quantum, numUniqueProcs)[0];
+        rr(processArray, length, quantum, numUniqueProcs);
     } 
 
     else if (strcmp(procType, "fcfs") == 0) {
