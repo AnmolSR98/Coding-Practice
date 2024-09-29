@@ -36,7 +36,6 @@ void printArray(double* someArray, int length) {
 }
 
 int main(int argc, char** argv) {
-
     // most crucial thing right now is to get the number of lines in an input file
     // PROCESSES ARE BEING READ IN CORRECTLY 
     // maybe use feof to determine end of file
@@ -109,8 +108,10 @@ int main(int argc, char** argv) {
     fclose(inputCSV);
 
     if (strcmp(procType, "rr") == 0) {
-        
-        rr(processArray, length, 1, numUniqueProcs);
+
+        int quantum = 11;
+
+        rr(processArray, length, quantum, numUniqueProcs)[0];
     } 
 
     else if (strcmp(procType, "fcfs") == 0) {

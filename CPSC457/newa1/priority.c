@@ -33,10 +33,6 @@ void priority(struct process** procArray, int length, int numUniqueProcs) {
     // listing off a bunch of the vars to be used for calculations  
     int id, arrival, burst, start, finish, wait, turnaround, respTime;
 
-    // duplicating the array
-    struct process* duplicateArray[length];
-    copyArray(procArray, duplicateArray, length);
-
     // creating the totals array 
     struct totalProcess* totalsArray[numUniqueProcs];
     for (i = 0; i < numUniqueProcs; i++) {
@@ -89,7 +85,7 @@ void priority(struct process** procArray, int length, int numUniqueProcs) {
         
         // calculate what processes would have arrived in that time frame
         if (max < length) {
-            max = getIndexOfLastArrivedProcess(duplicateArray, currentTime, length);
+            max = getIndexOfLastArrivedProcess(procArray, currentTime, length);
         }
 
         // sort the queue by priority now

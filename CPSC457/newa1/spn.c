@@ -39,11 +39,8 @@ void spn(struct process** procArray, int length, int numUniqueProcs) {
     // listing off a bunch of the vars to be printed    
     int id, arrival, burst, start, finish, wait, turnaround, respTime;
 
-    struct process* duplicateArray[length];
-    
-    copyArray(procArray, duplicateArray, length);
-
     struct totalProcess* totalsArray[numUniqueProcs];
+    
     for (i = 0; i < numUniqueProcs; i++) {
         totalsArray[i] = createTotalProcess(i+1);
     }
@@ -94,7 +91,7 @@ void spn(struct process** procArray, int length, int numUniqueProcs) {
         
         // if not all of the processes, have entered determine the index of the last process to have arrived
         if (max < length) {
-            max = getIndexOfLastArrivedProcess(duplicateArray, currentTime, length);
+            max = getIndexOfLastArrivedProcess(procArray, currentTime, length);
         }
 
         // insertion sort according to job time, simulating the sorting the ready queue by job time,

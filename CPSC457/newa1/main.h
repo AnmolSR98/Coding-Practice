@@ -3,13 +3,14 @@
 
 #include "queue.c"
 
-// all of these are in milliseconds
+// strings to be used for the print statements all of these are in milliseconds
 char* firstLine = 
 "+----+---------+-------+-------+--------+-------+-------------+---------------+\n| Id | Arrival | Burst | Start | Finish | Wait  | Turnaround  | Response Time |\n+----+---------+-------+-------+--------+-------+-------------+---------------+\n";
 char* standard =  "| %2d | %7d | %5d | %5d | %6d | %5d | %11d | %13d |\n";
 char* tableCloser = "+----+---------+-------+-------+--------+-------+-------------+---------------+\n";
-char* finalThree ="Average waiting time: %5.2f\nAverage turnaround time: %5.2f\nAverage response time: %5.2f\n";
+char* finalThree ="Average waiting time: %5.2f ms\nAverage turnaround time: %5.2f ms\nAverage response time: %5.2f ms\n";
 
+// struct definitions for each individual thread
 struct process {
 
     int pid;
@@ -22,6 +23,7 @@ struct process {
     int prevEndTime;
 };
 
+// struct definition for total of each process
 struct totalProcess {
 
     int pid;
@@ -39,14 +41,7 @@ struct totalProcess {
 
 };
 
-void copyArray(struct process** original, struct process** duplicate, int length) {
-
-    int i;
-    for (i = 0; i < length; i++) {
-        duplicate[i] = original[i];
-    }
-}
-
+// getting the index of the last process to arrive
 int getIndexOfLastArrivedProcess(struct process** procArray, int time, int arrayLength) {
 
     int i = 0;
@@ -60,6 +55,7 @@ int getIndexOfLastArrivedProcess(struct process** procArray, int time, int array
     return i - 1;
 }
 
+// total process creation method
 struct totalProcess* createTotalProcess(int pid) {
 
     struct totalProcess* newTotalProcess = malloc(sizeof(struct totalProcess));
@@ -78,6 +74,7 @@ struct totalProcess* createTotalProcess(int pid) {
     return newTotalProcess;
 }
 
+// process creation method, for strings
 struct process* createProcess(char* pid, char* arrival, char* time, char* burst) {
 
     struct process* newProcess = malloc(sizeof(struct process));
@@ -93,6 +90,37 @@ struct process* createProcess(char* pid, char* arrival, char* time, char* burst)
     return newProcess;
 }
 
+// process creation method, for integers
+struct process* createProcessAlt(int pid, int arrival, int time, int burst) {
+
+    struct process* newProcess = malloc(sizeof(struct process));
+
+    newProcess->pid = pid;
+    newProcess->arrival = arrival;
+    newProcess->timeTilFirstResp = time;
+    newProcess->burstLength = burst;
+    newProcess->timeRemaining = newProcess->burstLength;
+    newProcess->hasResponded = false;
+    newProcess->prevEndTime = -1;
+
+    return newProcess;
+
+}
+
+// method to copy arrays
+void copyArray(struct process** original, struct process** duplicate, int length) {
+
+    struct process* currentProc = malloc(sizeof(struct process));
+    int i;
+    for (i = 0; i < length; i++) {
+        currentProc = original[i];
+        duplicate[i] = createProcessAlt(currentProc->pid, currentProc->arrival, currentProc->timeTilFirstResp, currentProc->burstLength);
+    }
+
+    free(currentProc);
+}
+
+// method to swap two processes in the process array
 void swap(int a, int b, struct process** array){
 
     struct process* temp = array[a];
@@ -100,6 +128,7 @@ void swap(int a, int b, struct process** array){
     array[b] = temp;
 }
 
+// method to update the information on a process, used after a thread is either rotated out or if it finished executing
 void updateTotal(struct totalProcess* someTotal, int arrive, int burst, int start, int finish, int response) {
 
 
@@ -125,9 +154,10 @@ void updateTotal(struct totalProcess* someTotal, int arrive, int burst, int star
 
 }
 
+// print function to be used after all processes have been completed
 double* printTable(struct totalProcess** totalsArray, int length) {
 
-    printf(firstLine);
+    //printf(firstLine);
     double totalWaitingTime, totalTurnTime, totalRespTime;
     struct totalProcess* currentTotal = (struct totalProcess*) malloc(sizeof(struct totalProcess));
     int i;
@@ -136,9 +166,9 @@ double* printTable(struct totalProcess** totalsArray, int length) {
         currentTotal = totalsArray[i];
         // updating the totals
         totalWaitingTime += currentTotal->wait; totalTurnTime += currentTotal->turnaround; totalRespTime += currentTotal->response;
-        printf(standard, currentTotal->pid, currentTotal->arrive, currentTotal->burst, currentTotal->start, currentTotal->finish, currentTotal->wait, currentTotal->turnaround, currentTotal->response);
+        //printf(standard, currentTotal->pid, currentTotal->arrive, currentTotal->burst, currentTotal->start, currentTotal->finish, currentTotal->wait, currentTotal->turnaround, currentTotal->response);
     }
-    printf(tableCloser);
+    //printf(tableCloser);
 
     // converting these to the averages, ought to update the variable names
     totalWaitingTime /= length; totalTurnTime /= length; totalRespTime /= length;
