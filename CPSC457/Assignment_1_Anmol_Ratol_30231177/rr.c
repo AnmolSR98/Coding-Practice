@@ -120,8 +120,8 @@ double* rr(struct process** procArray, int length, int quantum, int numUniquePro
         totalsArray[i] = createTotalProcess(i+1);
     }
 
-    // resetting i
-    i = 0;
+    // resetting i, so that 1 will be the next process admitted in
+    i = 1;
 
     // printing sequence
     printf("seq = [");
