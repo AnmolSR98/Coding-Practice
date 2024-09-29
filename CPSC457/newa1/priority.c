@@ -54,6 +54,7 @@ void priority(struct process** procArray, int length, int numUniqueProcs) {
     // need to do something in case of a gap
 
     // very similar to the SPN loop
+    i = 0;
     while (i < length) {
 
 
@@ -71,6 +72,20 @@ void priority(struct process** procArray, int length, int numUniqueProcs) {
 
         // move the currentTime ahead
         currentTime += burst;
+
+        // updating the values for the total processes
+        updateTotal(totalsArray[id - 1], arrival, burst, start, finish, respTime);
+
+        // printing the sequence bit by bit
+        if (i < length) {
+            printf("%d, ", id);
+            // update the current time if there is potentially a gap between a process finishing and the next one arriving
+            currentTime = maximum(currentTime, procArray[i]->arrival);
+        }
+
+        else {
+            printf("%d]\n", id);
+        }
         
         // calculate what processes would have arrived in that time frame
         if (max < length) {
@@ -80,17 +95,6 @@ void priority(struct process** procArray, int length, int numUniqueProcs) {
         // sort the queue by priority now
         insertionSortPriority(procArray, i, max + 1);
 
-        // updating the values for the total processes
-        updateTotal(totalsArray[id - 1], arrival, burst, start, finish, respTime);
-
-        // printing the sequence bit by bit
-        if (i < length) {
-            printf("%d, ", id);
-        }
-
-        else {
-            printf("%d]\n", id);
-        }
     }
 
     // print the final values

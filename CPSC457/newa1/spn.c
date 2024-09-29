@@ -39,11 +39,11 @@ void spn(struct process** procArray, int length, int numUniqueProcs) {
     // listing off a bunch of the vars to be printed    
     int id, arrival, burst, start, finish, wait, turnaround, respTime;
 
-    struct process* duplicateArray[1000];
+    struct process* duplicateArray[length];
     
-    copyArray(procArray, duplicateArray, 1000);
+    copyArray(procArray, duplicateArray, length);
 
-    struct totalProcess* totalsArray[50];
+    struct totalProcess* totalsArray[numUniqueProcs];
     for (i = 0; i < numUniqueProcs; i++) {
         totalsArray[i] = createTotalProcess(i+1);
     }
@@ -58,9 +58,8 @@ void spn(struct process** procArray, int length, int numUniqueProcs) {
     // a variable to keep track of which processes have come in
     int max = 0;
 
-    // again, write something for potential gaps
-
     // while not all of the processes are done
+    i = 0;
     while (i < length) {
 
         // reset the value of max to 0
@@ -76,8 +75,22 @@ void spn(struct process** procArray, int length, int numUniqueProcs) {
         // move onto the next process
         i++;
 
-        // 
+        // updating the values for the total processes
+        updateTotal(totalsArray[id - 1], arrival, burst, start, finish, respTime);
+
+        // update the current time
         currentTime += burst;
+
+        // printing off the sequence
+        if (i < length) {
+            printf("%d, ", id);
+            // update the current time if there is potentially a gap between a process finishing and the next one arriving
+            currentTime = maximum(currentTime, procArray[i]->arrival);
+        }
+
+        else {
+            printf("%d]\n", id);
+        }
         
         // if not all of the processes, have entered determine the index of the last process to have arrived
         if (max < length) {
@@ -86,18 +99,6 @@ void spn(struct process** procArray, int length, int numUniqueProcs) {
 
         // insertion sort according to job time, simulating the sorting the ready queue by job time,
         insertionSortSPN(procArray, i, max + 1);
-
-        // updating the values for the total processes
-        updateTotal(totalsArray[id - 1], arrival, burst, start, finish, respTime);
-
-        // printing off the sequence
-        if (i < length) {
-            printf("%d, ", id);
-        }
-
-        else {
-            printf("%d]\n", id);
-        }
 
     }
 

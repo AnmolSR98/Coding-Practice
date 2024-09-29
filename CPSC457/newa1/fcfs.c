@@ -59,6 +59,9 @@ void fcfs(struct process** procArray, int length, int numUniqueProcs) {
 
         // simulating getting the next process from the queue
         currentProc = dequeue(procQueue);
+
+        // getting the currentTime (accounting for the case where there is a gap in between a process finishing, and the next one arriving)
+        currentTime = maximum(currentTime, currentProc->arrival);
         
         // getting its attributes
         id = currentProc->pid; arrival = currentProc->arrival; burst = currentProc->burstLength;
@@ -81,7 +84,6 @@ void fcfs(struct process** procArray, int length, int numUniqueProcs) {
             printf("%d]\n", id);
         }
 
-        // in the case where there no are elements within do this urgently[]
     }
 
     // printing off the 50 line table that contains a summary of each process

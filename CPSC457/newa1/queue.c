@@ -3,8 +3,7 @@
 #include <stdbool.h>
 #include "main.h"
 
-// need to free up nodes that get deleted ie. deallocate memory [X]
-
+// linked list based implementation of a queue
 struct node {
     struct process* storedProcess;
     struct node* next;
