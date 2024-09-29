@@ -18,7 +18,22 @@
 #define tim_column 2
 #define bur_column 3
 
+void printArray(double* someArray, int length) {
+    printf("[ ");
+    int i = 0;
+    for (i = 0; i < length; i++) {
 
+        if (i != length - 1) {
+            printf("%10.5f, ", someArray[i]);
+        }
+
+        else {
+            printf("%10.5f]\n", someArray[i]);
+        }
+    }
+
+
+}
 
 int main(int argc, char** argv) {
 
@@ -28,7 +43,7 @@ int main(int argc, char** argv) {
 
     // https://stackoverflow.com/questions/12911299/read-csv-file-in-c
     // perhaps change to another name otherwise it may not work properly when TA has to run[]
-    int length = 1000; int extraIn;
+    int length = 1000; int numUniqueProcs = 50; int extraIn;
     char* procType; char* inputArr; 
 
     /** 
@@ -58,6 +73,7 @@ int main(int argc, char** argv) {
 
    inputArr = "input.csv";
    procType = "srt";
+   
 
     // actual input file
     FILE* inputCSV = fopen(inputArr, "r");
@@ -93,24 +109,48 @@ int main(int argc, char** argv) {
     fclose(inputCSV);
 
     if (strcmp(procType, "rr") == 0) {
-        rr(processArray, length, extraIn);
-    }
+        
+        rr(processArray, length, 1, numUniqueProcs);
+    } 
 
     else if (strcmp(procType, "fcfs") == 0) {
-        fcfs(processArray,  length);
+        fcfs(processArray,  length, numUniqueProcs);
     }
 
     else if (strcmp(procType, "spn") == 0) {
-        spn(processArray,  length);
+        spn(processArray,  length, numUniqueProcs);
     }
 
     else if (strcmp(procType, "priority") == 0) {
-        priority(processArray,  length);
+        priority(processArray,  length, numUniqueProcs);
     }
 
     // change this one too later, change it to SRT once correctly implemented
     else if (strcmp(procType, "srt") == 0) {
-        srt(processArray, length, 0.5);
+
+        srt(processArray, length, numUniqueProcs, 0.5);
+
+        /** 
+        double waitTimes[11];
+        double turnTimes[11];
+        double respTimes[11];
+        double* latestSRT = malloc(sizeof(double) * 3);
+
+        double alpha = 0.0;
+
+        int i = 0;
+        for (alpha = 0.0; alpha <= 1.0; alpha += 0.1) {
+            latestSRT = srt(processArray, length, alpha); 
+            waitTimes[i] = latestSRT[0];
+            turnTimes[i] = latestSRT[1];
+            respTimes[i] = latestSRT[2];
+
+            i++;
+        }
+
+        printArray(waitTimes, 11);
+        printArray(turnTimes, 11);
+        printArray(respTimes, 11);*/
     }
 
     return 0;

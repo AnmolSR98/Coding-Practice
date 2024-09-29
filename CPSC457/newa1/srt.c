@@ -4,6 +4,8 @@
 #include <string.h>
 #include "main.h"
 
+// need to work on updating ties and wait times []
+
 double updateExponentialAverage(double burst, double T_n, double alpha) {
 
     double t_next = alpha * burst + (1 - alpha) * T_n;
@@ -11,7 +13,7 @@ double updateExponentialAverage(double burst, double T_n, double alpha) {
     return t_next;
 }
 
-void updateTotalSRT(struct totalProcess* someTotal, int arrive, int totalBurst, int burst, int start, int finish, int response, double alpha) {
+void updateTotalSRT(struct totalProcess* someTotal, int arrive, int totalBurst, int burst, int start, int finish, int response, double alpha, int prevEndTime) {
 
 
     if (someTotal->arrive == -1) {
@@ -27,8 +29,14 @@ void updateTotalSRT(struct totalProcess* someTotal, int arrive, int totalBurst, 
     someTotal->finish = finish;
 
     // this has to be updated to account for processes being sat on the wait for much longer, will almost certainly involve using
-    // the previous end time 
-    someTotal->wait = finish - arrive - burst;
+    // the previous end time
+    if (prevEndTime == -1) {
+        someTotal->wait += (start - prevEndTime);
+    }
+
+    else {
+        someTotal->wait += (start - arrive);
+    }
 
     someTotal->turnaround = finish - arrive;
 
@@ -62,15 +70,30 @@ void insertionSortSRT(struct process** procArray, struct totalProcess** totalsAr
     int i = lower + 1, j;
     while (i < upper) {
         j = i;
-        while ((j > lower) && (totalsArray[procArray[j - 1]->pid - 1]->estimatedRemainingTime > totalsArray[procArray[j]->pid - 1]->estimatedRemainingTime)) {
-            swap(j, j - 1, procArray);
-            j--;
+        while ((j > lower) && (totalsArray[procArray[j - 1]->pid - 1]->estimatedRemainingTime >= totalsArray[procArray[j]->pid - 1]->estimatedRemainingTime)) {
+        
+            // fixing the tie issues
+            if (totalsArray[procArray[j - 1]->pid - 1]->estimatedRemainingTime == totalsArray[procArray[j]->pid - 1]->estimatedRemainingTime) {
+                if (procArray[j - 1]->pid > procArray[j]->pid) {
+                    swap(j, j - 1, procArray);
+                    j--;
+                }
+            }
+           
+            else if (totalsArray[procArray[j - 1]->pid - 1]->estimatedRemainingTime >= totalsArray[procArray[j]->pid - 1]->estimatedRemainingTime) {  
+                swap(j, j - 1, procArray);
+                j--;
+            }
+
+            else {
+                j--;
+            }
         }
         i++;
     }
 }
 
-void srt(struct process** procArray, int length, double alpha) {
+double* srt(struct process** procArray, int length, int numUniqueProcs, double alpha) {
 
     int i;
 
@@ -114,13 +137,17 @@ void srt(struct process** procArray, int length, double alpha) {
         max = 0;
         currentProc = procArray[i];
 
+        currentTime = maximum(currentProc->arrival, currentTime);
+
         id = currentProc->pid; arrival = currentProc->arrival; burst = step;
         start = currentTime; finish = start + burst; wait = start - arrival; turnaround = finish - arrival; respTime = start + currentProc->timeTilFirstResp;
         
         // incrementing the currentTime by the step 
         currentTime += step;
 
-        updateTotalSRT(totalsArray[id - 1], arrival, currentProc->burstLength, burst, start, finish, respTime, alpha);
+        updateTotalSRT(totalsArray[id - 1], arrival, currentProc->burstLength, burst, start, finish, respTime, alpha, currentProc->prevEndTime);
+
+        currentProc->prevEndTime = currentTime;
 
         if (totalsArray[id - 1]->actualRemainingTime == 0) {
             i++;
@@ -133,15 +160,17 @@ void srt(struct process** procArray, int length, double alpha) {
         // in this case, we want to include the lowest index, since it may not have actually terminated yet
         insertionSortSRT(procArray, totalsArray, i, max + 1);
         
+        // ie. print only if the process has actually changed (by comparing memory locations)
+        if (currentProc != procArray[i]) {
+            if (i < length) {
+                printf("%d, ", id);
+            }
 
-        if (i < length) {
-            printf("%d, ", id);
-        }
-
-        else {
-            printf("%d]\n", id);
+            else {
+                printf("%d]\n", id);
+            }
         }
     }
 
-    printTable(totalsArray, numUniqueProcs);
+    return printTable(totalsArray, numUniqueProcs);
 }
