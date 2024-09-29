@@ -121,7 +121,13 @@ int main(int argc, char** argv) {
         // extra in being the potential optional parameter given
         double alpha = extraIn;
 
+        // some error handling for alpha
+        if ((alpha < 0) || (alpha > 1.0)) {
+            printf("Enter an alpha value between 0.0 and 1.0, in increments of 0.1!\n");
+        }
+
         srt(processArray, length, numUniqueProcs, alpha);
+
     }
 
     return 0;

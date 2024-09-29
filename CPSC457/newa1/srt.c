@@ -144,8 +144,18 @@ double* srt(struct process** procArray, int length, int numUniqueProcs, double a
 
         // get the values of the current process
         id = currentProc->pid; arrival = currentProc->arrival; burst = step;
-        start = currentTime; finish = start + burst; wait = start - arrival; turnaround = finish - arrival; respTime = start + currentProc->timeTilFirstResp;
+        start = currentTime; finish = start + burst; wait = start - arrival; turnaround = finish - arrival; 
+        // needing to fix up respTime right now
+        respTime = -1;
         
+        if (currentProc->timeTilFirstResp - burst <= 0) {
+            respTime = currentTime + currentProc->timeTilFirstResp;
+        }
+
+        else {
+            currentProc->timeTilFirstResp -= burst;
+        }
+
         // incrementing the currentTime by the step 
         currentTime += step;
 
