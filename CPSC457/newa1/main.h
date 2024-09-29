@@ -18,6 +18,9 @@ struct process {
     int burstLength;
     int timeRemaining;
     bool hasResponded;
+    // for RR calculations
+    int prevEndTime;
+    bool hasBeenRotated;
 };
 
 struct totalProcess {
@@ -48,7 +51,7 @@ void copyArray(struct process** original, struct process** duplicate, int length
 int getIndexOfLastArrivedProcess(struct process** procArray, int time, int arrayLength) {
 
     int i = 0;
-    while (procArray[i]->arrival < time) {
+    while (procArray[i]->arrival <= time) {
         if (i == arrayLength - 1) {
             return arrayLength - 1;
         }
@@ -86,6 +89,7 @@ struct process* createProcess(char* pid, char* arrival, char* time, char* burst)
     newProcess->burstLength = atoi(burst);
     newProcess->timeRemaining = newProcess->burstLength;
     newProcess->hasResponded = false;
+    newProcess->prevEndTime = newProcess->arrival;
 
     return newProcess;
 }
@@ -112,7 +116,7 @@ void updateTotal(struct totalProcess* someTotal, int arrive, int burst, int star
 
     someTotal->finish = finish;
 
-    someTotal->wait = start - arrive;
+    someTotal->wait += (start - arrive);
 
     someTotal->turnaround = finish - arrive;
 
@@ -122,7 +126,7 @@ void updateTotal(struct totalProcess* someTotal, int arrive, int burst, int star
 
 }
 
-void printTable(struct totalProcess** totalsArray, int length) {
+double* printTable(struct totalProcess** totalsArray, int length) {
 
     printf(firstLine);
     double totalWaitingTime, totalTurnTime, totalRespTime;
@@ -142,6 +146,21 @@ void printTable(struct totalProcess** totalsArray, int length) {
 
     printf(finalThree, totalWaitingTime, totalTurnTime, totalRespTime);
 
+    double* averageArray = malloc(sizeof(double) * 3);
+    averageArray[0] = totalWaitingTime;
+    averageArray[1] = totalTurnTime;
+    averageArray[2] = totalRespTime;
+
+    return averageArray;
+}
+
+// simple maximum function here
+int maximum(int a, int b) {
+    if (a >= b) {
+        return a;
+    }
+
+    return b;
 }
 
 #endif
