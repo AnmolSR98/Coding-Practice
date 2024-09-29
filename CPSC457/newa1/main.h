@@ -20,7 +20,6 @@ struct process {
     bool hasResponded;
     // for RR calculations
     int prevEndTime;
-    bool hasBeenRotated;
 };
 
 struct totalProcess {
@@ -89,7 +88,7 @@ struct process* createProcess(char* pid, char* arrival, char* time, char* burst)
     newProcess->burstLength = atoi(burst);
     newProcess->timeRemaining = newProcess->burstLength;
     newProcess->hasResponded = false;
-    newProcess->prevEndTime = newProcess->arrival;
+    newProcess->prevEndTime = -1;
 
     return newProcess;
 }

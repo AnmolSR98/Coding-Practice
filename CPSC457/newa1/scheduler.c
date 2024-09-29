@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
     }**/
 
    inputArr = "input.csv";
-   procType = "srt";
+   procType = "rr";
    
 
     // actual input file
