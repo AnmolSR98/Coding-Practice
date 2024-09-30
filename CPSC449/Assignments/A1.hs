@@ -51,9 +51,10 @@ myShow x
 -- function to return the length of a string
 myLength :: String -> Int
 myLength x 
-           | otherwise = 0
+           | (x == "") = 0
+           | otherwise = 1 + myLength(drop 1 x)
 
--- determining whether an integer is even length or not
+-- determining whether an integer is even or not
 myEven :: Int -> Bool
 myEven x
         | (mod x 2 == 0) = True
@@ -62,3 +63,9 @@ myEven x
 -- function to determine whether number of digits in an integer is even or not
 processCheck :: Int -> Bool
 processCheck x = myEven(myLength(myShow(x))) 
+
+-- QUESTION 4:
+
+-- 4a: function to check whether a function is a power of 2 maybe
+
+-- 4b: 
