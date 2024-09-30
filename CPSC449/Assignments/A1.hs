@@ -19,12 +19,46 @@ factorial n
             
 
 
-binomial :: Int -> Int -> Double
+binomial :: Int -> Int -> Int
 binomial n k 
-            | ((n > k) && (k >= 0)) = (factorial (n)) / (factorial (k) * factorial(n - k))
-            | otherwise = 0.0
+            | ((n > k) && (k >= 0)) = round( (factorial (n)) / (factorial (k) * factorial(n - k)) )
+            | otherwise = 0
 
--- QUESTION 3: converting integer to string representation without using show in prelude
+-- QUESTION 3a: converting integer to string representation without using show in prelude
+
+-- simple function to convert numbers less than 10 to strings
+convertToString :: Int -> String
+convertToString x
+                  | (x == 0) = "0"
+                  | (x == 1) = "1"
+                  | (x == 2) = "2"
+                  | (x == 3) = "3"
+                  | (x == 4) = "4"
+                  | (x == 5) = "5"
+                  | (x == 6) = "6"
+                  | (x == 7) = "7"
+                  | (x == 8) = "8"
+                  | otherwise = "9"
+
+-- assumed that 0 doesn't count as positive 
 myShow :: Int->String
-myShow x
-        | (x >= 0) = ""
+myShow x 
+        | (x == 0) = ""
+        | otherwise = myShow( round(fromIntegral(x - mod x 10) / 10)) ++ convertToString(mod x 10)
+
+-- QUESTION 3b: 
+
+-- function to return the length of a string
+myLength :: String -> Int
+myLength x 
+           | otherwise = 0
+
+-- determining whether an integer is even length or not
+myEven :: Int -> Bool
+myEven x
+        | (mod x 2 == 0) = True
+        | otherwise = False 
+
+-- function to determine whether number of digits in an integer is even or not
+processCheck :: Int -> Bool
+processCheck x = myEven(myLength(myShow(x))) 
