@@ -23,7 +23,7 @@ factorial n
 
 binomial :: Int -> Int -> Int
 binomial n k 
-            | ((n >= k) && (k >= 0)) = round( (factorial (n)) / (factorial (k) * factorial(n - k)) )
+            | ((n >= k) && (k >= 0) && (n >= 1)) = round( (factorial (n)) / (factorial (k) * factorial(n - k)) )
             | otherwise = 0
 
 -- QUESTION 3a: converting integer to string representation without using show in prelude
