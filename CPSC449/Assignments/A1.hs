@@ -1,4 +1,6 @@
--- making a quickie function as described in assignment 1
+
+-- Anmol Ratol, 30231177
+
 -- CANNOT USE * OPERATOR
 -- QUESTION 1
 multiply :: Int -> Int -> Int
@@ -10,7 +12,7 @@ multiply x y
 
 
 -- QUESTION 2: making a binomial coefficient function
--- Working fine, just need to make sure to find a way to convert integer to double [DONE]
+-- simple little factorial function that spits out double for the sake of making division  simpler
 factorial :: Int -> Double
 factorial n
             | (n > 0) = fromIntegral(n) * factorial (n - 1)
@@ -21,7 +23,7 @@ factorial n
 
 binomial :: Int -> Int -> Int
 binomial n k 
-            | ((n > k) && (k >= 0)) = round( (factorial (n)) / (factorial (k) * factorial(n - k)) )
+            | ((n >= k) && (k >= 0)) = round( (factorial (n)) / (factorial (k) * factorial(n - k)) )
             | otherwise = 0
 
 -- QUESTION 3a: converting integer to string representation without using show in prelude
@@ -41,7 +43,7 @@ convertToString x
                   | otherwise = "9"
 
 -- assumed that 0 doesn't count as positive 
-myShow :: Int->String
+myShow :: Int -> String
 myShow x 
         | (x == 0) = ""
         | otherwise = myShow( round(fromIntegral(x - mod x 10) / 10)) ++ convertToString(mod x 10)
@@ -62,10 +64,44 @@ myEven x
 
 -- function to determine whether number of digits in an integer is even or not
 processCheck :: Int -> Bool
-processCheck x = myEven(myLength(myShow(x))) 
+processCheck x = (myEven . myLength . myShow) x 
 
 -- QUESTION 4:
 
--- 4a: function to check whether a function is a power of 2 maybe
+-- 4a: function to get a power of 2 maybe
+powerOfTwoMaybe :: Integer -> Maybe Integer
+powerOfTwoMaybe x 
+                | (x < 0) = Nothing
+                | otherwise = Just (2^x)
 
 -- 4b: 
+-- added the deriving Show just to get it to appear nicely
+data SF a = SS a | FF deriving Show
+
+-- integer version of factorial function
+factorialInteger :: Integer-> Integer
+factorialInteger n
+            | (n > 0) = n * factorialInteger (n - 1)
+            | (n == 0) = 1
+            | otherwise = 0
+
+factorialSF :: Integer -> SF Integer
+factorialSF x 
+        | (x < 0) = FF
+        | (x >= 0) = SS (factorialInteger(x)) 
+        
+-- 4c:
+
+-- function that returns log_2_(x), in int form
+intLog :: Integer -> Integer
+intLog x 
+        | (x == 1) = 0
+        | otherwise = 1 + (intLog.floor) (fromIntegral(x) / 2)
+
+
+invExpEither :: Integer -> Either String Integer
+invExpEither x 
+                | (x < 0) = Left "Input must be a non-negative integer"
+                | (x == 0) = Left "Undefined" -- was unsure what to place here, since 0 ought to prompt an error message as well
+                | otherwise = Right (intLog(x)) -- used log function here
+
