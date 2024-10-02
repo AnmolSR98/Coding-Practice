@@ -4,6 +4,8 @@
 #include <stdlib.h>
 
 #include "main.h"
+#include "fifo.c"
+#include "lru.c"
 
 #define length 15000
 #define buffer 64
@@ -13,12 +15,12 @@
 #define di_column 1
 
 // function to read in csv file
-void readIn() {
+page** readIn() {
 
     char* inputFile = "input.csv";
 
     // array of page pointers
-    page* pageArray[length];
+    page** pageArray = (page**) malloc(length*sizeof(page));
 
     // opening input file
     FILE* inputCSV = fopen(inputFile, "r");
@@ -48,13 +50,17 @@ void readIn() {
     // closing the input csv
     fclose(inputCSV);
 
-    printf("%d", pageArray[0]->pageNumber);
+    return pageArray;
 
 }
 
 int main () {
 
-    readIn();
+    page** listOPages = (page**) malloc(sizeof(page) * length);
+
+    listOPages = readIn();
+
+    LRU(listOPages, 100, length);
 
     return 0;
 }
