@@ -1,8 +1,5 @@
 #include "main.h"
 
-// ask if this should be one loop to check for free, then another to check oldest
-// as opposed to the current method of checking both in one go
-
 // function to the frame to update
 // need to account for the page that will be doing the replacing
 int getFrameToUpdateFIFO(frame** frameArray, int numFrames, int pageNumber) {
@@ -15,15 +12,12 @@ int getFrameToUpdateFIFO(frame** frameArray, int numFrames, int pageNumber) {
     for (i = 0; i < numFrames; i++) {
         // return if one is found
         if (frameArray[i]->currentPage == NULL) {
+            frameArray[i]->pageFaults += 1;
             return i;
         }
 
         else if (frameArray[i]->currentPage->pageNumber == pageNumber) {
             return i;
-        }
-
-        else {
-            frameArray[i]->pageFaults += 1;
         }
 
         // check if that frame is the oldest
@@ -32,12 +26,15 @@ int getFrameToUpdateFIFO(frame** frameArray, int numFrames, int pageNumber) {
             oldestFrameIndex = i;
         }
     }
+
+    // update the page fault if that specific page number was not found in memory
+    frameArray[oldestFrameIndex]->pageFaults += 1;
     
     // if no free page was found then return the oldest frame
     return oldestFrameIndex;
 }
 
-void FIFO(page** pageArray, int numFrames, int numPages) {
+void fifo(page** pageArray, int numFrames, int numPages) {
 
     // creating a new array of frames and filling it
     frame** frameArray = malloc(sizeof(frame) * numFrames);
@@ -47,34 +44,42 @@ void FIFO(page** pageArray, int numFrames, int numPages) {
     }
 
     int frameToUpdate;
-    page* currentPage = (page*) malloc(sizeof(page));
+    page* newPage = (page*) malloc(sizeof(page));
     frame* currentFrame = (frame*) malloc(sizeof(frame));
+    int totalTimesWasInMemory = 0;
 
     // now moving onto actually simulating checking the frames
     for (i = 0; i < numPages; i++) {
 
         // get the current page from the queue
-        currentPage = pageArray[i];
+        newPage = pageArray[i];
 
         // gonna create a function to check for the index of the first free frame
-        currentFrame = frameArray[getFrameToUpdateFIFO(frameArray, numFrames, currentPage->pageNumber)];
+        currentFrame = frameArray[getFrameToUpdateFIFO(frameArray, numFrames, newPage->pageNumber)];
 
         // adding on a update if the frame was null before or if the current page has a dirty bit
         // in the case of a null frame or change in page number, add on a write back
-        if ((currentFrame->currentPage == NULL) || (currentFrame->currentPage->pageNumber != currentPage->pageNumber)) {
+        if ((currentFrame->currentPage == NULL) || (currentFrame->currentPage->pageNumber != newPage->pageNumber)) {
             currentFrame->totalWriteBacks += 1;
             currentFrame->timeArrived = i;
         }
 
         // also do this in the case for identical page numbers but with a dirty bit
-        else if ((currentFrame->currentPage->pageNumber == currentPage->pageNumber) && (currentPage->dirty == 1)) {
+        else if ((currentFrame->currentPage->pageNumber == newPage->pageNumber) && (newPage->dirty == 1)) {
             currentFrame->totalWriteBacks += 1;
         }
 
+        if(currentFrame->currentPage!= NULL) {
+            if (currentFrame->currentPage->pageNumber == newPage->pageNumber) {
+                totalTimesWasInMemory++;
+            }
+        }
+
         // updating the frame
-        currentFrame->currentPage = currentPage;
+        currentFrame->currentPage = newPage;
     }
 
     printTable(frameArray, numFrames);
     printf("%d\n", frameArray[0]->currentPage->pageNumber);
+    printf("%d\n", totalTimesWasInMemory);
 }

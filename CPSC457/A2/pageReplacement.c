@@ -60,7 +60,7 @@ int main () {
 
     listOPages = readIn();
 
-    LRU(listOPages, 100, length);
+    fifo(listOPages, 5, length);
 
     return 0;
 }

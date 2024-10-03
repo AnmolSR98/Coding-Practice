@@ -13,16 +13,15 @@ int getFrameToUpdateLRU(frame** frameArray, int numFrames, int pageNumber) {
     for (i = 0; i < numFrames; i++) {
         // return if one is found
         if (frameArray[i]->currentPage == NULL) {
+            frameArray[i]->pageFaults += 1;
             return i;
         }
 
+        // if it is in memory return it
         else if (frameArray[i]->currentPage->pageNumber == pageNumber) {
             return i;
         }
 
-        else {
-            frameArray[i]->pageFaults += 1;
-        }
 
         // check if that frame is the oldest
         if (frameArray[i]->timeArrived < oldest) {
@@ -31,6 +30,9 @@ int getFrameToUpdateLRU(frame** frameArray, int numFrames, int pageNumber) {
         }
     }
     
+    // update the page fault if that specific page number was not found in memory
+    frameArray[oldestFrameIndex]->pageFaults += 1;
+
     // if no free page was found then return the oldest frame
     return oldestFrameIndex;
 }

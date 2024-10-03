@@ -47,6 +47,7 @@ void printTable(frame** frameArray, int numFrames) {
 
     printf(divider);
     printf(header);
+    printf(divider);
 
     frame* currentFrame = malloc(sizeof(frame));
 
@@ -54,6 +55,9 @@ void printTable(frame** frameArray, int numFrames) {
     for (i = 0; i < numFrames; i++) {
         currentFrame = frameArray[i];
         printf(content, currentFrame->frameId, currentFrame->pageFaults, currentFrame->totalWriteBacks);
+        if (i < numFrames - 1) { 
+            printf(divider);
+        }
     }
 
     printf(divider);
