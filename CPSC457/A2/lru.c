@@ -37,7 +37,7 @@ int getFrameToUpdateLRU(frame** frameArray, int numFrames, int pageNumber) {
     return oldestFrameIndex;
 }
 
-void LRU(page** pageArray, int numFrames, int numPages) {
+void lru(page** pageArray, int numFrames, int numPages) {
 
     // creating a new array of frames and filling it
     frame** frameArray = malloc(sizeof(frame) * numFrames);
@@ -47,35 +47,43 @@ void LRU(page** pageArray, int numFrames, int numPages) {
     }
 
     int frameToUpdate;
-    page* currentPage = (page*) malloc(sizeof(page));
+    page* newPage = (page*) malloc(sizeof(page));
     frame* currentFrame = (frame*) malloc(sizeof(frame));
+
+    int totalTimesWasInMemory = 0;
 
     // now moving onto actually simulating checking the frames
     for (i = 0; i < numPages; i++) {
 
         // get the current page from the queue
-        currentPage = pageArray[i];
+        newPage = pageArray[i];
 
         // gonna create a function to check for the index of the first free frame
-        currentFrame = frameArray[getFrameToUpdateLRU(frameArray, numFrames, currentPage->pageNumber)];
+        currentFrame = frameArray[getFrameToUpdateLRU(frameArray, numFrames, newPage->pageNumber)];
 
         // only changes for LRU is to change timeArrived only when the pageNumber is different
 
         // adding on a update if the frame was null before or if the current page has a dirty bit
         // in the case of a null frame or change in page number, add on a write back
-        if ((currentFrame->currentPage == NULL) || (currentFrame->currentPage->pageNumber != currentPage->pageNumber)) {
+        if ((currentFrame->currentPage == NULL) || (currentFrame->currentPage->pageNumber != newPage->pageNumber)) {
             currentFrame->totalWriteBacks += 1;
         }
 
         // also do this in the case for identical page numbers but with a dirty bit
-        else if ((currentFrame->currentPage->pageNumber == currentPage->pageNumber) && (currentPage->dirty == 1)) {
+        else if ((currentFrame->currentPage->pageNumber == newPage->pageNumber) && (newPage->dirty == 1)) {
             currentFrame->totalWriteBacks += 1;
         }
 
+         if(currentFrame->currentPage!= NULL) {
+            if (currentFrame->currentPage->pageNumber == newPage->pageNumber) {
+                totalTimesWasInMemory++;
+            }
+        }
+
         currentFrame->timeArrived = i;
-        currentFrame->currentPage = currentPage;
+        currentFrame->currentPage = newPage;
     }
 
     printTable(frameArray, numFrames);
-    printf("%d\n", frameArray[0]->currentPage->pageNumber);
+    printf("%d\n", totalTimesWasInMemory);
 }

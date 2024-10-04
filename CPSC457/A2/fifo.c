@@ -1,5 +1,8 @@
 #include "main.h"
 
+// look at write backs again for both FIFO and LRU
+// definitely change, should only writeback for dirty bits
+
 // function to the frame to update
 // need to account for the page that will be doing the replacing
 int getFrameToUpdateFIFO(frame** frameArray, int numFrames, int pageNumber) {
@@ -80,6 +83,5 @@ void fifo(page** pageArray, int numFrames, int numPages) {
     }
 
     printTable(frameArray, numFrames);
-    printf("%d\n", frameArray[0]->currentPage->pageNumber);
     printf("%d\n", totalTimesWasInMemory);
 }
