@@ -23,8 +23,8 @@ int indexOfNextInstance(page** pageArray, int lowerBound, int length, int pageNu
 int getFrameToUpdateOptimal(frame** frameArray, page** pageArray, int numFrames, int numPages, int pageNumber, int currentIndex) {
 
     int i;
-    int frameIndex;
-    int lastestAppearance = 0;
+    int frameIndex = 0;
+    int latest = 0;
     int potential;
     
     // loop to cycle through the various frames to see if any of them are free
@@ -40,10 +40,10 @@ int getFrameToUpdateOptimal(frame** frameArray, page** pageArray, int numFrames,
         }
 
         // check if the page in the frame appears that last, or not at all
-        potential = indexOfNextInstance(pageArray, numPages, frameArray[i]->currentPage->pageNumber, currentIndex);
+        potential = indexOfNextInstance(pageArray, currentIndex, numPages, frameArray[i]->currentPage->pageNumber);
 
-        if ((potential > lastestAppearance) || (potential == -1)) {
-            lastestAppearance = potential;
+        if ((potential > latest) || ((potential == -1) && (latest != -1))) {
+            latest = potential;
             frameIndex = i;
         }
     }

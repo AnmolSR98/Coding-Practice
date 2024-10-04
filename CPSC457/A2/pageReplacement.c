@@ -6,6 +6,7 @@
 #include "main.h"
 #include "fifo.c"
 #include "lru.c"
+#include "optimal.c"
 
 #define length 15000
 #define buffer 64
@@ -60,7 +61,9 @@ int main () {
 
     listOPages = readIn();
 
-    lru(listOPages, 50, length);
+    //fifo(listOPages, 50, length);
+    //lru(listOPages, 50, length);
+    optimal(listOPages, 50, length);
 
     return 0;
 }
