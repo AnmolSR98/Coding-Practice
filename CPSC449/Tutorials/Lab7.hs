@@ -108,7 +108,8 @@ insertSorted x (y:ys) | (x < y) = [x] ++ (y:ys)
                       | otherwise = [y] ++ insertSorted (x) (ys)
 
 -- 11. Find all sublists of a list 
---sublists :: [a] -> [[a]]
---sublists [] = [[]]
---sublists (x:y) = [[x], y]
---sublists (x:y:rem) = sublists(x:y) + sublists(y:rem)
+-- sublists :: [a] -> [[a]]
+-- sublists [] = [[]]
+-- sublists (x:rem) = x : sublists(rem)
+
+-- take the head of the list, extract it, make the list as x:xs, 
