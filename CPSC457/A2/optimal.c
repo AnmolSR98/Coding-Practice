@@ -39,7 +39,7 @@ int getFrameToUpdateOptimal(frame** frameArray, page** pageArray, int numFrames,
             return i;
         }
 
-        // check if that frame is the oldest
+        // check if the page in the frame appears that last, or not at all
         potential = indexOfNextInstance(pageArray, numPages, frameArray[i]->currentPage->pageNumber, currentIndex);
 
         if ((potential > lastestAppearance) || (potential == -1)) {
@@ -55,7 +55,7 @@ int getFrameToUpdateOptimal(frame** frameArray, page** pageArray, int numFrames,
     return frameIndex;
 }
 
-void fifo(page** pageArray, int numFrames, int numPages) {
+void optimal(page** pageArray, int numFrames, int numPages) {
 
     // creating a new array of frames and filling it
     frame** frameArray = malloc(sizeof(frame) * numFrames);
