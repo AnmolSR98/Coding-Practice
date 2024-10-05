@@ -54,6 +54,24 @@ frame* createFrame(int frameId) {
     return newFrame;
 }
 
+void printArray(int* someArray, int length) {
+
+    int i = 0;
+    printf("[ ");
+    for (i = 0; i < length; i++) {
+
+        if (i < length - 1) {
+            printf("%d, ", someArray[i]);
+        }
+
+        else {
+            printf("%d", someArray[i]);
+        }
+    }
+    printf(" ]\n");
+
+}
+
 char* divider = "+--------+-------------+-------------+\n";
 char* header  = "| Frames | Page Faults | Write backs |\n";
 char* content = "| %6d | %11d | %11d |\n";

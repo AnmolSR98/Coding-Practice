@@ -7,6 +7,7 @@
 #include "fifo.c"
 #include "lru.c"
 #include "optimal.c"
+#include "secondchance.c"
 
 #define length 15000
 #define buffer 64
@@ -63,7 +64,8 @@ int main () {
 
     //fifo(listOPages, 50, length);
     //lru(listOPages, 50, length);
-    optimal(listOPages, 50, length);
+    //optimal(listOPages, 50, length);
+    secondChance(listOPages, 50, length, 8, 8, 500);
 
     return 0;
 }

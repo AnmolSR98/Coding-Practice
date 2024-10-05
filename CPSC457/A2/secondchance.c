@@ -2,6 +2,7 @@
 #include "math.h"
 #include <stdio.h>
 
+// definitely some issue with this here
 
 int getTotalValue(int* someArray, int length) {
     int i, arraySum = 0;
@@ -15,8 +16,12 @@ int getTotalValue(int* someArray, int length) {
 // only works for one shift, which ought to be needed for this assignment
 int* logicalShiftRight(int* someArray, int length) {
     int i;
+    int holder = someArray[0];
+    int holder2 = someArray[0];
     for (i = 1; i < length; i++) {
-        someArray[i] = someArray[i-1];
+        holder = holder2;
+        holder2 = someArray[i];
+        someArray[i] = holder;
     }
 
     someArray[0] = 0;
@@ -56,7 +61,7 @@ int getFrameToUpdateSecond(frame** frameArray, page** pageArray, page** pageTabl
         }
 
         somePage = frameArray[i]->currentPage;
-        potential = getTotalValue(pageTable[somePage->pageNumber - 1]->reference, n);
+        potential = getTotalValue(pageTable[somePage->pageNumber]->reference, n);
 
         // check to see if this page has the smallest reference in the table, and if so update it
         if (potential < smallestVal) {
