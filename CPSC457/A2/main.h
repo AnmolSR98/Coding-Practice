@@ -9,6 +9,7 @@
 typedef struct {
     int pageNumber;
     int dirty;
+    int* reference;
 } page;
 
 typedef struct {
@@ -24,6 +25,20 @@ page* createPage(char* pageNumber, char* dirty) {
     
     newPage->pageNumber = atoi(pageNumber);
     newPage->dirty = atoi(dirty);
+
+    return newPage;
+}
+
+page* altCreatePage(int pageNumber, int n) {
+    page* newPage = (page*) malloc(sizeof(page));
+    
+    newPage->pageNumber = pageNumber;
+    newPage->reference = (int*) malloc(sizeof(int) * n);
+
+    int i;
+    for (i = 0; i < n; i++) {
+        newPage->reference[i] = 0; 
+    }
 
     return newPage;
 }
