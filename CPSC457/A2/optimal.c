@@ -55,7 +55,7 @@ int getFrameToUpdateOptimal(frame** frameArray, page** pageArray, int numFrames,
     return frameIndex;
 }
 
-void optimal(page** pageArray, int numFrames, int numPages) {
+int* optimal(page** pageArray, int numFrames, int numPages) {
 
     // creating a new array of frames and filling it
     frame** frameArray = malloc(sizeof(frame) * numFrames);
@@ -99,7 +99,7 @@ void optimal(page** pageArray, int numFrames, int numPages) {
     }
 
     //printTable(frameArray, numFrames);
-    free(frameArray); free(currentFrame); free(newPage); 
+    free(frameArray); free(currentFrame);
     //printf("%d\n", totalTimesWasInMemory);
     //printf("%d\n", totalWritebacks);
 

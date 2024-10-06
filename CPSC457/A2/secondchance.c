@@ -4,6 +4,11 @@
 
 // definitely some issue with this here
 
+// had forgotten to implement this
+void setMostSignificantBit(int* someArray) {
+    someArray[0] = 1;
+}
+
 int getTotalValue(int* someArray, int length) {
     int i, arraySum = 0;
     for (i = 0; i < length; i++) {
@@ -79,7 +84,7 @@ int getFrameToUpdateSecond(frame** frameArray, page** pageArray, page** pageTabl
 }
 
 // need to change this so that it performs the shift right every m number of frames
-void secondChance(page** pageArray, int numFrames, int numPages, int m, int n, int numUniquePages) {
+int* secondChance(page** pageArray, int numFrames, int numPages, int m, int n, int numUniquePages) {
 
     // creating a new array of frames and filling it
     frame** frameArray = (frame**) malloc(sizeof(frame) * numFrames);
@@ -90,13 +95,14 @@ void secondChance(page** pageArray, int numFrames, int numPages, int m, int n, i
 
     page** pageTable = (page**)  malloc(sizeof(page) * numUniquePages);
     for (i = 0; i < numUniquePages; i++) {
-        pageTable[i] = altCreatePage(i+1, n);
+        pageTable[i] = altCreatePage(i, n);
     }
 
     int frameToUpdate;
     page* newPage = (page*) malloc(sizeof(page));
     frame* currentFrame = (frame*) malloc(sizeof(frame));
     int totalTimesWasInMemory = 0;
+    int totalWritebacks = 0;
 
     // now moving onto actually simulating checking the frames
     for (i = 0; i < numPages; i++) {
@@ -105,17 +111,16 @@ void secondChance(page** pageArray, int numFrames, int numPages, int m, int n, i
         newPage = pageArray[i];
 
         // gonna create a function to check for the index of the first free frame
-        currentFrame = frameArray[getFrameToUpdateSecond(frameArray, pageArray, pageTable, numFrames, numPages, numUniquePages, newPage->pageNumber, n)];
+        int newThing = getFrameToUpdateSecond(frameArray, pageArray, pageTable, numFrames, numPages, numUniquePages, newPage->pageNumber, n);
+        currentFrame = frameArray[newThing];
 
         // adding on a update if the frame was null before or if the current page has a dirty bit
         // in the case of a null frame or change in page number, add on a write back
-        if ((currentFrame->currentPage == NULL) || (currentFrame->currentPage->pageNumber != newPage->pageNumber)) {
-            currentFrame->totalWriteBacks += 1;
-        }
 
         // also do this in the case for identical page numbers but with a dirty bit
-        else if ((currentFrame->currentPage->pageNumber == newPage->pageNumber) && (newPage->dirty == 1)) {
+        if ((newPage->dirty == 1)) {
             currentFrame->totalWriteBacks += 1;
+            totalWritebacks++;
         }
 
         if(currentFrame->currentPage!= NULL) {
@@ -126,6 +131,7 @@ void secondChance(page** pageArray, int numFrames, int numPages, int m, int n, i
 
         // updating the frame
         currentFrame->currentPage = newPage;
+        setMostSignificantBit(pageTable[newPage->pageNumber]->reference);
 
         if (i % m == 0) {
             updatePageTable(pageTable, numUniquePages, n);
@@ -133,5 +139,11 @@ void secondChance(page** pageArray, int numFrames, int numPages, int m, int n, i
     }
 
     printTable(frameArray, numFrames);
-    printf("%d\n", totalTimesWasInMemory);
+    //printf("%d\n", totalTimesWasInMemory);
+    free(pageTable); free(frameArray); free(newPage);
+
+    int* returnData = (int*) malloc(sizeof(int)*2);
+    returnData[0] = numPages-totalTimesWasInMemory; returnData[1] = totalWritebacks;
+
+    return returnData;
 }

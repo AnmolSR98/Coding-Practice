@@ -98,7 +98,7 @@ void printTable(frame** frameArray, int numFrames) {
     //free(currentFrame);
 }
 
-// functions to actually use for this
+// functions to actually use for printing the results of any given algorithm
 void printHeader() {
     printf(divider);
     printf(header);

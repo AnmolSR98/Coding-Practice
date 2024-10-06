@@ -56,24 +56,34 @@ page** readIn() {
 
 }
 
+void runLoop(page** listOPages){
+    
+    int i, y, z;
+    int* holderArray = (int*) malloc(sizeof(int)*2);
+    printHeader();
+    for (i = 1; i <= 100; i++) {
+        holderArray = optimal(listOPages, i, length);
+        printData(i, holderArray[0], holderArray[1]);
+    }
+    printFooter();
+}
+
 int main () {
 
     page** listOPages = (page**) malloc(sizeof(page) * length);
 
     listOPages = readIn();
-
-    int i, y, z;
-    int* holderArray = (int*) malloc(sizeof(int)*2);
-    printHeader();
-    for (i = 1; i <= 50; i++) {
-        holderArray = fifo(listOPages, i, length);
-        printData(i, holderArray[0], holderArray[1]);
-    }
-    printFooter();
-
     //lru(listOPages, 50, length);
     //optimal(listOPages, 50, length);
-    //secondChance(listOPages, 50, length, 8, 8, 500);
+
+    int i;
+    int* holderArray = (int*) malloc(sizeof(int)*2);
+    printHeader();
+    for (i = 1; i <= 1; i++) {
+        holderArray = secondChance(listOPages, 25, length, 8, 8, 500);
+        //printData(i, holderArray[0], holderArray[1]);
+    }
+    //printFooter();
 
     return 0;
 }
