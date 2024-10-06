@@ -23,7 +23,7 @@ int getFrameToUpdateLRU(frame** frameArray, int numFrames, int pageNumber) {
         }
 
 
-        // check if that frame is the oldest
+        // check if that frame is the oldest, and if so, update it
         if (frameArray[i]->timeArrived < oldest) {
             oldest = frameArray[i]->timeArrived;
             oldestFrameIndex = i;
@@ -46,7 +46,6 @@ int* lru(page** pageArray, int numFrames, int numPages) {
         frameArray[i] = createFrame(i+1);
     }
 
-    int frameToUpdate;
     page* newPage = (page*) malloc(sizeof(page));
     frame* currentFrame = (frame*) malloc(sizeof(frame));
 
@@ -59,14 +58,9 @@ int* lru(page** pageArray, int numFrames, int numPages) {
         // get the current page from the queue
         newPage = pageArray[i];
 
-        // gonna create a function to check for the index of the first free frame
+        // getting the frame to be updated
         currentFrame = frameArray[getFrameToUpdateLRU(frameArray, numFrames, newPage->pageNumber)];
 
-        // only changes for LRU is to change timeArrived only when the pageNumber is different
-
-        // adding on a update if the frame was null before or if the current page has a dirty bit
-        // in the case of a null frame or change in page number, add on a write back
-        // also do this in the case for identical page numbers but with a dirty bit
         if ((newPage->dirty == 1)) {
             currentFrame->totalWriteBacks += 1;
             totalWritebacks++;
@@ -78,6 +72,7 @@ int* lru(page** pageArray, int numFrames, int numPages) {
             }
         }
 
+        // update the time arrived (regardless of whether that frame already contained that page) and the page within the frame
         currentFrame->timeArrived = i;
         currentFrame->currentPage = newPage;
     }

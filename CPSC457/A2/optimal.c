@@ -1,10 +1,6 @@
 #include "main.h"
 
-// look at write backs again for both FIFO and LRU
-// definitely change, should only writeback for dirty bits
-
-// function to the frame to update
-// need to account for the page that will be doing the replacing
+// function that finds index of first instance of the pageNumber
 int indexOfNextInstance(page** pageArray, int lowerBound, int length, int pageNumber) {
 
     int i;
@@ -29,6 +25,7 @@ int getFrameToUpdateOptimal(frame** frameArray, page** pageArray, int numFrames,
     
     // loop to cycle through the various frames to see if any of them are free
     for (i = 0; i < numFrames; i++) {
+
         // return if one is found
         if (frameArray[i]->currentPage == NULL) {
             frameArray[i]->pageFaults += 1;
@@ -42,6 +39,7 @@ int getFrameToUpdateOptimal(frame** frameArray, page** pageArray, int numFrames,
         // check if the page in the frame appears that last, or not at all
         potential = indexOfNextInstance(pageArray, currentIndex, numPages, frameArray[i]->currentPage->pageNumber);
 
+        // if it appears last or doesn't appear at all, then this is the frame to update
         if ((potential > latest) || ((potential == -1) && (latest != -1))) {
             latest = potential;
             frameIndex = i;

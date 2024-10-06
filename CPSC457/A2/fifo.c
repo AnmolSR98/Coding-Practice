@@ -23,7 +23,7 @@ int getFrameToUpdateFIFO(frame** frameArray, int numFrames, int pageNumber) {
             return i;
         }
 
-        // check if that frame is the oldest
+        // check if that frame is the oldest, and if so, update it
         if (frameArray[i]->timeArrived < oldest) {
             oldest = frameArray[i]->timeArrived;
             oldestFrameIndex = i;
@@ -58,16 +58,14 @@ int* fifo(page** pageArray, int numFrames, int numPages) {
         // get the current page from the queue
         newPage = pageArray[i];
 
-        // gonna create a function to check for the index of the first free frame
+        // gonna create a function to get the frame to update
         currentFrame = frameArray[getFrameToUpdateFIFO(frameArray, numFrames, newPage->pageNumber)];
 
-        // adding on a update if the frame was null before or if the current page has a dirty bit
-        // in the case of a null frame or change in page number, add on a write back
+        // update the time arrived value if the page was not already in the frame array
         if ((currentFrame->currentPage == NULL) || (currentFrame->currentPage->pageNumber != newPage->pageNumber)) {
             currentFrame->timeArrived = i;
         }
 
-        // also do this in the case for identical page numbers but with a dirty bit
         if ((newPage->dirty == 1)) {
             currentFrame->totalWriteBacks += 1;
             totalWritebacks++;
@@ -79,7 +77,7 @@ int* fifo(page** pageArray, int numFrames, int numPages) {
             }
         }
 
-        // updating the frame
+        // updating the frame with the new page
         currentFrame->currentPage = newPage;
     }
 
