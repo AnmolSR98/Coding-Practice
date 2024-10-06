@@ -68,6 +68,7 @@ void optimal(page** pageArray, int numFrames, int numPages) {
     page* newPage = (page*) malloc(sizeof(page));
     frame* currentFrame = (frame*) malloc(sizeof(frame));
     int totalTimesWasInMemory = 0;
+    int totalWritebacks = 0;
 
     // now moving onto actually simulating checking the frames
     for (i = 0; i < numPages; i++) {
@@ -80,14 +81,11 @@ void optimal(page** pageArray, int numFrames, int numPages) {
 
         // adding on a update if the frame was null before or if the current page has a dirty bit
         // in the case of a null frame or change in page number, add on a write back
-        if ((currentFrame->currentPage == NULL) || (currentFrame->currentPage->pageNumber != newPage->pageNumber)) {
-            currentFrame->totalWriteBacks += 1;
-            currentFrame->timeArrived = i;
-        }
 
         // also do this in the case for identical page numbers but with a dirty bit
-        else if ((currentFrame->currentPage->pageNumber == newPage->pageNumber) && (newPage->dirty == 1)) {
+        if ( (newPage->dirty == 1)) {
             currentFrame->totalWriteBacks += 1;
+            totalWritebacks++;
         }
 
         if(currentFrame->currentPage!= NULL) {
@@ -100,6 +98,13 @@ void optimal(page** pageArray, int numFrames, int numPages) {
         currentFrame->currentPage = newPage;
     }
 
-    printTable(frameArray, numFrames);
-    printf("%d\n", totalTimesWasInMemory);
+    //printTable(frameArray, numFrames);
+    free(frameArray); free(currentFrame); free(newPage); 
+    //printf("%d\n", totalTimesWasInMemory);
+    //printf("%d\n", totalWritebacks);
+
+    int* returnData = (int*) malloc(sizeof(int)*2);
+    returnData[0] = numPages-totalTimesWasInMemory; returnData[1] = totalWritebacks;
+
+    return returnData;
 }

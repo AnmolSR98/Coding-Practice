@@ -76,6 +76,7 @@ char* divider = "+--------+-------------+-------------+\n";
 char* header  = "| Frames | Page Faults | Write backs |\n";
 char* content = "| %6d | %11d | %11d |\n";
 
+// just used for testing purposes
 void printTable(frame** frameArray, int numFrames) {
 
     printf(divider);
@@ -94,7 +95,22 @@ void printTable(frame** frameArray, int numFrames) {
     }
 
     printf(divider);
-    free(currentFrame);
+    //free(currentFrame);
+}
+
+// functions to actually use for this
+void printHeader() {
+    printf(divider);
+    printf(header);
+}
+
+void printData(int x, int y, int z) {
+    printf(divider);
+    printf(content, x, y, z);
+}
+
+void printFooter() {
+    printf(divider);
 }
 
 #endif

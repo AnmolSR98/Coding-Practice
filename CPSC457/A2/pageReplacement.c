@@ -62,10 +62,18 @@ int main () {
 
     listOPages = readIn();
 
-    //fifo(listOPages, 50, length);
+    int i, y, z;
+    int* holderArray = (int*) malloc(sizeof(int)*2);
+    printHeader();
+    for (i = 1; i <= 50; i++) {
+        holderArray = fifo(listOPages, i, length);
+        printData(i, holderArray[0], holderArray[1]);
+    }
+    printFooter();
+
     //lru(listOPages, 50, length);
     //optimal(listOPages, 50, length);
-    secondChance(listOPages, 50, length, 8, 8, 500);
+    //secondChance(listOPages, 50, length, 8, 8, 500);
 
     return 0;
 }
