@@ -1,14 +1,17 @@
+// importing a bunch of standard c stuff
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
+// including the other algorithms
 #include "main.h"
 #include "fifo.c"
 #include "lru.c"
 #include "optimal.c"
 #include "secondchance.c"
 
+// defining a bunch of variables to be used
 #define length 15000
 #define buffer 64
 #define numAttr 2
@@ -70,9 +73,10 @@ void runLoop(page** listOPages){
 
 int main () {
 
+    // reading in the pages to be used later
     page** listOPages = (page**) malloc(sizeof(page) * length);
-
     listOPages = readIn();
+    
     //lru(listOPages, 50, length);
     //optimal(listOPages, 50, length);
 

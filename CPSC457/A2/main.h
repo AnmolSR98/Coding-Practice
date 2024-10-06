@@ -113,5 +113,20 @@ void printFooter() {
     printf(divider);
 }
 
+char* clockDivider =  "+--------+-------------+-------------+\n";
+char* clockHeaderN  = "|  n | Page Faults | Write backs |\n";
+char* clockHeaderM  = "|  m | Page Faults | Write backs |\n";
+char* clockContent =  "| %3d | %11d | %11d |\n";
+
+void printClockHeaderN(){
+    printf(clockDivider);
+    printf(clockHeaderN);
+}
+
+void printClockHeaderM(){
+    printf(clockDivider);
+    printf(clockHeaderM);
+}
+
 #endif
 
