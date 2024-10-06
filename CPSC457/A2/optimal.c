@@ -49,7 +49,7 @@ int getFrameToUpdateOptimal(frame** frameArray, page** pageArray, int numFrames,
     // update the page fault if that specific page number was not found in memory
     frameArray[frameIndex]->pageFaults += 1;
     
-    // if no free page was found then return the oldest frame
+    // if no free page was found then return the frame with the page that will reappear last or not at all
     return frameIndex;
 }
 

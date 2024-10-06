@@ -18,6 +18,7 @@ typedef struct {
     int frameId; 
     int pageFaults;
     int timeArrived;
+    int nextArrival;
 } frame;    
 
 page* createPage(char* pageNumber, char* dirty) {
@@ -50,6 +51,7 @@ frame* createFrame(int frameId) {
     newFrame->frameId = frameId;
     newFrame->pageFaults = 0;
     newFrame->totalWriteBacks = 0;
+    newFrame->nextArrival = 0;
 
     return newFrame;
 }
