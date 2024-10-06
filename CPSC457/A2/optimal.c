@@ -37,7 +37,7 @@ int getFrameToUpdateOptimal(frame** frameArray, page** pageArray, int numFrames,
         }
 
         // check if the page in the frame appears that last, or not at all
-        potential = indexOfNextInstance(pageArray, currentIndex, numPages, frameArray[i]->currentPage->pageNumber);
+        potential = frameArray[i]->nextArrival;
 
         // if it appears last or doesn't appear at all, then this is the frame to update
         if ((potential > latest) || ((potential == -1) && (latest != -1))) {
@@ -94,6 +94,7 @@ int* optimal(page** pageArray, int numFrames, int numPages) {
 
         // updating the frame
         currentFrame->currentPage = newPage;
+        currentFrame->nextArrival = indexOfNextInstance(pageArray, i, numPages, currentFrame->currentPage->pageNumber);
     }
 
     //printTable(frameArray, numFrames);
