@@ -145,19 +145,19 @@ int main (int argc, char** argv) {
     listOPages = readIn(filename);
     int numUniquePages = 500;
     
-    if (strcmp(method, "FIFO") == 1) {
+    if (strcmp(method, "FIFO") == 0) {
         runLoopFIFO(listOPages);
     }
 
-    else if (strcmp(method, "LRU") == 1) {
+    else if (strcmp(method, "LRU") == 0) {
         runLoopLRU(listOPages);
     }
     
-    else if (strcmp(method, "OPT") == 1) {
+    else if (strcmp(method, "OPT") == 0) {
         runLoopOPT(listOPages);
     }
     
-    else if (strcmp(method, "CLK") == 1) {
+    else if (strcmp(method, "CLK") == 0) {
         runLoopCLK(listOPages, numUniquePages);
     }
 
