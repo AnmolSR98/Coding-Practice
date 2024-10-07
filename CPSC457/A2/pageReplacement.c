@@ -84,10 +84,11 @@ int main () {
     int* holderArray = (int*) malloc(sizeof(int)*2);
     printHeader();
     for (i = 1; i <= 1; i++) {
-        holderArray = secondChance(listOPages, 25, length, 8, 8, 500);
-        //printData(i, holderArray[0], holderArray[1]);
+        holderArray = fifo(listOPages, 25, length); 
+        //secondChance(listOPages, 25, length, 8, 8, 500);
+        printData(i, holderArray[0], holderArray[1]);
     }
-    //printFooter();
+    printFooter();
 
     return 0;
 }

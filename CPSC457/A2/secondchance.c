@@ -143,7 +143,7 @@ int* secondChance(page** pageArray, int numFrames, int numPages, int m, int n, i
         }
     }
 
-    printTable(frameArray, numFrames);
+    //printTable(frameArray, numFrames);
     //printf("%d\n", totalTimesWasInMemory);
     free(pageTable); free(frameArray); free(newPage);
 
