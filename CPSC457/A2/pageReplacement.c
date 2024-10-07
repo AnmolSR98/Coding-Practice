@@ -20,9 +20,7 @@
 #define di_column 1
 
 // function to read in csv file
-page** readIn() {
-
-    char* inputFile = "input.csv";
+page** readIn(char* inputFile) {
 
     // array of page pointers
     page** pageArray = (page**) malloc(length*sizeof(page));
@@ -59,10 +57,12 @@ page** readIn() {
 
 }
 
-void runLoop(page** listOPages){
+// bunch of generic functions to run loops for the various page replacement algorithms
+void runLoopOPT(page** listOPages){
     
     int i, y, z;
     int* holderArray = (int*) malloc(sizeof(int)*2);
+    printf("OPT\n");
     printHeader();
     for (i = 1; i <= 100; i++) {
         holderArray = optimal(listOPages, i, length);
@@ -71,24 +71,99 @@ void runLoop(page** listOPages){
     printFooter();
 }
 
-int main () {
-
-    // reading in the pages to be used later
-    page** listOPages = (page**) malloc(sizeof(page) * length);
-    listOPages = readIn();
+void runLoopLRU(page** listOPages){
     
-    //lru(listOPages, 50, length);
-    //optimal(listOPages, 50, length);
-
-    int i;
+    int i, y, z;
     int* holderArray = (int*) malloc(sizeof(int)*2);
+    printf("LRU\n");
     printHeader();
-    for (i = 1; i <= 1; i++) {
-        holderArray = fifo(listOPages, 25, length); 
-        //secondChance(listOPages, 25, length, 8, 8, 500);
+    for (i = 1; i <= 100; i++) {
+        holderArray = lru(listOPages, i, length);
         printData(i, holderArray[0], holderArray[1]);
     }
     printFooter();
+}
+
+void runLoopFIFO(page** listOPages){
+    
+    int i, y, z;
+    int* holderArray = (int*) malloc(sizeof(int)*2);
+    printf("FIFO\n");
+    printHeader();
+    for (i = 1; i <= 100; i++) {
+        holderArray = fifo(listOPages, i, length);
+        printData(i, holderArray[0], holderArray[1]);
+    }
+    printFooter();
+}
+
+void runLoopCLK(page** listOPages, int numUniquePages){
+    
+    int m, n, y, z;
+    int numFrames = 25;
+    int* holderArray = (int*) malloc(sizeof(int)*2);
+    
+    printf("CLK\n");
+
+    m = 10;
+    // setting the loop for m = 10, n from 1 to 32
+    printClockHeaderN();
+    for (n = 1; n <= 32; n++) {
+        holderArray = secondChance(listOPages, numFrames, numUniquePages, m, n, length);
+        printClockData(n, holderArray[0], holderArray[1]);
+    }
+    printFooter();
+    printf("\n");
+
+    n = 8;
+    // setting the loop for n = 10, n from 1 to 32
+    printClockHeaderM();
+    for (m = 1; m <= 100; m++) {
+        holderArray = secondChance(listOPages, numFrames, numUniquePages, m, n, length);
+        printClockData(m, holderArray[0], holderArray[1]);
+    }
+    printFooter();
+}
+
+int main (int argc, char** argv) {
+
+    char* method; 
+    char* filename;
+
+    if (argc != 3) {
+        printf("The correct format is: <./pageReplacement method filename>!");
+        return 0;
+    }
+
+    else {
+        method = argv[1];
+        filename = argv[2];
+    }
+
+    // reading in the pages to be used later
+    page** listOPages = (page**) malloc(sizeof(page) * length);
+    listOPages = readIn(filename);
+    int numUniquePages = 500;
+    
+    if (strcmp(method, "FIFO") == 1) {
+        runLoopFIFO(listOPages);
+    }
+
+    else if (strcmp(method, "LRU") == 1) {
+        runLoopLRU(listOPages);
+    }
+    
+    else if (strcmp(method, "OPT") == 1) {
+        runLoopOPT(listOPages);
+    }
+    
+    else if (strcmp(method, "CLK") == 1) {
+        runLoopCLK(listOPages, numUniquePages);
+    }
+
+    else {
+        printf("Enter a valid method (one of: FIFO, LRU, OPT, CLK)!");
+    }
 
     return 0;
 }

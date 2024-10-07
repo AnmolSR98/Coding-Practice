@@ -115,6 +115,7 @@ void printFooter() {
     printf(divider);
 }
 
+// more print functions to be used for the clock algorithm
 char* clockDivider =  "+--------+-------------+-------------+\n";
 char* clockHeaderN  = "|  n | Page Faults | Write backs |\n";
 char* clockHeaderM  = "|  m | Page Faults | Write backs |\n";
@@ -123,6 +124,11 @@ char* clockContent =  "| %3d | %11d | %11d |\n";
 void printClockHeaderN(){
     printf(clockDivider);
     printf(clockHeaderN);
+}
+
+void printClockData(int x, int y, int z) {
+    printf(divider);
+    printf(content, x, y, z);
 }
 
 void printClockHeaderM(){
