@@ -82,9 +82,9 @@ outcome a b
 
 -- The Value Constructors in the definition of a data type, can have parameters:
 -- 9. Make your own type to represent a shape. A shape can be a circle or a rectangle
---data Shape = Sphere Float | Rect Float Float
+data Shape = Sphere Float | Rect Float Float Float
 
-{-}
+{-
 Value constructors are actually functions that ultimately return a value of a data type.
 Let's take a look at the type signatures for these two value constructors.
 
@@ -96,9 +96,9 @@ ghci> :t Rectangle
 
 
 -- 10. Write a function that takes a shape and returns its surface.
---surface :: Shape -> Float
---surface (Circle r) = pi * r * r
---surface (Rect x y) = x * y
+surface :: Shape -> Float
+surface (Sphere r) = (4 / 3) * pi * (r^3)
+surface (Rect x y z) = 2 * ( (x * y) + (y * z) + (x * z) ) 
 
 
 -- The Shape data type is good, although it could be better.
@@ -106,17 +106,17 @@ ghci> :t Rectangle
 -- Then we can use that to make our shapes more understandable.
 
 -- 11. Define data type Point and rewrite the Shape data type using Point
---data Point = -- ??? --
+data Point = Point Float Float Float
 
---data Shape' = -- ??? --
+data Shape' = Sphere' Point Point | Rect' Point Point Point  
 
 -- You can also write your custom show function for your data type
 -- by making your data type an instance of Show type class:
 -- 12. Implement custom show function for Shape and Point data types
 
---instance Show Point where
-  --show :: -- ??? --
-  --show = -- ??? --
+instance Show Point where
+  show :: Point -> String
+  show (Point x y z) = "(" ++ show x ++ ", " ++  show y ++ ", " ++ show z  ++ ")"  
 
 --instance Show Shape' where
   --show :: -- ??? --

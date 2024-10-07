@@ -52,13 +52,18 @@ sumOfSquares n = if n == 1 then 1
         else n*n + sumOfSquares(n - 1)           -- enter your code here
 
 -- Implement a function to check if a given number is prime
---isPrime :: Int -> Bool
---isPrime n =            -- enter your code here
+isPrime :: Int -> Bool
+isPrime n = isPrimeHelper (n) (2)            -- enter your code here
+
+isPrimeHelper :: Int -> Int -> Bool
+isPrimeHelper x y | (x == y) = True
+                  | (mod (x) (y) /= 0) = isPrimeHelper (x) (y+1)
+                  | otherwise = False
 
 
 -- Implement a function that uses function composition to take a number, adds 3, multiply by 2, subtract 1, and then takes the absolute value. 
---complexOperation :: Int -> Int
---complexOperation x = absolute.           -- enter your code here
+complexOperation :: Int -> Int
+complexOperation = abs . (subtract 1) . (*2) . (+3)          -- enter your code here
 
 --prop_roots :: Double -> Double -> Double -> Bool
 --prop_roots a b c = (a /= 0.0) ==> (roots a b c == rootsTest a b c)

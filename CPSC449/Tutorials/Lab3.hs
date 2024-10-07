@@ -51,7 +51,7 @@ toLowercaseIfUpper c = if ((c >= 'A') && (c <= 'Z')) then chr( ord(c) + ord('a')
 -}
 -- need to fix this with a mod to ensure z loops around to a [DONE]
 caesarCipher :: Int -> Char -> Char
-caesarCipher n c = if ( ord(c) + n > ord('z') ) then chr( (n mod 26) + ord(c) - 26 )
+caesarCipher n c = if ( ord(c) + n > ord('z') ) then chr( (mod n 26) + ord(c) - 26 )
                 else chr( n + ord(c) )
 
 {- Write a function that takes a string as an input and concatenates a tab (\t) at the beginning,
@@ -75,4 +75,4 @@ addSpecialChars str = "\t\"" ++ str ++ "\"\n"
 -}
 --isSelfInverse :: (Eq a) => (a -> a) -> a -> Bool
 --isSelfInverse f a = (f (a) == f.f(a))
-    {- FILL HERE -}
+

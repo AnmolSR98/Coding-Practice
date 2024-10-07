@@ -52,7 +52,7 @@ safeSqrt x
 safeIndex :: [a] -> Int -> Maybe a
 safeIndex x y 
                 | (y >= length(x)) = Nothing
-                | otherwise = Just(!! x y)
+                | otherwise = Just(x !! y)
 
 
 -- The Either data type
@@ -65,23 +65,27 @@ data Either a b = Left a | Right b
 -}
 
 -- 4. rewrite the safeSqrt function using the Either data type
---safeSqrt' :: Double -> Either String Double
---safeSqrt' = -- ??? --
+safeSqrt' :: Double -> Either String Double
+safeSqrt' x | (x < 0) = Left "Will result in a complex number"
+            | otherwise = Right (sqrt(x))
 
 
 -- 5. rewrite the safeIndex function using the Either data type
---safeIndex' :: [a] -> Int -> Either String a
---safeIndex' = -- ??? --
+safeIndex' :: [a] -> Int -> Either String a
+safeIndex' x y | (y >= length(x)) = Left "Not a valid index!"
+               | otherwise = Right (x !! y)
 
 
 -- 6. Write a function that takes a list of integers (l :: [Int]) and an integer index (i :: Int).
 -- If i is within bounds, get the element at index i, say i' = l[i].
 -- Then, if i' is within bounds, return the element at index i' in the list.
 -- If i or i' are out of bounds, return Nothing.
---chainSafeIndex :: [Int] -> Int -> Maybe Int
---chainSafeIndex = -- ??? --
+chainSafeIndex :: [Int] -> Int -> Maybe Int
+chainSafeIndex x y | ((y >= length(x)) || (y < 0)) = Nothing
+                   | otherwise = Just (x !! y) 
 
 
 -- 7. rewrite function chainSafeIndex, with Either data type
---chainSafeIndex' :: [Int] -> Int -> Either String Int
---chainSafeIndex' = -- ??? --
+chainSafeIndex' :: [Int] -> Int -> Either String Int
+chainSafeIndex' x y| ((y >= length(x)) || (y < 0)) = Left "Not a valid index!"
+                   | otherwise = Right (x !! y) 
