@@ -80,12 +80,13 @@ int* optimal(page** pageArray, int numFrames, int numPages) {
         // adding on a update if the frame was null before or if the current page has a dirty bit
         // in the case of a null frame or change in page number, add on a write back
 
-        // also do this in the case for identical page numbers but with a dirty bit
-        if ( (newPage->dirty == 1)) {
-            currentFrame->totalWriteBacks += 1;
-            totalWritebacks++;
+        // writing back to memory if current page is dirty 
+        if (currentFrame->currentPage != NULL) {
+            if (currentFrame->currentPage->dirty == 1) {
+                totalWritebacks++;
+            }
         }
-
+        
         if(currentFrame->currentPage!= NULL) {
             if (currentFrame->currentPage->pageNumber == newPage->pageNumber) {
                 totalTimesWasInMemory++;

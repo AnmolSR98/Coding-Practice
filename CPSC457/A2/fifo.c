@@ -61,17 +61,19 @@ int* fifo(page** pageArray, int numFrames, int numPages) {
         // gonna create a function to get the frame to update
         currentFrame = frameArray[getFrameToUpdateFIFO(frameArray, numFrames, newPage->pageNumber)];
 
+        // writing back to memory if current page is dirty 
+        if (currentFrame->currentPage != NULL) {
+            if (currentFrame->currentPage->dirty == 1) {
+                totalWritebacks++;
+            }
+        }
+
         // update the time arrived value if the page was not already in the frame array
         if ((currentFrame->currentPage == NULL) || (currentFrame->currentPage->pageNumber != newPage->pageNumber)) {
             currentFrame->timeArrived = i;
         }
 
-        if ((newPage->dirty == 1)) {
-            currentFrame->totalWriteBacks += 1;
-            totalWritebacks++;
-        }
-
-        if(currentFrame->currentPage!= NULL) {
+        if(currentFrame->currentPage != NULL) {
             if (currentFrame->currentPage->pageNumber == newPage->pageNumber) {
                 totalTimesWasInMemory++;
             }

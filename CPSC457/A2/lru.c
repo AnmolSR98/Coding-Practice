@@ -61,9 +61,11 @@ int* lru(page** pageArray, int numFrames, int numPages) {
         // getting the frame to be updated
         currentFrame = frameArray[getFrameToUpdateLRU(frameArray, numFrames, newPage->pageNumber)];
 
-        if ((newPage->dirty == 1)) {
-            currentFrame->totalWriteBacks += 1;
-            totalWritebacks++;
+        // writing back to memory if current page is dirty 
+        if (currentFrame->currentPage != NULL) {
+            if (currentFrame->currentPage->dirty == 1) {
+                totalWritebacks++;
+            }
         }
 
          if(currentFrame->currentPage!= NULL) {

@@ -109,27 +109,28 @@ void runLoopCLK(page** listOPages, int numUniquePages){
     // setting the loop for m = 10, n from 1 to 32
     printClockHeaderN();
     for (n = 1; n <= 32; n++) {
-        holderArray = secondChance(listOPages, numFrames, numUniquePages, m, n, length);
+        holderArray = secondChance(listOPages, numFrames, length, m, n, numUniquePages);
         printClockData(n, holderArray[0], holderArray[1]);
     }
-    printFooter();
+    printClockFooter();
     printf("\n");
 
     n = 8;
     // setting the loop for n = 10, n from 1 to 32
     printClockHeaderM();
     for (m = 1; m <= 100; m++) {
-        holderArray = secondChance(listOPages, numFrames, numUniquePages, m, n, length);
+        holderArray = secondChance(listOPages, numFrames, length, m, n, numUniquePages);
         printClockData(m, holderArray[0], holderArray[1]);
     }
-    printFooter();
+    printClockFooter();
 }
 
-int main (int argc, char** argv) {
+int main () { // (int argc, char** argv) {
 
     char* method; 
     char* filename;
 
+    /*
     if (argc != 3) {
         printf("The correct format is: <./pageReplacement method filename>!");
         return 0;
@@ -139,12 +140,17 @@ int main (int argc, char** argv) {
         method = argv[1];
         filename = argv[2];
     }
+    **/
+
 
     // reading in the pages to be used later
     page** listOPages = (page**) malloc(sizeof(page) * length);
-    listOPages = readIn(filename);
+    listOPages = readIn("input.csv");
     int numUniquePages = 500;
-    
+     
+    runLoopCLK(listOPages, numUniquePages);
+
+    /** 
     if (strcmp(method, "FIFO") == 0) {
         runLoopFIFO(listOPages);
     }
@@ -163,7 +169,7 @@ int main (int argc, char** argv) {
 
     else {
         printf("Enter a valid method (one of: FIFO, LRU, OPT, CLK)!");
-    }
+    } */
 
     return 0;
 }

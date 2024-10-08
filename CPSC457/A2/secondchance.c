@@ -118,10 +118,11 @@ int* secondChance(page** pageArray, int numFrames, int numPages, int m, int n, i
         frameToUpdate = getFrameToUpdateSecond(frameArray, pageArray, pageTable, numFrames, numPages, numUniquePages, newPage->pageNumber, n);
         currentFrame = frameArray[frameToUpdate];
 
-        // also do this in the case for identical page numbers but with a dirty bit
-        if ((newPage->dirty == 1)) {
-            currentFrame->totalWriteBacks += 1;
-            totalWritebacks++;
+        // writing back to memory if current page is dirty 
+        if (currentFrame->currentPage != NULL) {
+            if (currentFrame->currentPage->dirty == 1) {
+                totalWritebacks++;
+            }
         }
 
         // if the page wasn't in memory, increment the value
@@ -145,10 +146,10 @@ int* secondChance(page** pageArray, int numFrames, int numPages, int m, int n, i
 
     //printTable(frameArray, numFrames);
     //printf("%d\n", totalTimesWasInMemory);
-    free(pageTable); free(frameArray); free(newPage);
+    free(pageTable); free(frameArray);
 
     int* returnData = (int*) malloc(sizeof(int)*2);
-    returnData[0] = numPages-totalTimesWasInMemory; returnData[1] = totalWritebacks;
+    returnData[0] = numPages - totalTimesWasInMemory; returnData[1] = totalWritebacks;
 
     return returnData;
 }
