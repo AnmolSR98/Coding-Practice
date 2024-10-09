@@ -7,8 +7,6 @@
 // including the other algorithms
 #include "main.h"
 #include "fifo.c"
-#include "altfifo.c"
-#include "altlru.c"
 #include "lru.c"
 #include "optimal.c"
 #include "secondchance.c"
@@ -150,7 +148,7 @@ int main () { // (int argc, char** argv) {
     listOPages = readIn("input.csv");
     int numUniquePages = 500;
      
-    runLoopLRU(listOPages);
+    runLoopCLK(listOPages, 500);
 
     /** 
     if (strcmp(method, "FIFO") == 0) {

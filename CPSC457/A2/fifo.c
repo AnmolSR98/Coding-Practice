@@ -5,39 +5,39 @@
 
 // function to the frame to update
 // need to account for the page that will be doing the replacing
-int getFrameToUpdateFIFO(frame** frameArray, int numFrames, int pageNumber) {
+int getFrameToUpdateAltFIFO(frame** frameArray, int numFrames, int pageNumber, int nextInQueue) {
 
     int i;
-    int oldestFrameIndex;
-    int oldest = largeNumber;
+    int frameToReplace = -1;
     
     // loop to cycle through the various frames to see if any of them are free
     for (i = 0; i < numFrames; i++) {
         // return if one is found
         if (frameArray[i]->currentPage == NULL) {
-            frameArray[i]->pageFaults += 1;
             return i;
         }
 
+        // return if it is already in memory
         else if (frameArray[i]->currentPage->pageNumber == pageNumber) {
             return i;
         }
 
-        // check if that frame is the oldest, and if so, update it
-        if (frameArray[i]->timeArrived < oldest) {
-            oldest = frameArray[i]->timeArrived;
-            oldestFrameIndex = i;
+        // hang to the index of the frame if it contains the process that is next in the queue
+        else if (frameArray[i]->currentPage->pageNumber == nextInQueue) {
+            frameToReplace = i;
         }
     }
 
-    // update the page fault if that specific page number was not found in memory
-    frameArray[oldestFrameIndex]->pageFaults += 1;
-    
-    // if no free page was found then return the oldest frame
-    return oldestFrameIndex;
+    // if the frame is there to replace, replace it
+    if (frameToReplace != -1) {
+        return frameToReplace;
+    }
+
+    // in the case that no frame can be updated, should never happen
+    return (-1);
 }
 
-int* fifo(page** pageArray, int numFrames, int numPages) {
+int* altFifo(page** pageArray, int numFrames, int numPages) {
 
     // creating a new array of frames and filling it
     frame** frameArray = malloc(sizeof(frame) * numFrames);
@@ -46,11 +46,13 @@ int* fifo(page** pageArray, int numFrames, int numPages) {
         frameArray[i] = createFrame(i+1);
     }
 
-    int frameToUpdate;
+
     page* newPage = (page*) malloc(sizeof(page));
     frame* currentFrame = (frame*) malloc(sizeof(frame));
-    int totalTimesWasInMemory = 0;
+    queue* someQueue = createQueue();
     int totalWritebacks = 0;
+    int totalPageFaults = 0;
+    int nextInQueue = -1;
 
     // now moving onto actually simulating checking the frames
     for (i = 0; i < numPages; i++) {
@@ -58,39 +60,44 @@ int* fifo(page** pageArray, int numFrames, int numPages) {
         // get the current page from the queue
         newPage = pageArray[i];
 
-        // gonna create a function to get the frame to update
-        currentFrame = frameArray[getFrameToUpdateFIFO(frameArray, numFrames, newPage->pageNumber)];
+        // get the number of the next page to be replaced
+        if (!isEmpty(someQueue)) {
+            nextInQueue = someQueue->head->data;
+        }
 
-        // writing back to memory if current page is dirty 
+        // gonna create a function to get the frame to update
+        currentFrame = frameArray[getFrameToUpdateAltFIFO(frameArray, numFrames, newPage->pageNumber, nextInQueue)];
+
         if (currentFrame->currentPage != NULL) {
+            // writing back to memory if current page is dirty 
             if (currentFrame->currentPage->dirty == 1) {
                 totalWritebacks++;
             }
-        }
 
-        // update the time arrived value if the page was not already in the frame array
-        if ((currentFrame->currentPage == NULL) || (currentFrame->currentPage->pageNumber != newPage->pageNumber)) {
-            currentFrame->timeArrived = i;
-        }
-
-        if(currentFrame->currentPage != NULL) {
-            if (currentFrame->currentPage->pageNumber == newPage->pageNumber) {
-                totalTimesWasInMemory++;
+            if (currentFrame->currentPage->pageNumber != newPage->pageNumber) {
+                totalPageFaults++;
+                // if this page was not already in memory then it must be added to the queue
+                dequeue(someQueue);
+                enqueue(someQueue, newPage->pageNumber);
             }
+
+        }
+
+        else {
+            totalPageFaults++;
+            enqueue(someQueue, newPage->pageNumber);
         }
 
         // updating the frame with the new page
         currentFrame->currentPage = newPage;
     }
 
-    //printTable(frameArray, numFrames);
+    currentFrame = NULL; newPage = NULL; free(newPage); free(currentFrame);
     free(frameArray); 
     free(currentFrame); 
-    //printf("%d\n", totalTimesWasInMemory);
-    //printf("%d\n", totalWritebacks);
 
     int* returnData = (int*) malloc(sizeof(int)*2);
-    returnData[0] = numPages-totalTimesWasInMemory; returnData[1] = totalWritebacks;
+    returnData[0] = totalPageFaults; returnData[1] = totalWritebacks;
 
     return returnData;
 }

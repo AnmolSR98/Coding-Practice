@@ -144,8 +144,7 @@ int* secondChance(page** pageArray, int numFrames, int numPages, int m, int n, i
         }
     }
 
-    //printTable(frameArray, numFrames);
-    //printf("%d\n", totalTimesWasInMemory);
+    currentFrame = NULL; newPage = NULL; free(newPage); free(currentFrame);
     free(pageTable); free(frameArray);
 
     int* returnData = (int*) malloc(sizeof(int)*2);
