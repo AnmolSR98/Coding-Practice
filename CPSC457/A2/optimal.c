@@ -98,10 +98,8 @@ int* optimal(page** pageArray, int numFrames, int numPages) {
         currentFrame->nextArrival = indexOfNextInstance(pageArray, i, numPages, currentFrame->currentPage->pageNumber);
     }
 
-    //printTable(frameArray, numFrames);
+    currentFrame = NULL; newPage = NULL; free(newPage); free(currentFrame);
     free(frameArray); free(currentFrame);
-    //printf("%d\n", totalTimesWasInMemory);
-    //printf("%d\n", totalWritebacks);
 
     int* returnData = (int*) malloc(sizeof(int)*2);
     returnData[0] = numPages-totalTimesWasInMemory; returnData[1] = totalWritebacks;
