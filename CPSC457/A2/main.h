@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include "queue.c"
 
 #define largeNumber 10000000
 

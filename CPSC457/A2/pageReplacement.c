@@ -8,6 +8,7 @@
 #include "main.h"
 #include "fifo.c"
 #include "altfifo.c"
+#include "altlru.c"
 #include "lru.c"
 #include "optimal.c"
 #include "secondchance.c"
@@ -79,7 +80,7 @@ void runLoopLRU(page** listOPages){
     printf("LRU\n");
     printHeader();
     for (i = 1; i <= 100; i++) {
-        holderArray = lru(listOPages, i, length);
+        holderArray = altLRU(listOPages, i, length);
         printData(i, holderArray[0], holderArray[1]);
     }
     printFooter();
@@ -149,7 +150,7 @@ int main () { // (int argc, char** argv) {
     listOPages = readIn("input.csv");
     int numUniquePages = 500;
      
-    runLoopFIFO(listOPages);
+    runLoopLRU(listOPages);
 
     /** 
     if (strcmp(method, "FIFO") == 0) {

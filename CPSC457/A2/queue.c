@@ -38,11 +38,10 @@ bool contains(queue* someQueue, int someNumber) {
     }
 
     struct node* temp = someQueue->head;
-    int returnData = temp->data;
 
     while (temp != NULL) {
 
-        if (returnData == someNumber) {
+        if (temp->data == someNumber) {
             return true;
         }
 
@@ -67,12 +66,12 @@ int removeFromQueue(queue* someQueue, int someData) {
 
     struct node* temp = someQueue->head;
     struct node* prev;
-    int returnData;
     bool loop = true;
 
     while (loop) {
         
         if (temp->data == someData) {
+
             if (temp == someQueue->head) {
                 someQueue->head = someQueue->head->next;
             }
@@ -86,6 +85,7 @@ int removeFromQueue(queue* someQueue, int someData) {
         }
 
         else {
+            prev = temp;
             temp = temp->next;
         }
 
@@ -136,3 +136,14 @@ int dequeue(queue* someQueue) {
     free(temp);
     return returnData;
 }
+
+/**
+int main() {
+
+    queue* someQueue = createQueue();
+    enqueue(someQueue, 30);
+    enqueue(someQueue, 294);
+    removeFromQueue(someQueue, 294);
+
+    return 0;
+}*/

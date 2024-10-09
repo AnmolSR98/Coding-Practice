@@ -5,7 +5,7 @@
 
 // function to the frame to update
 // need to account for the page that will be doing the replacing
-int getFrameToUpdateAltFIFO(frame** frameArray, int numFrames, int pageNumber, int nextInQueue) {
+int getFrameToUpdateAltLRU(frame** frameArray, int numFrames, int pageNumber, int nextInQueue) {
 
     int i;
     int frameToReplace = -1;
@@ -37,7 +37,7 @@ int getFrameToUpdateAltFIFO(frame** frameArray, int numFrames, int pageNumber, i
     return (-1);
 }
 
-int* altFifo(page** pageArray, int numFrames, int numPages) {
+int* altLRU(page** pageArray, int numFrames, int numPages) {
 
     // creating a new array of frames and filling it
     frame** frameArray = malloc(sizeof(frame) * numFrames);
@@ -53,6 +53,7 @@ int* altFifo(page** pageArray, int numFrames, int numPages) {
     int totalWritebacks = 0;
     int totalPageFaults = 0;
     int nextInQueue = -1;
+    int frameToGet;
 
     // now moving onto actually simulating checking the frames
     for (i = 0; i < numPages; i++) {
@@ -66,7 +67,8 @@ int* altFifo(page** pageArray, int numFrames, int numPages) {
         }
 
         // gonna create a function to get the frame to update
-        currentFrame = frameArray[getFrameToUpdateAltFIFO(frameArray, numFrames, newPage->pageNumber, nextInQueue)];
+        frameToGet = getFrameToUpdateAltLRU(frameArray, numFrames, newPage->pageNumber, nextInQueue);
+        currentFrame = frameArray[frameToGet];
 
         if (currentFrame->currentPage != NULL) {
             // writing back to memory if current page is dirty 
@@ -78,6 +80,13 @@ int* altFifo(page** pageArray, int numFrames, int numPages) {
                 totalPageFaults++;
                 // if this page was not already in memory then it must be added to the queue
                 dequeue(someQueue);
+                enqueue(someQueue, newPage->pageNumber);
+            }
+
+            // if the page is memory, then remove it from the queue and add it again, so the
+            // least recently used frame will move to the front
+            else {
+                removeFromQueue(someQueue, newPage->pageNumber);
                 enqueue(someQueue, newPage->pageNumber);
             }
 
