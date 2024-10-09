@@ -10,22 +10,32 @@ typedef struct {
     struct node* head;
 } queue;
 
+queue* createQueue() {
+
+    queue* newQueue = (queue*) malloc(sizeof(queue));
+    newQueue->head = NULL;
+}
+
 // returns false only if head is uninitialized
 bool isEmpty(queue* someQueue) {
     
-    if (someQueue->head != NULL){
+    if (someQueue->head == NULL){
         return true;
     }
 
     return false;
 }
 
-// 0 in this reading means false
 bool isFull(queue* someQueue) {
     return false;
 }
 
+// function to see if a number is already in the queue
 bool contains(queue* someQueue, int someNumber) {
+
+    if (isEmpty(someQueue)) {
+        return false;
+    }
 
     struct node* temp = someQueue->head;
     int returnData = temp->data;
@@ -44,42 +54,77 @@ bool contains(queue* someQueue, int someNumber) {
     return false;
 }
 
-void remove(queue* someQueue, int someData) {
+// function to remove an element from a queue
+int removeFromQueue(queue* someQueue, int someData) {
 
     if (!contains(someQueue, someData)) {
-        return;
+        return (-1);
+    }
+
+    if (isEmpty(someQueue)) {
+        return (-1);
     }
 
     struct node* temp = someQueue->head;
     struct node* prev;
-    int returnData = temp->data;
+    int returnData;
+    bool loop = true;
+
+    while (loop) {
+        
+        if (temp->data == someData) {
+            if (temp == someQueue->head) {
+                someQueue->head = someQueue->head->next;
+            }
+
+            else {
+                prev->next = temp->next;
+            }
+        
+            free(temp);
+            loop = false;
+        }
+
+        else {
+            temp = temp->next;
+        }
+
+        if (temp == NULL) {
+            loop = false;
+        }
+
+    }
+
+    return 0;
 }
 
 
 // if it is not empty, cycle to the next 
 void enqueue(queue* someQueue, int someData){
     
-    if (isEmpty(someQueue)){
-        return;
-    }    
-
     struct node* temp = someQueue->head;
-
-    while (temp->next != NULL){
-        temp = temp->next;
-    }
 
     struct node *newNode = (struct node*) malloc(sizeof(struct node));
     newNode->data = someData;
+    newNode->next = NULL;
+
     if (isEmpty(someQueue)){
+        someQueue->head = newNode;
         return;
     }    
 
-    temp->next = newNode;
+    else {
+
+        while (temp->next != NULL){
+            temp = temp->next;
+        }
+
+        temp->next = newNode;
+    }
 }
 
 // dequeue provided that the queue is not empty, cycle the head forward
-int dequeue(queue* someQueue, int data) {
+int dequeue(queue* someQueue) {
 
     if (isEmpty(someQueue)){
         return (-1);
@@ -90,10 +135,4 @@ int dequeue(queue* someQueue, int data) {
     someQueue->head = someQueue->head->next;
     free(temp);
     return returnData;
-}
-
-
-
-int main() {
-    return 0;
 }

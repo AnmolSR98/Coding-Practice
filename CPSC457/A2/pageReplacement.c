@@ -7,6 +7,7 @@
 // including the other algorithms
 #include "main.h"
 #include "fifo.c"
+#include "altfifo.c"
 #include "lru.c"
 #include "optimal.c"
 #include "secondchance.c"
@@ -91,7 +92,7 @@ void runLoopFIFO(page** listOPages){
     printf("FIFO\n");
     printHeader();
     for (i = 1; i <= 100; i++) {
-        holderArray = fifo(listOPages, i, length);
+        holderArray = altFifo(listOPages, i, length);
         printData(i, holderArray[0], holderArray[1]);
     }
     printFooter();
@@ -148,7 +149,7 @@ int main () { // (int argc, char** argv) {
     listOPages = readIn("input.csv");
     int numUniquePages = 500;
      
-    runLoopCLK(listOPages, numUniquePages);
+    runLoopFIFO(listOPages);
 
     /** 
     if (strcmp(method, "FIFO") == 0) {
