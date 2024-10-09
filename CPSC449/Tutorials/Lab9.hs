@@ -115,12 +115,16 @@ comparison function for sorting the tuples.
 
 -}
 
+-- use filter, returns a list of those that are true
+
 -- 8. Use the filter function to create a list of all palindromic numbers 
 -- between 1 and 1000. A number is palindromic if it reads the same backwards 
 -- as forwards when written as a string.
---palindromicNumbers :: [Int]
---palindromicNumbers = -- ??? --
+palindromicNumbers :: [Int]
+palindromicNumbers = filter isPalindrome [1..1000]
 
+isPalindrome :: Int -> Bool
+isPalindrome x = ((show x) == reverse(show x))
 
 -- 9. Use a lambda function to create a list of tuples where the first element
 -- is a number from 1 to 5, and the second element is that number raised to a given power.
@@ -129,3 +133,5 @@ comparison function for sorting the tuples.
 -- Hint: Use a lambda function inside of list comprehension
 --powerTuples :: Int -> [(Int, Int)]
 --powerTuples = -- ??? --
+
+-- lambda function is basically just an anonymous function
