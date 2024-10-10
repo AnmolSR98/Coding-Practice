@@ -1,17 +1,17 @@
-// importing a bunch of standard c stuff
+// importing a bunch of standard c stuff, if needed
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-// including the other algorithms
+// including the other files to be used
 #include "main.h"
 #include "fifo.c"
 #include "lru.c"
 #include "optimal.c"
 #include "secondchance.c"
 
-// defining a bunch of variables to be used
+// defining a bunch of variables to be used for reading in the csv file
 #define length 15000
 #define buffer 64
 #define numAttr 2
@@ -58,6 +58,8 @@ page** readIn(char* inputFile) {
 }
 
 // bunch of generic functions to run loops for the various page replacement algorithms
+
+// this one is for optimal
 void runLoopOPT(page** listOPages){
     
     int i, y, z;
@@ -71,6 +73,7 @@ void runLoopOPT(page** listOPages){
     printFooter();
 }
 
+// lru function
 void runLoopLRU(page** listOPages){
     
     int i, y, z;
@@ -78,12 +81,13 @@ void runLoopLRU(page** listOPages){
     printf("LRU\n");
     printHeader();
     for (i = 1; i <= 100; i++) {
-        holderArray = altLRU(listOPages, i, length);
+        holderArray = lru(listOPages, i, length);
         printData(i, holderArray[0], holderArray[1]);
     }
     printFooter();
 }
 
+// fifo function
 void runLoopFIFO(page** listOPages){
     
     int i, y, z;
@@ -91,12 +95,13 @@ void runLoopFIFO(page** listOPages){
     printf("FIFO\n");
     printHeader();
     for (i = 1; i <= 100; i++) {
-        holderArray = altFifo(listOPages, i, length);
+        holderArray = fifo(listOPages, i, length);
         printData(i, holderArray[0], holderArray[1]);
     }
     printFooter();
 }
 
+// finally, one for second chance/clock
 void runLoopCLK(page** listOPages, int numUniquePages){
     
     int m, n, y, z;
@@ -125,22 +130,24 @@ void runLoopCLK(page** listOPages, int numUniquePages){
     printClockFooter();
 }
 
-int main () { // (int argc, char** argv) {
+int main (int argc, char** argv) {
 
+    // variables to hold both the method and filename
     char* method; 
     char* filename;
 
-    /*
+    // checking that the correct format for the input string was used, print an error message if not
     if (argc != 3) {
         printf("The correct format is: <./pageReplacement method filename>!");
         return 0;
     }
 
     else {
+        // otherwise assign those strings to method and filename
         method = argv[1];
         filename = argv[2];
     }
-    **/
+
 
 
     // reading in the pages to be used later
@@ -148,9 +155,7 @@ int main () { // (int argc, char** argv) {
     listOPages = readIn("input.csv");
     int numUniquePages = 500;
      
-    runLoopCLK(listOPages, 500);
-
-    /** 
+    // if else statements to run selected loop
     if (strcmp(method, "FIFO") == 0) {
         runLoopFIFO(listOPages);
     }
@@ -167,9 +172,10 @@ int main () { // (int argc, char** argv) {
         runLoopCLK(listOPages, numUniquePages);
     }
 
+    // if no valid method was given, print an error message
     else {
         printf("Enter a valid method (one of: FIFO, LRU, OPT, CLK)!");
-    } */
+    } 
 
     return 0;
 }

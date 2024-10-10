@@ -1,11 +1,8 @@
 #include "main.h"
 
-// look at write backs again for both FIFO and LRU
-// definitely change, should only writeback for dirty bits
 
-// function to the frame to update
-// need to account for the page that will be doing the replacing
-int getFrameToUpdateAltLRU(frame** frameArray, int numFrames, int pageNumber, int nextInQueue) {
+// function to find the frame that needs to be updated
+int getFrameToUpdateLRU(frame** frameArray, int numFrames, int pageNumber, int nextInQueue) {
 
     int i;
     int frameToReplace = -1;
@@ -33,11 +30,12 @@ int getFrameToUpdateAltLRU(frame** frameArray, int numFrames, int pageNumber, in
         return frameToReplace;
     }
 
-    // in the case that no frame can be updated, should never happen
+    // in the case that no frame can be found to be updated, should never happen
     return (-1);
 }
 
-int* altLRU(page** pageArray, int numFrames, int numPages) {
+// actual LRU simulation
+int* lru(page** pageArray, int numFrames, int numPages) {
 
     // creating a new array of frames and filling it
     frame** frameArray = malloc(sizeof(frame) * numFrames);
@@ -46,14 +44,16 @@ int* altLRU(page** pageArray, int numFrames, int numPages) {
         frameArray[i] = createFrame(i+1);
     }
 
-
+    // holder variables for the current frame and next page in sequence
     page* newPage = (page*) malloc(sizeof(page));
     frame* currentFrame = (frame*) malloc(sizeof(frame));
+    // queue to be used
     queue* someQueue = createQueue();
+    // variables for the calculation of number of page faults, writebacks 
     int totalWritebacks = 0;
     int totalPageFaults = 0;
+    // variable for the pagenumber that is the head of the queue
     int nextInQueue = -1;
-    int frameToGet;
 
     // now moving onto actually simulating checking the frames
     for (i = 0; i < numPages; i++) {
@@ -66,25 +66,28 @@ int* altLRU(page** pageArray, int numFrames, int numPages) {
             nextInQueue = someQueue->head->data;
         }
 
-        // gonna create a function to get the frame to update
-        frameToGet = getFrameToUpdateAltLRU(frameArray, numFrames, newPage->pageNumber, nextInQueue);
-        currentFrame = frameArray[frameToGet];
+        // getting the frame to place the new page in 
+        currentFrame = frameArray[getFrameToUpdateLRU(frameArray, numFrames, newPage->pageNumber, nextInQueue)];
 
+        // if the frame is not empty
         if (currentFrame->currentPage != NULL) {
-            // writing back to memory if current page is dirty 
+
+            // write back to memory if page being rotated out is dirty 
             if (currentFrame->currentPage->dirty == 1) {
                 totalWritebacks++;
             }
 
+            // if the pagenumbers are not the same, then add a page fault, dequeue and enqueue the page number
             if (currentFrame->currentPage->pageNumber != newPage->pageNumber) {
+
                 totalPageFaults++;
-                // if this page was not already in memory then it must be added to the queue
+                // this page was not already in memory and it must be added to the queue
                 dequeue(someQueue);
                 enqueue(someQueue, newPage->pageNumber);
             }
 
             // if the page is memory, then remove it from the queue and add it again, so the
-            // least recently used frame will move to the front
+            // page number associated with the least recently used frame will move to the front
             else {
                 removeFromQueue(someQueue, newPage->pageNumber);
                 enqueue(someQueue, newPage->pageNumber);
@@ -92,6 +95,7 @@ int* altLRU(page** pageArray, int numFrames, int numPages) {
 
         }
 
+        // if the page is empty, add on a page fault and add the page number to the queue
         else {
             totalPageFaults++;
             enqueue(someQueue, newPage->pageNumber);
@@ -101,10 +105,12 @@ int* altLRU(page** pageArray, int numFrames, int numPages) {
         currentFrame->currentPage = newPage;
     }
 
+    // deallocating memory
     currentFrame = NULL; newPage = NULL; free(newPage); free(currentFrame);
     free(frameArray); 
     free(currentFrame); 
 
+    // returning the page faults and writebacks
     int* returnData = (int*) malloc(sizeof(int)*2);
     returnData[0] = totalPageFaults; returnData[1] = totalWritebacks;
 

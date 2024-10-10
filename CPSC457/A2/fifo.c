@@ -1,11 +1,8 @@
 #include "main.h"
 
-// look at write backs again for both FIFO and LRU
-// definitely change, should only writeback for dirty bits
 
-// function to the frame to update
-// need to account for the page that will be doing the replacing
-int getFrameToUpdateAltFIFO(frame** frameArray, int numFrames, int pageNumber, int nextInQueue) {
+// function to get the frame to update
+int getFrameToUpdateFIFO(frame** frameArray, int numFrames, int pageNumber, int nextInQueue) {
 
     int i;
     int frameToReplace = -1;
@@ -37,7 +34,7 @@ int getFrameToUpdateAltFIFO(frame** frameArray, int numFrames, int pageNumber, i
     return (-1);
 }
 
-int* altFifo(page** pageArray, int numFrames, int numPages) {
+int* fifo(page** pageArray, int numFrames, int numPages) {
 
     // creating a new array of frames and filling it
     frame** frameArray = malloc(sizeof(frame) * numFrames);
@@ -46,12 +43,15 @@ int* altFifo(page** pageArray, int numFrames, int numPages) {
         frameArray[i] = createFrame(i+1);
     }
 
-
+    // creating pointers for the next page and the current frame
     page* newPage = (page*) malloc(sizeof(page));
     frame* currentFrame = (frame*) malloc(sizeof(frame));
+    // creating the queue
     queue* someQueue = createQueue();
+    // variables for writebacks and page faults
     int totalWritebacks = 0;
     int totalPageFaults = 0;
+    // the page number of the head of the queue
     int nextInQueue = -1;
 
     // now moving onto actually simulating checking the frames
@@ -65,15 +65,18 @@ int* altFifo(page** pageArray, int numFrames, int numPages) {
             nextInQueue = someQueue->head->data;
         }
 
-        // gonna create a function to get the frame to update
-        currentFrame = frameArray[getFrameToUpdateAltFIFO(frameArray, numFrames, newPage->pageNumber, nextInQueue)];
+        // get the frame to be updated
+        currentFrame = frameArray[getFrameToUpdateFIFO(frameArray, numFrames, newPage->pageNumber, nextInQueue)];
 
+        // if the frame is not empty
         if (currentFrame->currentPage != NULL) {
-            // writing back to memory if current page is dirty 
+
+            // write back to memory if page being rotated out is dirty  
             if (currentFrame->currentPage->dirty == 1) {
                 totalWritebacks++;
             }
 
+            // if the page was not already in memory then add a page faultS
             if (currentFrame->currentPage->pageNumber != newPage->pageNumber) {
                 totalPageFaults++;
                 // if this page was not already in memory then it must be added to the queue
@@ -83,6 +86,7 @@ int* altFifo(page** pageArray, int numFrames, int numPages) {
 
         }
 
+        // if the frame was empty, add a pagefault and add the page number to the queue
         else {
             totalPageFaults++;
             enqueue(someQueue, newPage->pageNumber);
@@ -92,10 +96,12 @@ int* altFifo(page** pageArray, int numFrames, int numPages) {
         currentFrame->currentPage = newPage;
     }
 
+    // memory dealloc
     currentFrame = NULL; newPage = NULL; free(newPage); free(currentFrame);
     free(frameArray); 
     free(currentFrame); 
 
+    // returning number of page faults and writebacks
     int* returnData = (int*) malloc(sizeof(int)*2);
     returnData[0] = totalPageFaults; returnData[1] = totalWritebacks;
 

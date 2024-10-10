@@ -2,8 +2,6 @@
 #include "math.h"
 #include <stdio.h>
 
-// definitely some issue with this here
-
 // set the first bit to one 
 void setMostSignificantBit(int* someArray) {
     someArray[0] = 1;
@@ -21,7 +19,7 @@ int getTotalValue(int* someArray, int length) {
     return arraySum;
 }
 
-// only works for one shift, which ought to be needed for this assignment
+// shift the array over by one
 int* logicalShiftRight(int* someArray, int length) {
     
     int i; int holder = someArray[0]; int holder2 = someArray[0];
@@ -60,7 +58,6 @@ int getFrameToUpdateSecond(frame** frameArray, page** pageArray, page** pageTabl
         
         // return if one is found
         if (frameArray[i]->currentPage == NULL) {
-            frameArray[i]->pageFaults += 1;
             return i;
         }
         // otherwise if the page is already in memory return it
@@ -71,22 +68,18 @@ int getFrameToUpdateSecond(frame** frameArray, page** pageArray, page** pageTabl
         // otherwise get the reference of the current frame's page
         potential = getTotalValue(pageTable[frameArray[i]->currentPage->pageNumber]->reference, n);
 
-        // check to see if this page has the smallest reference in the table, and if so mark it as the frame to be replaced
+        // check to see if this page has the smallest reference in the frame array, and if so mark it as the frame to be replaced
         if (potential < smallestVal) {
             frameIndex = i;
             smallestVal = potential;
         }
 
     }
-
-    // update the page fault if that specific page number was not found in memory
-    frameArray[frameIndex]->pageFaults += 1;
     
     // if no free page was found then return the frame with the lowest reference value
     return frameIndex;
 }
 
-// need to change this so that it performs the shift right every m number of frames
 int* secondChance(page** pageArray, int numFrames, int numPages, int m, int n, int numUniquePages) {
 
     // creating a new array of frames and filling it
@@ -102,11 +95,14 @@ int* secondChance(page** pageArray, int numFrames, int numPages, int m, int n, i
         pageTable[i] = altCreatePage(i, n);
     }
 
-    int frameToUpdate;
+    // pointer variables for the new page and the frame to be replaced
     page* newPage = (page*) malloc(sizeof(page));
     frame* currentFrame = (frame*) malloc(sizeof(frame));
-    int totalTimesWasInMemory = 0;
+
+    // variables to keep track of page faults and write backs
+    int totalPageFaults = 0;
     int totalWritebacks = 0;
+
 
     // now moving onto actually simulating checking the frames
     for (i = 0; i < numPages; i++) {
@@ -115,21 +111,22 @@ int* secondChance(page** pageArray, int numFrames, int numPages, int m, int n, i
         newPage = pageArray[i];
 
         // get the frame to place the page in 
-        frameToUpdate = getFrameToUpdateSecond(frameArray, pageArray, pageTable, numFrames, numPages, numUniquePages, newPage->pageNumber, n);
-        currentFrame = frameArray[frameToUpdate];
-
-        // writing back to memory if current page is dirty 
-        if (currentFrame->currentPage != NULL) {
-            if (currentFrame->currentPage->dirty == 1) {
-                totalWritebacks++;
-            }
-        }
+        currentFrame = frameArray[getFrameToUpdateSecond(frameArray, pageArray, pageTable, numFrames, numPages, numUniquePages, newPage->pageNumber, n)];
 
         // if the page wasn't in memory, increment the value
         if(currentFrame->currentPage != NULL) {
-            if (currentFrame->currentPage->pageNumber == newPage->pageNumber) {
-                totalTimesWasInMemory++;
+            if (currentFrame->currentPage->dirty == 1) {
+                totalWritebacks++;
             }
+
+            if (currentFrame->currentPage->pageNumber != newPage->pageNumber) {
+                totalPageFaults++;
+            }
+        }
+
+        // if the frame was null increment the value
+        else {
+            totalPageFaults++;
         }
 
         // updating the frame with the new page
@@ -144,11 +141,13 @@ int* secondChance(page** pageArray, int numFrames, int numPages, int m, int n, i
         }
     }
 
+    // memory dealloc
     currentFrame = NULL; newPage = NULL; free(newPage); free(currentFrame);
     free(pageTable); free(frameArray);
 
+    // returning variables
     int* returnData = (int*) malloc(sizeof(int)*2);
-    returnData[0] = numPages - totalTimesWasInMemory; returnData[1] = totalWritebacks;
+    returnData[0] = totalPageFaults; returnData[1] = totalWritebacks;
 
     return returnData;
 }

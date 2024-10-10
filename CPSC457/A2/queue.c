@@ -1,15 +1,18 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+// struct node
 struct node {
     int data;
     struct node* next;
 };
 
+// ll queue that contains head
 typedef struct {
     struct node* head;
 } queue;
 
+// creation method, just allocates memory, nothing else
 queue* createQueue() {
 
     queue* newQueue = (queue*) malloc(sizeof(queue));
@@ -26,6 +29,7 @@ bool isEmpty(queue* someQueue) {
     return false;
 }
 
+// always returns false
 bool isFull(queue* someQueue) {
     return false;
 }
@@ -39,6 +43,7 @@ bool contains(queue* someQueue, int someNumber) {
 
     struct node* temp = someQueue->head;
 
+    // just cycle through to see if it is in the queue
     while (temp != NULL) {
 
         if (temp->data == someNumber) {
@@ -50,46 +55,55 @@ bool contains(queue* someQueue, int someNumber) {
         }
     }
 
+    // otherwise return false
     return false;
 }
 
-// function to remove an element from a queue
+// function to remove an element from a queue, not dequeue (ie. can remove regardless of where it is in queue)
 int removeFromQueue(queue* someQueue, int someData) {
+
+    // verify that the queue is not empty and verify that the element is in queue
+    if (isEmpty(someQueue)) {
+        return (-1);
+    }
 
     if (!contains(someQueue, someData)) {
         return (-1);
     }
 
-    if (isEmpty(someQueue)) {
-        return (-1);
-    }
-
+    // create some nodes, prev will store the prior value of temp
     struct node* temp = someQueue->head;
     struct node* prev;
     bool loop = true;
 
     while (loop) {
         
+        // if the value is found
         if (temp->data == someData) {
 
+            // if it is the head, just shuffle the head forward
             if (temp == someQueue->head) {
                 someQueue->head = someQueue->head->next;
             }
 
+            // otherwise, break the queue around it, linking the prior node to the next node
             else {
                 prev->next = temp->next;
             }
         
+            // free the node and kill the loop
             free(temp);
             loop = false;
         }
 
         else {
+            // otherwise cycle loop
             prev = temp;
             temp = temp->next;
         }
 
         if (temp == NULL) {
+            // kill the loop if temp is null
             loop = false;
         }
 
@@ -99,7 +113,7 @@ int removeFromQueue(queue* someQueue, int someData) {
 }
 
 
-// if it is not empty, cycle to the next 
+// if it is not empty, cycle to the end to place the new node there
 void enqueue(queue* someQueue, int someData){
     
     struct node* temp = someQueue->head;
@@ -123,7 +137,7 @@ void enqueue(queue* someQueue, int someData){
     }
 }
 
-// dequeue provided that the queue is not empty, cycle the head forward
+// dequeue provided that the queue is not empty, simply cycle the head forward
 int dequeue(queue* someQueue) {
 
     if (isEmpty(someQueue)){
@@ -136,14 +150,3 @@ int dequeue(queue* someQueue) {
     free(temp);
     return returnData;
 }
-
-/**
-int main() {
-
-    queue* someQueue = createQueue();
-    enqueue(someQueue, 30);
-    enqueue(someQueue, 294);
-    removeFromQueue(someQueue, 294);
-
-    return 0;
-}*/

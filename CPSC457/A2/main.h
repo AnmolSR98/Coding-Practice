@@ -1,27 +1,33 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+// include a bunch of standard c things, as well as the modified queue to be used for 
+// both fifo and lru
 #include <stdlib.h>
 #include <stdbool.h>
 #include "queue.c"
 
+// generic largeNumber to be used for functions
 #define largeNumber 10000000
 
+// definition of page
 typedef struct {
     int pageNumber;
     int dirty;
     int* reference;
 } page;
 
+// definition of frame 
 typedef struct {
+    // page that currently housed in said frame
     page* currentPage;
-    int totalWriteBacks;
-    int frameId; 
-    int pageFaults;
+    
+    // variables for the time the last process arrived, and when it will arrive next
     int timeArrived;
     int nextArrival;
 } frame;    
 
+// page creation method
 page* createPage(char* pageNumber, char* dirty) {
     page* newPage = (page*) malloc(sizeof(page));
     
@@ -31,10 +37,13 @@ page* createPage(char* pageNumber, char* dirty) {
     return newPage;
 }
 
+// alternate one for the page table used in second chance
 page* altCreatePage(int pageNumber, int n) {
     page* newPage = (page*) malloc(sizeof(page));
     
     newPage->pageNumber = pageNumber;
+
+    // the array that simulates binary string for second chance
     newPage->reference = (int*) malloc(sizeof(int) * n);
 
     int i;
@@ -45,61 +54,21 @@ page* altCreatePage(int pageNumber, int n) {
     return newPage;
 }
 
+// frame creation method
 frame* createFrame(int frameId) {
+    
     frame* newFrame = (frame*) malloc(sizeof(frame));
 
     newFrame->currentPage = NULL;
-    newFrame->frameId = frameId;
-    newFrame->pageFaults = 0;
-    newFrame->totalWriteBacks = 0;
     newFrame->nextArrival = 0;
 
     return newFrame;
 }
 
-void printArray(int* someArray, int length) {
-
-    int i = 0;
-    printf("[ ");
-    for (i = 0; i < length; i++) {
-
-        if (i < length - 1) {
-            printf("%d, ", someArray[i]);
-        }
-
-        else {
-            printf("%d", someArray[i]);
-        }
-    }
-    printf(" ]\n");
-
-}
-
+// strings to be used
 char* divider = "+--------+-------------+-------------+\n";
 char* header  = "| Frames | Page Faults | Write backs |\n";
 char* content = "| %6d | %11d | %11d |\n";
-
-// just used for testing purposes
-void printTable(frame** frameArray, int numFrames) {
-
-    printf(divider);
-    printf(header);
-    printf(divider);
-
-    frame* currentFrame = malloc(sizeof(frame));
-
-    int i;
-    for (i = 0; i < numFrames; i++) {
-        currentFrame = frameArray[i];
-        printf(content, currentFrame->frameId, currentFrame->pageFaults, currentFrame->totalWriteBacks);
-        if (i < numFrames - 1) { 
-            printf(divider);
-        }
-    }
-
-    printf(divider);
-    //free(currentFrame);
-}
 
 // functions to actually use for printing the results of any given algorithm
 void printHeader() {

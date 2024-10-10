@@ -28,7 +28,6 @@ int getFrameToUpdateOptimal(frame** frameArray, page** pageArray, int numFrames,
 
         // return if one is found
         if (frameArray[i]->currentPage == NULL) {
-            frameArray[i]->pageFaults += 1;
             return i;
         }
 
@@ -45,9 +44,6 @@ int getFrameToUpdateOptimal(frame** frameArray, page** pageArray, int numFrames,
             frameIndex = i;
         }
     }
-
-    // update the page fault if that specific page number was not found in memory
-    frameArray[frameIndex]->pageFaults += 1;
     
     // if no free page was found then return the frame with the page that will reappear last or not at all
     return frameIndex;
@@ -62,11 +58,12 @@ int* optimal(page** pageArray, int numFrames, int numPages) {
         frameArray[i] = createFrame(i+1);
     }
 
-    int frameToUpdate;
+    // pointers for the next page in the sequence
     page* newPage = (page*) malloc(sizeof(page));
     frame* currentFrame = (frame*) malloc(sizeof(frame));
-    int totalTimesWasInMemory = 0;
+    // values to keep track of write backs and page faults
     int totalWritebacks = 0;
+    int totalPageFaults = 0;
 
     // now moving onto actually simulating checking the frames
     for (i = 0; i < numPages; i++) {
@@ -74,11 +71,8 @@ int* optimal(page** pageArray, int numFrames, int numPages) {
         // get the current page from the queue
         newPage = pageArray[i];
 
-        // gonna create a function to check for the index of the first free frame
+        // get the frame
         currentFrame = frameArray[getFrameToUpdateOptimal(frameArray, pageArray, numFrames, numPages, newPage->pageNumber, i)];
-
-        // adding on a update if the frame was null before or if the current page has a dirty bit
-        // in the case of a null frame or change in page number, add on a write back
 
         // writing back to memory if current page is dirty 
         if (currentFrame->currentPage != NULL) {
@@ -87,22 +81,32 @@ int* optimal(page** pageArray, int numFrames, int numPages) {
             }
         }
         
+        // checking to see if the page number of this frame is different to the page being shifted in, if not, page fault
         if(currentFrame->currentPage!= NULL) {
-            if (currentFrame->currentPage->pageNumber == newPage->pageNumber) {
-                totalTimesWasInMemory++;
+            if (currentFrame->currentPage->pageNumber != newPage->pageNumber) {
+                totalPageFaults++;
             }
         }
 
-        // updating the frame
+        // if the frame was empty, page fault
+        else {
+            totalPageFaults++;
+        }
+
+        // updating the frame with the new page
         currentFrame->currentPage = newPage;
+
+        // calculate the next time this page will appear
         currentFrame->nextArrival = indexOfNextInstance(pageArray, i, numPages, currentFrame->currentPage->pageNumber);
     }
 
+    // dealloc
     currentFrame = NULL; newPage = NULL; free(newPage); free(currentFrame);
     free(frameArray); free(currentFrame);
 
+    // returning data
     int* returnData = (int*) malloc(sizeof(int)*2);
-    returnData[0] = numPages-totalTimesWasInMemory; returnData[1] = totalWritebacks;
+    returnData[0] = totalPageFaults; returnData[1] = totalWritebacks;
 
     return returnData;
 }
