@@ -1,6 +1,16 @@
 #include "main.h"
-#include "math.h"
+#include <math.h>
 #include <stdio.h>
+
+// had to create this due to some server issue that stopped me from using pow()
+int customPow(int base, int exponent){
+    int product = 1;
+    int i;
+    for (i = 0; i < exponent; i++) {
+        product *= base;
+    }
+    return product;
+}
 
 // set the first bit to one 
 void setMostSignificantBit(int* someArray) {
@@ -13,7 +23,7 @@ int getTotalValue(int* someArray, int length) {
     int i, arraySum = 0;
     
     for (i = 0; i < length; i++) {
-        arraySum += someArray[i]*pow(10, length - i - 1);
+        arraySum += someArray[i]*customPow(10, length - i - 1);
     }
 
     return arraySum;
@@ -151,3 +161,4 @@ int* secondChance(page** pageArray, int numFrames, int numPages, int m, int n, i
 
     return returnData;
 }
+
