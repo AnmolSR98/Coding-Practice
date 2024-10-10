@@ -12,7 +12,8 @@
 #include "secondchance.c"
 
 // defining a bunch of variables to be used for reading in the csv file
-#define length 15000
+// csv actually contains slightly more than 15000 lines of data to read in
+#define length 15050
 #define buffer 64
 #define numAttr 2
 #define expectedLength 16
@@ -68,7 +69,8 @@ void runLoopOPT(page** listOPages){
     printHeader();
     for (i = 1; i <= 100; i++) {
         holderArray = optimal(listOPages, i, length);
-        printData(i, holderArray[0], holderArray[1]);
+        //printData(i, holderArray[0], holderArray[1]);
+        printf("%d, %d, %d\n", i, holderArray[0], holderArray[1]);
     }
     printFooter();
 }
@@ -82,7 +84,8 @@ void runLoopLRU(page** listOPages){
     printHeader();
     for (i = 1; i <= 100; i++) {
         holderArray = lru(listOPages, i, length);
-        printData(i, holderArray[0], holderArray[1]);
+        //printData(i, holderArray[0], holderArray[1]);
+        printf("%d, %d, %d\n", i, holderArray[0], holderArray[1]);
     }
     printFooter();
 }
@@ -96,7 +99,8 @@ void runLoopFIFO(page** listOPages){
     printHeader();
     for (i = 1; i <= 100; i++) {
         holderArray = fifo(listOPages, i, length);
-        printData(i, holderArray[0], holderArray[1]);
+        //printData(i, holderArray[0], holderArray[1]);
+        printf("%d, %d, %d\n", i, holderArray[0], holderArray[1]);
     }
     printFooter();
 }
@@ -115,7 +119,8 @@ void runLoopCLK(page** listOPages, int numUniquePages){
     printClockHeaderN();
     for (n = 1; n <= 32; n++) {
         holderArray = secondChance(listOPages, numFrames, length, m, n, numUniquePages);
-        printClockData(n, holderArray[0], holderArray[1]);
+        //printClockData(n, holderArray[0], holderArray[1]);
+        printf("%d, %d, %d\n", n, holderArray[0], holderArray[1]);
     }
     printClockFooter();
     printf("\n");
@@ -125,7 +130,8 @@ void runLoopCLK(page** listOPages, int numUniquePages){
     printClockHeaderM();
     for (m = 1; m <= 100; m++) {
         holderArray = secondChance(listOPages, numFrames, length, m, n, numUniquePages);
-        printClockData(m, holderArray[0], holderArray[1]);
+        //printClockData(m, holderArray[0], holderArray[1]);
+        printf("%d, %d, %d\n", m , holderArray[0], holderArray[1]);
     }
     printClockFooter();
 }
