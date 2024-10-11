@@ -39,6 +39,7 @@ evenSumPairs xs ys = [(x, y) | (x, y)<- zip (xs) (ys), mod (x+y) (2) == 0]
 maxManhattanDistance :: [(Int, Int)] -> Int
 maxManhattanDistance xs = maxGet (-1) ([abs(x)+abs(y) | (x, y) <- xs]) 
 
+-- can use where if helper functions are not allowed
 -- still need to define a helper max function
 maxGet:: Int -> [Int] -> Int
 maxGet x [] = x
@@ -66,11 +67,7 @@ vowelStringLengths :: [String] -> [(String, Int)]
 vowelStringLengths strlist = [(x, length(x)) | x <- strlist, isVowel(x !! 0)] 
 
 isVowel :: Char -> Bool
-isVowel x | (x == 'a') = True
-          | (x == 'e') = True
-          | (x == 'i') = True
-          | (x == 'o') = True
-          | (x == 'u') = True
+isVowel x | (x `elem` "aeiouAEIOU") = True
           | otherwise = False
 
 -- 6. Create a recursive function that takes a list of tuples (String, Int)
