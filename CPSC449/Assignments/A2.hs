@@ -15,8 +15,22 @@ getArrayOfColumnN [] y = []
 getArrayOfColumnN (x:xs) y = [(x !! y)] ++ getArrayOfColumnN (xs) (y)
 
 -- Question 2: Group by Predicate
-groupByPredicate :: (a -> Bool) -> [a] -> [a]
-groupByPredicate func xs = [x | x <- xs, func (x)]
+-- going to need a take while esque helper
+-- will insert an errant empty list if the first value is not true, maybe have a checker for that
+groupByPredicate :: (a -> Bool) -> [a] -> [[a]]
+groupByPredicate func [] = []
+groupByPredicate func xs | (checkFirst func xs) = [takeWhile (func) (xs)] ++ groupByPredicate (functionInverse func) (drop (getNumberTaken (func) (xs)) (xs)) 
+                         | otherwise = [takeWhile (functionInverse func) (xs)] ++ groupByPredicate (func) (drop (getNumberTaken (functionInverse func) (xs)) (xs))
+
+checkFirst :: (a -> Bool) -> [a] -> Bool
+checkFirst func [] = True
+checkFirst func (x:xs) = func x
+
+functionInverse :: (a -> Bool) -> a -> Bool
+functionInverse func x = not(func x)
+
+getNumberTaken :: (a -> Bool) -> [a] -> Int
+getNumberTaken func xs = length(takeWhile (func) (xs))
 
 -- Question 3: Movie questions
 data Movie = Movie { title :: String, rating :: Float, genre :: String } deriving Show
@@ -40,6 +54,6 @@ moviesByGenre mlist mgenre = [(title x) | (x) <- mlist, ((genre x) == mgenre)]
 adjustedRatings :: [Movie] -> [Movie]
 adjustedRatings mlist = [ Movie (title x) ((\x -> x + 0.5) (rating x)) (genre x) | x <- mlist]
 
--- (\x = x + 0.5) (rating x)
+-- Question 4: Merge sort 
 
 
