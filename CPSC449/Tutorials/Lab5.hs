@@ -133,3 +133,8 @@ instance Show Point where
 -- and then returns a new shape that has the same dimensions, only it's located somewhere else.
 --nudge :: Shape' -> Float -> Float -> Shape'
 --nudge = -- ??? --
+
+data Judge = Passed | Failed
+deriving Show where
+  Show Passed = "Congrats"
+  Show Failed = "Failedsds"

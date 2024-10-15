@@ -54,6 +54,29 @@ moviesByGenre mlist mgenre = [(title x) | (x) <- mlist, ((genre x) == mgenre)]
 adjustedRatings :: [Movie] -> [Movie]
 adjustedRatings mlist = [ Movie (title x) ((\x -> x + 0.5) (rating x)) (genre x) | x <- mlist]
 
--- Question 4: Merge sort 
+-- Question 4: Merge sort, 
+-- working, but I don't think this is an actual merge sort unfortunately since it isn't cleanly merge two halves together 
+-- maybe use take to get first half of list 
 
+-- actual merge sort function here
+mergeSort:: Ord a => [a] -> [a]
+mergeSort a = (runMerge . getListOfLists) a
 
+-- maybe get a function to divide them into two lists and then use list comprehension
+runMerge:: Ord a => [[a]] -> [a]
+runMerge [] = []
+runMerge (x:xs) | (xs == []) = x
+runMerge (x:y:rem) = merge (merge (x) (y)) (runMerge (rem))
+
+-- getting a list of lists to merge them together 
+getListOfLists:: Ord a => [a] -> [[a]]
+getListOfLists [] = []
+getListOfLists (x:rem) = [[x]] ++ getListOfLists (rem)
+
+-- merging two lists so that they appear in order
+merge:: Ord a => [a] -> [a] -> [a]
+merge [] [] = []
+merge (x:xs) [] = [x] ++ merge (xs) []
+merge [] (y:ys) = [y] ++ merge [] (ys)
+merge (x:xs) (y:ys) | (x < y)   = [x] ++ merge (xs) (y:ys)
+                    | otherwise = [y] ++ merge (x:xs) (ys)
