@@ -68,7 +68,7 @@ getHalf x = round(fromIntegral(x)/2)
 -- maybe get a function to divide them into two lists and then use list comprehension
 runMerge:: Ord a => [a] -> [a]
 runMerge x | (length(x) <= 1) = x
-runMerge x = merge (runMerge (take (getHalf (length x)) x)) (runMerge (drop (getHalf (length x)) x)) -- defo causing a free error here
+runMerge x = merge (runMerge (take (getHalf (length x)) x)) (runMerge (drop (getHalf (length x)) x)) 
            -- | otherwise = merge (genericTake (getHalf (length x)) (x)) (x) --merge (merge (x) (y)) (runMerge (rem))
 
 
