@@ -60,18 +60,17 @@ adjustedRatings mlist = [ Movie (title x) ((\x -> x + 0.5) (rating x)) (genre x)
 
 -- actual merge sort function here
 mergeSort:: Ord a => [a] -> [a]
-mergeSort a = (runMerge . getListOfLists) a
+mergeSort a = runMerge a
+
+getHalf:: Int -> Int
+getHalf x = round(fromIntegral(x)/2)
 
 -- maybe get a function to divide them into two lists and then use list comprehension
-runMerge:: Ord a => [[a]] -> [a]
-runMerge [] = []
-runMerge (x:xs) | (xs == []) = x
-runMerge (x:y:rem) = merge (merge (x) (y)) (runMerge (rem))
+runMerge:: Ord a => [a] -> [a]
+runMerge x | (length(x) <= 1) = x
+runMerge x = merge (runMerge (take (getHalf (length x)) x)) (runMerge (drop (getHalf (length x)) x)) -- defo causing a free error here
+           -- | otherwise = merge (genericTake (getHalf (length x)) (x)) (x) --merge (merge (x) (y)) (runMerge (rem))
 
--- getting a list of lists to merge them together 
-getListOfLists:: Ord a => [a] -> [[a]]
-getListOfLists [] = []
-getListOfLists (x:rem) = [[x]] ++ getListOfLists (rem)
 
 -- merging two lists so that they appear in order
 merge:: Ord a => [a] -> [a] -> [a]
