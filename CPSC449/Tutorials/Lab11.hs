@@ -1,3 +1,4 @@
+import Data.Char (toUpper)
 -- Fill in the missing code for each function
 
 -- I) Lambda Function
@@ -11,7 +12,7 @@
 
 -- 1. Function that uses a lambda function to increment all elements of a list by 1
 incrementList :: [Int] -> [Int]
-incrementList xs = undefined  -- Complete this function
+incrementList xs = [(\n -> n + 1) (x) | x <- xs]  -- Complete this function
 
 -- 2. Function that uses a lambda function to multiply corresponding elements of two lists
 -- Hint: You can use the `zipWith`. zipWith is a higher-order function in Haskell that takes
@@ -20,11 +21,12 @@ incrementList xs = undefined  -- Complete this function
 -- Example: zipWith (+) [1, 2, 3] [4, 5, 6] or zipWith (\x y -> x + y) [1, 2, 3] [4, 5, 6]
 -- Result: [5, 7, 9]
 multiplyLists :: [Int] -> [Int] -> [Int]
-multiplyLists xs ys = undefined  -- Complete this function
+multiplyLists xs ys = [(\x y -> x*y) (x) (y) | (x, y) <- zip (xs) (ys)]  -- Complete this function
+-- can feed tuples to lambda functions
 
 -- 3. Function that uses a lambda to filter out words shorter than a given length from a list
 filterShortWords :: Int -> [String] -> [String]
-filterShortWords n words = undefined  -- Complete this function
+filterShortWords n words = [x | x <- words, (\k -> (length(k) >= n)) x]  -- Complete this function
 
 -- II) More exercises on Maps and Filters
 -- ------------------------------------
@@ -40,29 +42,31 @@ filterShortWords n words = undefined  -- Complete this function
 --   Example 1: `filter even [1, 2, 3, 4]` results in `[2, 4]`.
 --   Example 2: `filter (> 3) [1, 2, 3, 4, 5]` results in `[4, 5]` (filters elements greater than 3).
 --   Example 3: `filter (\x -> length x > 3) ["cat", "horse", "dog"]` results in `["horse"]` (keeps 
---   words longer than 3 characters).
+--   words longer than 3 characters
 
 -- 1. Function to multiply each number in a list by its index position (0-based)
 -- For example: multiplyByIndex [5, 10, 15] should return [0, 10, 30]
 multiplyByIndex :: [Int] -> [Int]
-multiplyByIndex xs = undefined  -- Complete this function
+multiplyByIndex xs = [x*y | (x, y) <- zip xs [0..length(xs)]] -- Complete this function
 
 -- 2 Function to convert a list of strings to uppercase
 -- For example: toUppercase ["hello", "world"] should return ["HELLO", "WORLD"]
-import Data.Char (toUpper)
 toUppercase :: [String] -> [String]
-toUppercase strs = undefined  -- Complete this function
+toUppercase strs = [map (toUpper) (x) | x <- strs]  -- Complete this function
 
 -- 3. Function to filter out all the strings that contain the letter 'a'
 -- For example: filterNoA ["apple", "banana", "cherry", "date"] should return ["cherry"]
 filterNoA :: [String] -> [String]
-filterNoA strs = undefined  -- Complete this function
+filterNoA strs = [x | x <- strs, (x == filter (\x -> (x /= 'a')) (x))]   -- Complete this function
 
 -- 4. Function to filter out all prime numbers from a list
 -- It could be usefull to define a helper function or reuse the one you defined in
 -- previous sessions.
 filterPrimes :: [Int] -> [Int]
-filterPrimes xs = undefined  -- Complete this function
+filterPrimes xs = filter (not.isPrime) (xs)  -- Complete this function
+
+isPrime :: Int -> Bool
+isPrime x = False
 
 -- III) Custom Higher Order Functions
 -- ---------------------------
@@ -77,15 +81,21 @@ filterPrimes xs = undefined  -- Complete this function
 
 -- 1. Function that takes a function and applies it to each element of a list
 applyToList :: (a -> b) -> [a] -> [b]
-applyToList f xs = undefined  -- Complete this function
+applyToList f xs = map f xs  -- Complete this function
 
 -- 2. Function that takes a list of functions and applies them sequentially to a value
 applyFunctions :: [a -> a] -> a -> a
-applyFunctions fs x = undefined  -- Complete this function
+applyFunctions [] x = x
+applyFunctions (f:fs) x = applyFunctions (fs) (f (x)) -- Complete this function
 
 -- 3. Function that takes a comparison function and returns the maximum element from a list
 maxWithFunction :: (a -> a -> Ordering) -> [a] -> a
-maxWithFunction cmp xs = undefined  -- Complete this function
+maxWithFunction cmp (x:xs) = maxHelper cmp (x:xs) x   -- Complete this function
+
+maxHelper :: (a -> a -> Ordering) -> [a] -> a -> a
+maxHelper cmp [] m = m
+maxHelper cmp (x:xs) m | (cmp m x == GT) = maxHelper (cmp) (xs) (m)
+                       | otherwise = maxHelper cmp xs x
 
 -- Hint: Define a helper function to compare and find the max recursively
 
