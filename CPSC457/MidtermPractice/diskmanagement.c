@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include "queue.c"
 
+#define min 0
+#define max 199
+
 // simple first come first serve algorithm
 int FCFS(queue* requests, int length) {
 
@@ -120,8 +123,8 @@ int SCAN(queue* requests, int length) {
         lowerLength--;
     }
 
-    totalCylinders += abs(current - 0);
-    current = 0;
+    totalCylinders += abs(current - min);
+    current = min;
 
     while (!isEmpty(requests)) {
         next = getLowestDifferenceInQueue(requests, current, length);
@@ -168,8 +171,63 @@ int CSCAN(queue* requests, int length) {
         length--;
     }
 
-    totalCylinders += abs(current - 0);
-    current = 0;
+    next = max;
+    totalCylinders += abs(current - next);
+    current = next;
+
+    next = min;
+    totalCylinders += abs(current - next);
+    current = next;
+
+    while (!isEmpty(lowerQueue)) {
+        next = getLowestDifferenceInQueue(lowerQueue, current, lowerLength);
+        totalCylinders += abs(current - next);
+        current = next;
+        lowerLength--;
+    }
+
+    return totalCylinders;
+}
+
+int CLOOK(queue* requests, int length) {
+    
+    int head = dequeue(requests);
+    int totalCylinders = 0;
+    int current = 0;
+    int next = 0;
+    length--;
+    int minimum = getLowestDifferenceInQueue(requests, 0, length);
+    length--;
+
+    queue* lowerQueue = createQueue();
+
+    int lowerLength = length - howManyLargerThan(requests, head, length);
+
+    int i;
+    for (i = 0; i < length; i++) {
+        current = dequeue(requests);
+        if (current < head) {
+            enqueue(lowerQueue, current);
+            length--;
+        }
+
+        else {
+            enqueue(requests, current);
+        }
+    }
+
+    current = head;
+
+    while (!isEmpty(requests)) {
+        next = getLowestDifferenceInQueue(requests, current, length);
+        totalCylinders += abs(current - next);
+        current = next;
+        length--;
+    }
+
+    next = minimum;
+    totalCylinders += abs(current - next);
+    current = next;
 
     while (!isEmpty(lowerQueue)) {
         next = getLowestDifferenceInQueue(lowerQueue, current, lowerLength);
@@ -189,7 +247,7 @@ int main(){
     enqueue(testQueue, 122); enqueue(testQueue, 14); enqueue(testQueue, 124); enqueue(testQueue, 65); enqueue(testQueue, 67); 
 
     int length = 9;
-    int cyl = SCAN(testQueue, length);
+    int cyl = CLOOK(testQueue, length);
 
     return 0;
 }
