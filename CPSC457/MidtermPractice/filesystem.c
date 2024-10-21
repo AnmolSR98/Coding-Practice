@@ -34,5 +34,17 @@ struct freeSpaceLinked {
 
 // for counting
 struct freeSpaceCounting {
+    int** overallList; // a list of format [address of free block, count of contiguous blocks]
+};
 
+// for grouping
+
+struct grouping {
+    int* addressList;
+    int size;
+    int data;
+};
+
+struct freeSpaceGrouping {
+    struct grouping head; // kind of like a bunch of linked lists, as opposed to one that is strictly linear
 };
