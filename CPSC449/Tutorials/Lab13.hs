@@ -1,4 +1,4 @@
-import System.Win32 (COORD(yPos))
+
 {-
 Currying:
 Currying refers to transforming a function that takes multiple arguments into a sequence of functions, each taking a single argument.
@@ -67,8 +67,8 @@ switchMap :: (a -> b) -> (a -> b) -> [a] -> [b]
 switchMap f g = foldl (\x y -> [getFunc f g x y] ++ x) []  
     --(\ func (x:xs) -> [func(x)]) (f)
 
-getFunc :: (a -> b) -> (a -> b) -> [a] -> [b] -> a
-getFunc f g xs x | (length xs `mod` 2 == 0) = f x
+getFunc :: (a -> b) -> (a -> b) -> [b] -> a -> b
+getFunc f g xs x | (length xs `mod` 2 == 0) = f (x)
                  | otherwise = g x 
 
 
