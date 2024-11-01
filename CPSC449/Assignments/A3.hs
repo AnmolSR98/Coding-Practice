@@ -1,15 +1,20 @@
 -- Question 1
 
 processNestedList:: [[Int]] -> [Int]
-processNestedList = map (\x -> x*x) . filter (even) . nestedHelper
+processNestedList = filter (even) . foldr (\x z -> square (x) ++ z) []
+
+square :: [Int] -> [Int]
+square [] = []
+square (x:xs) = [x*x] ++ square(xs)
 
 nestedHelper :: [[Int]] -> [Int]
 nestedHelper [] = []
 nestedHelper (x:xs) = x ++ nestedHelper xs
 
+-- change to use two input lambda function FIX []
 fst' :: (a, b) -> a
 fst' = (\(x, y) -> x)
-
+ 
 snd' :: (a, b) -> b
 snd' = (\(x, y) -> y)
 

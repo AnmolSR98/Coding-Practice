@@ -18,34 +18,39 @@ sumProduct (Node (a, b) l r) = a*b + sumProduct l + sumProduct r
 
 -- Question 2: Map over a tree, applying a function to each tuple.
 mapTree :: (a -> b) -> Tree a -> Tree b
-mapTree = undefined
+mapTree f Leaf = Leaf
+mapTree f (Node a l r) = Node (f a) (mapTree f l) (mapTree f r)
 
 -- Question 3: apply a function that doubles each element in the tuple.
 doubleValues :: (Int, Int) -> (Int, Int)
-doubleValues = undefined
+doubleValues (a, b) = (2 * a, 2 * b) 
 -- Example: `mapTree doubleValues exampleTree` 
 
 -- Question 4: use * and uncurry to multiply two elements of each pair in the tree
 productUncurryTree :: Tree (Int, Int) -> Tree Int
-productUncurryTree = undefined
+productUncurryTree (Node (a, b) l r) = Node (a*b) (productUncurryTree l) (productUncurryTree r)
 
 
 -- Question 5: Function to add a constant to both values in each node’s tuple.
 addConstant :: Int -> Tree (Int, Int) -> Tree (Int, Int)
-addConstant = undefined
+addConstant x Leaf = Leaf
+addConstant 0 x = x
+addConstant x (Node (a, b) l r) = Node (a + x, b + x) (addConstant x l) (addConstant x r)
 
 -- Question 6: Partial application example: adding 10 to each node.
 addTenToTree ::  Tree (Int, Int) -> Tree (Int, Int)
-addTenToTree = undefined
+addTenToTree = addConstant 10 
 
 
 -- Question 7: Function to count nodes based on a predicate applied to the tuple.
 countNodes :: ((Int, Int) -> Bool) -> Tree (Int, Int) -> Int
-countNodes = undefined
+countNodes f Leaf = 0
+countNodes f (Node (a, b) l r) | (f (a, b)) = 1 + (countNodes f l) + (countNodes f r)
+                               | otherwise = (countNodes f l) + (countNodes f r)
 
 -- Question 8: Example: Using uncurry to apply a sum predicate.
 sumGreaterThan :: Int -> (Int, Int) -> Bool
-sumGreaterThan = undefined
+sumGreaterThan = undefined 
 
 -- Example: `countNodes (sumGreaterThan 7) exampleTree`
 
