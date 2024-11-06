@@ -75,6 +75,7 @@ reverseHelper (Node a arem) Empty = reverseHelper arem (Node a Empty)
 fromList :: [a] -> LinkedList a
 fromList [] = Empty
 fromList (x:xs) = Node x (fromList xs) 
+-- fromList = foldr Node Empty
 
 -- 2.5 Implement a function to convert a linked list back to a regular Haskell list 
 toList :: LinkedList a -> [a]
