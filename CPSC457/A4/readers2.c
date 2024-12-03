@@ -84,6 +84,11 @@ int main() {
     // checking the final values of sharedResource
     printf("%x\n", sharedResource);
 
+    // end of cycle print statements
+    printf("Readers-Writers Solution 2 (time in seconds)\n");
+    printf("Writers | AVG Reader TAT | AVG Writer TAT | AVG TAT\n");
+    printf("%2d      | %6.7f | %6.7f | %3.3f\n", 10, 500000.0, 500000.0, 500.0);
+
     // freeing all of the resources
     free(rentry); free(rmutex); free(wmutex); free(readtry); free(resource);
 

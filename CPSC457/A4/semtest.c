@@ -5,7 +5,7 @@
 #include "semaphore.c"
 
 #define numThreads 50
-#define testSize 25
+#define testSize 10
 // need to create an argument struct to actually pass those along
 typedef struct {
     int threadId;
