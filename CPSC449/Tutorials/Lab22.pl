@@ -42,12 +42,14 @@
 
 % Example 1: Check if a list is empty.
 
-% Usage:
-% ?- is_empty([]).
+% Usage: Can just define simply as this way
+is_empty([]).
+% ?-is_empty([])  
 
 
 % Example 2: Find the head and tail of a list.
 % Usage:
+head_tail([Head|Tail], Head, Tail).
 % ?- head_tail([1, 2, 3], Head, Tail).
 % Head = 1, Tail = [2, 3].
 
@@ -55,6 +57,8 @@
 % Example 3: Append two lists.
 
 % Usage:
+append_list([], List, List).
+append_list([Head|Tail], List, [Head|Result]):- append_list(Tail, List, Result).
 % ?- append_list([1, 2], [3, 4], Result).
 % Result = [1, 2, 3, 4].
 
@@ -62,6 +66,9 @@
 % Example 4: Reverse a list using recursion.
 
 % Usage:
+reverse_list([], []).
+reverse_list([Head|Tail], Result):- reverse_list(Tail, NewTail), append_list(NewTail,[Head], Result).
+
 % ?- reverse_list([1, 2, 3], Result).
 % Result = [3, 2, 1].
 
@@ -69,18 +76,33 @@
 
 % Example 5: Check if a list is a palindrome.
 % Usage:
+is_palindrome(List):- (reverse_list(List, List)).
 % ?- is_palindrome([1, 2, 1]).
 % true.
 
 
 % Example 6: Find the nth element of a list.
 % Usage:
+nth_element(0, [Head|Tail], Head).
+nth_element(Position, [Head|Tail], Element):- 
+    Position > 0, 
+    NewPos is Position - 1,
+    nth_element(NewPos, Tail, Element), !.
 % ?- nth_element(2, [a, b, c], Element).
 % Element = b.
 
 
 % Example 7: Remove duplicates from a list.
 % Usage:
+remove_duplicates([], []).
+remove_duplicates([Head|Tail], Result):-
+    member(Head, Tail), 
+    remove_duplicates(Tail, Result).
+remove_duplicates([Head|Tail], [Head|Result]):-
+    \+ member(Head, Tail),
+    remove_duplicates(Tail, Result).
+
+
 % ?- remove_duplicates([1, 2, 2, 3, 1], Result).
 % Result = [3, 2, 1].
 
