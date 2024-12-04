@@ -31,7 +31,7 @@ double writerTimes[numWriters];
 volatile int readers = 0;
 
 // function prototypes
-void* writer(arg_struct* args); void* reader(arg_struct* args);
+void* writer(void* args); void* reader(void* args);
 
 // semaphores for use
 semaphore* mutex; semaphore* resource;
@@ -65,14 +65,14 @@ int main() {
     }
 
     // initializing writers
-    for (i = 0; i < numWriters; i++) {
+    for (i = numWriters; i < numReaders + numWriters; i++) {
         args = (arg_struct*) malloc( sizeof(arg_struct) );
-        args->threadId = numReaders + i;
-        pthread_create(&tid[numReaders + i], NULL, writer, args);
+        args->threadId = i;
+        pthread_create(&tid[i], NULL, writer, args);
     }
 
     // joining all of the threads
-    for (i = 0; i < numReaders + numWriters; i++) {
+    for (i = 0; i < (numReaders + numWriters); i++) {
         pthread_join(tid[i], NULL);
     }
 
@@ -84,26 +84,28 @@ int main() {
     printf("%2d      | %6.7f | %6.7f | %3.3f\n", 10, 500000.0, 500000.0, 500.0);
 
     // freeing all of the stuff used
-    free(args); free(mutex); free(resource);
+    //free(args); free(mutex); free(resource);
 
 
     return 0;
 }
 
-void* reader(arg_struct* args) {
+void* reader(void* args) {
+
+    arg_struct* actual_args = args;
 
     // getting the approximate time when the reader starts
     start = clock();
-    readerTimes[args->threadId] = (double) start;
+    readerTimes[actual_args->threadId] = (double) start;
 
     //int i;
     //for (i = 0; i < 1000; i++) {
 
         // entry section
-        semaphoreWait(mutex, &tid[args->threadId]);
+        semaphoreWait(mutex, &tid[actual_args->threadId]);
         readers++;
         if (readers == 1) {
-            semaphoreWait(resource, &tid[args->threadId]);
+            semaphoreWait(resource, &tid[actual_args->threadId]);
         }
         semaphoreSignal(mutex);
 
@@ -111,7 +113,7 @@ void* reader(arg_struct* args) {
         printf("%x\n", sharedResource);
         
         // exit section
-        semaphoreWait(mutex, &tid[args->threadId]);
+        semaphoreWait(mutex, &tid[actual_args->threadId]);
         readers--;
         if (readers == 0) { 
             semaphoreSignal(resource);
@@ -122,18 +124,20 @@ void* reader(arg_struct* args) {
 
     // getting the approximate times when the reader ends
     end = clock();
-    readerTimes[args->threadId] = (double) (end - readerTimes[args->threadId]);
-    readerTimes[args->threadId] /= CLOCKS_PER_SEC;
+    readerTimes[actual_args->threadId] = (double) (end - readerTimes[actual_args->threadId]);
+    readerTimes[actual_args->threadId] /= CLOCKS_PER_SEC;
 
     return NULL;
 
 }
 
-void* writer(arg_struct* args) {
+void* writer(void* args) {
+
+    arg_struct* actual_args = args;
 
     // getting the approximate time when the writer starts
     start = clock();
-    writerTimes[args->threadId] = (double) start;
+    writerTimes[actual_args->threadId] = (double) start;
 
     //int i = 0;
     //for (i = 0; i < 1000; i++) {
@@ -141,11 +145,11 @@ void* writer(arg_struct* args) {
         //sleep(1); // needed to ensure readers get in before writers
 
         // entry section
-        semaphoreWait(resource, &tid[args->threadId]); // insert method to get thread id into method, prolly using args struct
+        semaphoreWait(resource, &tid[actual_args->threadId]); // insert method to get thread id into method, prolly using args struct
         
         // insert test code here
-        sharedResource &= ~(0xF << (args->threadId % sharedLength) * 4);
-        holder = (0xF << (args->threadId % sharedLength) * 4) & (newResource);
+        sharedResource &= ~(0xF << (actual_args->threadId % sharedLength) * 4);
+        holder = (0xF << (actual_args->threadId % sharedLength) * 4) & (newResource);
         sharedResource |= holder;
 
         // exit section
@@ -155,8 +159,8 @@ void* writer(arg_struct* args) {
 
     // getting the approximate time the writer ends
     end = clock();
-    writerTimes[args->threadId] = (double) (end - writerTimes[args->threadId]);
-    writerTimes[args->threadId] /= CLOCKS_PER_SEC;
+    writerTimes[actual_args->threadId] = (double) (end - writerTimes[actual_args->threadId]);
+    writerTimes[actual_args->threadId] /= CLOCKS_PER_SEC;
 
     return NULL;
     
