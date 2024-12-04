@@ -58,17 +58,20 @@ int main() {
 
     // fill out rest of main section here
     // initializing readers
+    int check = 0;
     for (i = 0; i < numReaders; i++) {
         args = (arg_struct*) malloc( sizeof(arg_struct) );
         args->threadId = i;
-        pthread_create(&tid[i], NULL, reader, args);
+        check = pthread_create(&tid[i], NULL, reader, args);
+        if (check != 0) {check = pthread_create(&tid[i], NULL, reader, args); }
     }
 
     // initializing writers
     for (i = numReaders; i < numReaders + numWriters; i++) {
         args = (arg_struct*) malloc( sizeof(arg_struct) );
         args->threadId = i;
-        pthread_create(&tid[i], NULL, writer, args);
+        check = pthread_create(&tid[i], NULL, writer, args);
+        if (check != 0) {check = pthread_create(&tid[i], NULL, writer, args); }
     }
 
     // joining all of the threads
