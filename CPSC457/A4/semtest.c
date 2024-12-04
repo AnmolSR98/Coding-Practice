@@ -5,14 +5,14 @@
 #include "semaphore.c"
 
 #define numThreads 50
-#define testSize 10
+#define testSize 25
 // need to create an argument struct to actually pass those along
 typedef struct {
     int threadId;
 }arg_struct;
 
 // prototype function
-void* test(arg_struct* args);
+void* test(void* args);
 
 // creating the thread ids
 pthread_t tid[numThreads];
@@ -39,7 +39,7 @@ int main() {
     for (i = 0; i < numThreads; i++) {
         args = (arg_struct*) malloc( sizeof(arg_struct) );
         args->threadId = i;
-        pthread_create(&tid[i], NULL, &test, args);
+        pthread_create(&tid[i], NULL, test, args);
     }
     
     for (i = 0; i < numThreads; i++) {
@@ -55,14 +55,15 @@ int main() {
 
 // very rare now the freeze error
 
-void* test(arg_struct* args) {
+void* test(void* args) {
+    arg_struct* actual_args = args;
     
     // insert wait method here
-    semaphoreWait(newSem, &tid[args->threadId]);
+    semaphoreWait(newSem, &tid[actual_args->threadId]);
 
     sleep(1);
 
-    printf("Thread %d free (total %d)!\n", args->threadId, threadsFinished); // should print all except the last two as there will be no more threads arriving
+    printf("Thread %d free (total %d)!\n", actual_args->threadId, threadsFinished); // should print all except the last two as there will be no more threads arriving
 
     // signal here, as the exit section
     semaphoreSignal(newSem);

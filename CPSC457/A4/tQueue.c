@@ -41,12 +41,11 @@ void enqueue(threadQueue* someQueue, pthread_t* someThread, pthread_cond_t* some
     // otherwise cycle through to the end and insert it there
     else {
         someQueue->holder = someQueue->head;
-        if (someQueue->size > 1) {
-            int j;
-            for (j = 0; j < someQueue->size-1; j++) {
-                someQueue->holder = someQueue->holder->next;
-            }
+        int j;
+        for (j = 0; j < someQueue->size-1; j++) {
+            someQueue->holder = someQueue->holder->next;
         }
+        
 
         someQueue->holder->next = newNode;
     }
@@ -65,11 +64,11 @@ struct node* dequeue(threadQueue* someQueue) {
         return NULL;
     }
 
-    // cycle the head forward
+    // cycle the head forward and decrement the size
     else {
         nodeToRemove = someQueue->head;
         someQueue->size--;
-        if (someQueue->size != 0) {someQueue->head = someQueue->head->next;}
+        if (someQueue->head != NULL) {someQueue->head = someQueue->head->next;}
         return nodeToRemove;
     }
 }

@@ -10,7 +10,7 @@ typedef struct {
     threadQueue* queue;
     pthread_mutex_t syncLock; // lock needed to maintain synchronization
     pthread_mutex_t signalLock; // lock to actually use for wait and signal
-    volatile struct node* next; // node that represents the process to be signaled
+    struct node* next; // node that represents the process to be signaled
     int debug;
 
 } semaphore;
@@ -42,7 +42,6 @@ void semaphoreWait(semaphore* someSem, pthread_t* someThread) {
 
         pthread_cond_t newCond = PTHREAD_COND_INITIALIZER; // create a new condition
         enqueue(someSem->queue, someThread, &newCond); // enqueue into the thread queue
-        printf("Current queue size: %d\n", someSem->queue->size);
         pthread_mutex_unlock( &(someSem->syncLock) ); // unlocking the synchronization lock
         pthread_cond_wait( &newCond, &(someSem->signalLock) ); // making use of a separate lock for the signal to put into wait
         someSem->value--; // decrement the value
@@ -60,18 +59,16 @@ void semaphoreSignal(semaphore* someSem) {
 
     // lock the sync lock immediately
     pthread_mutex_lock( &(someSem->syncLock) );
-
-    //printf("Queue size as seen from thread is: %d\n", someSem->queue->size);
     
     // increment the value up
     someSem->value++;
 
     // get the next value from the queue
     someSem->next = dequeue(someSem->queue);
+    usleep(1000); // delay a little to keep everything synced up
 
     // if there is a thread waiting
     if (someSem->next != NULL) {
-        // going to add the condition about spurious wakeups
         someSem->debug = pthread_cond_signal( someSem->next->cond );  // signal it
         while (someSem->debug != 0) {someSem->debug = pthread_cond_signal( someSem->next->cond ); }
         pthread_mutex_unlock( &(someSem->signalLock) );
