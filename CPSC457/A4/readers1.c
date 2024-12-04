@@ -65,15 +65,15 @@ int main() {
     }
 
     // initializing writers
-    for (i = numWriters; i < numReaders + numWriters; i++) {
+    for (i = numReaders; i < numReaders + numWriters; i++) {
         args = (arg_struct*) malloc( sizeof(arg_struct) );
         args->threadId = i;
         pthread_create(&tid[i], NULL, writer, args);
     }
 
     // joining all of the threads
-    for (i = 0; i < (numReaders + numWriters); i++) {
-        pthread_join(tid[i], NULL);
+    for (i = 0; i < numReaders + numWriters; i++) {
+        pthread_join(tid[i], NULL); // getting seg fault on linux for some reason
     }
 
     printf("%x\n", sharedResource);
