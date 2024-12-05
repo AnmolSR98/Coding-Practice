@@ -65,7 +65,7 @@ void semaphoreSignal(semaphore* someSem) {
 
     // get the next value from the queue
     someSem->next = dequeue(someSem->queue);
-    usleep(1000); // delay a little to keep everything synced up
+    usleep(10000); // delay a little to keep everything synced up
 
     // if there is a thread waiting
     if (someSem->next != NULL) {
