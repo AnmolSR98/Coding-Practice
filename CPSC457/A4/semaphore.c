@@ -22,7 +22,7 @@ semaphore* createSemaphore(int size){
     newSem->size = size;
     newSem->value = size;
     newSem->queue = createQueue();
-    pthread_mutex_init(&(newSem->syncLock), NULL); // lock initialization is working
+    pthread_mutex_init(&(newSem->syncLock), NULL);
     pthread_mutex_init(&(newSem->signalLock), NULL);  
     newSem->debug = 0;
 
