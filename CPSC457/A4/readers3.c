@@ -6,11 +6,13 @@
 #include <unistd.h>
 #include "semaphore.c"
 #include <time.h> // needed for time measurement
+#include "calc.c"
 
 #define mutexSize 1
 #define resourceSize 1
 #define numWriters 6
 #define numReaders 10
+#define numCycles 1000
 
 // need to create an argument struct to actually pass those along
 typedef struct {
@@ -79,10 +81,12 @@ int main() {
     // end of cycle print statements
     printf("Readers-Writers Solution 1 (time in seconds)\n");
     printf("Writers | AVG Reader TAT | AVG Writer TAT | AVG TAT\n");
-    printf("%2d      | %6.7f | %6.7f | %3.3f\n", 10, 500000.0, 500000.0, 500.0);
+    printf("%2d      | %6.7f | %6.7f | %3.3f\n", numWriters,
+        getAverage(readerTimes, numReaders), getAverage(writerTimes, numWriters), 
+        ( numReaders * getAverage(readerTimes, numReaders) + numWriters * getAverage(writerTimes, numWriters) ) / (numWriters + numReaders) );
+
 
     // freeing all of the resources used
-    free(args); free(mutex); free(resource);
 
     return 0;
 }
@@ -93,27 +97,32 @@ void* reader(arg_struct* args) {
     start = clock();
     readerTimes[args->threadId] = (double) start;
 
-    // entry section
-    semaphoreWait(mutex, &tid[args->threadId]);
-    readers++;
-    if ((readers == 0) || (writers > 0)) {
-        semaphoreSignal(mutex);
-        semaphoreWait(resource, &tid[args->threadId]);
-        semaphoreWait(mutex, &tid[args->threadId]);
-    }
-    readers++;
-    semaphoreSignal(mutex);
+    int i;
+    for (i = 0; i < numCycles; i++) {
 
-    // actual test code goes here
-    printf("%x\n", sharedResource);
-    
-    // exit section
-    semaphoreWait(mutex, NULL);
-    readers--;
-    if (readers == 0) { // should i change this boolean condition?? ruminate
-        semaphoreSignal(resource);
+        // entry section
+        semaphoreWait(mutex, &tid[args->threadId]);
+        readers++;
+        if ((readers == 0) || (writers > 0)) {
+            semaphoreSignal(mutex);
+            semaphoreWait(resource, &tid[args->threadId]);
+            semaphoreWait(mutex, &tid[args->threadId]);
+        }
+        readers++;
+        semaphoreSignal(mutex);
+
+        // actual test code goes here
+        printf("%x\n", sharedResource);
+        
+        // exit section
+        semaphoreWait(mutex, NULL);
+        readers--;
+        if (readers == 0) { // should i change this boolean condition?? ruminate
+            semaphoreSignal(resource);
+        }
+        semaphoreSignal(mutex);
+
     }
-    semaphoreSignal(mutex);
 
     // getting the approximate times when the reader ends
     end = clock();
@@ -129,22 +138,27 @@ void* writer(arg_struct* args) {
     start = clock();
     writerTimes[args->threadId] = (double) start;
 
-    // entry section
-    semaphoreWait(mutex, &tid[args->threadId]); // insert method to get thread id into method, prolly using args struct
-    writers++;
-    semaphoreSignal(mutex);
-    semaphoreWait(resource, &tid[args->threadId]);
+    int i;
+    for (i = 0; i < numCycles; i++) {
 
-    // insert test code here
-    sharedResource &= ~(0xF << (args->threadId % sharedLength) * 4);
-    holder = (0xF << (args->threadId % sharedLength) * 4) & (newResource);
-    sharedResource |= holder;
+        // entry section
+        semaphoreWait(mutex, &tid[args->threadId]); // insert method to get thread id into method, prolly using args struct
+        writers++;
+        semaphoreSignal(mutex);
+        semaphoreWait(resource, &tid[args->threadId]);
 
-    // exit section
-    semaphoreWait(mutex, &tid[args->threadId]); // again, find a way to get threadId here
-    writers--;
-    semaphoreSignal(mutex);
-    semaphoreSignal(resource);
+        // insert test code here
+        sharedResource &= ~(0xF << (args->threadId % sharedLength) * 4);
+        holder = (0xF << (args->threadId % sharedLength) * 4) & (newResource);
+        sharedResource |= holder;
+
+        // exit section
+        semaphoreWait(mutex, &tid[args->threadId]); // again, find a way to get threadId here
+        writers--;
+        semaphoreSignal(mutex);
+        semaphoreSignal(resource);
+
+    }
 
     // getting the approximate time the writer ends
     end = clock();
