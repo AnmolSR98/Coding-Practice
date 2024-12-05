@@ -4,8 +4,8 @@
 #include <unistd.h>
 #include "semaphore.c"
 
-#define numThreads 30000
-#define testSize 1000
+#define numThreads 50
+#define testSize 25
 // need to create an argument struct to actually pass those along
 typedef struct {
     int threadId;

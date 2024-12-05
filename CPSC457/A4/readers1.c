@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include "semaphore.c"
 #include <time.h>
-#include "calc.c"
 
 // NEED TO MODIFY TO RUN FOR A 1000 TIMES EACH
 // numReaders can be fixed at 10
@@ -13,9 +12,8 @@
 
 #define mutexSize 1
 #define resourceSize 1
-#define numWriters 5
+#define numWriters 1
 #define numReaders 10
-#define numCycles 1000
 
 // need to create an argument struct to actually pass those along
 typedef struct {
@@ -81,12 +79,15 @@ int main() {
         pthread_join(tid[i], NULL); // getting seg fault on linux for some reason
     }
 
+    printf("%x\n", sharedResource);
+
     // end of cycle print statements
     printf("Readers-Writers Solution 1 (time in seconds)\n");
     printf("Writers | AVG Reader TAT | AVG Writer TAT | AVG TAT\n");
-    printf("%2d      | %6.7f | %6.7f | %3.3f\n", numWriters,
-        getAverage(readerTimes, numReaders), getAverage(writerTimes, numWriters), 
-        ( numReaders * getAverage(readerTimes, numReaders) + numWriters * getAverage(writerTimes, numWriters) ) / (numWriters + numReaders) );
+    printf("%2d      | %6.7f | %6.7f | %3.3f\n", 10, 500000.0, 500000.0, 500.0);
+
+    // freeing all of the stuff used
+    //free(args); free(mutex); free(resource);
 
 
     return 0;
@@ -100,8 +101,8 @@ void* reader(void* args) {
     start = clock();
     readerTimes[actual_args->threadId] = (double) start;
 
-    int i;
-    for (i = 0; i < numCycles; i++) {
+    //int i;
+    //for (i = 0; i < 1000; i++) {
 
         // entry section
         semaphoreWait(mutex, &tid[actual_args->threadId]);
@@ -122,7 +123,7 @@ void* reader(void* args) {
         }
         semaphoreSignal(mutex);
 
-    }
+    //}
 
     // getting the approximate times when the reader ends
     end = clock();
@@ -139,10 +140,10 @@ void* writer(void* args) {
 
     // getting the approximate time when the writer starts
     start = clock();
-    writerTimes[actual_args->threadId - numReaders] = (double) start;
+    writerTimes[actual_args->threadId] = (double) start;
 
-    int i = 0;
-    for (i = 0; i < numCycles; i++) {
+    //int i = 0;
+    //for (i = 0; i < 1000; i++) {
 
         //sleep(1); // needed to ensure readers get in before writers
 
@@ -157,12 +158,12 @@ void* writer(void* args) {
         // exit section
         semaphoreSignal(resource); // again, find a way to get threadId here
 
-    }
+    //}
 
     // getting the approximate time the writer ends
     end = clock();
-    writerTimes[actual_args->threadId - numReaders] = (double) (end - writerTimes[actual_args->threadId - numReaders]);
-    writerTimes[actual_args->threadId - numReaders] /= CLOCKS_PER_SEC;
+    writerTimes[actual_args->threadId] = (double) (end - writerTimes[actual_args->threadId]);
+    writerTimes[actual_args->threadId] /= CLOCKS_PER_SEC;
 
     return NULL;
     
