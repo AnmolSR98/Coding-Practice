@@ -79,7 +79,7 @@ int main() {
     }
 
     // end of cycle print statements
-    printf("Readers-Writers Solution 1 (time in seconds)\n");
+    printf("Readers-Writers Solution 3 (time in seconds)\n");
     printf("Writers | AVG Reader TAT | AVG Writer TAT | AVG TAT\n");
     printf("%2d      | %6.7f | %6.7f | %3.3f\n", numWriters,
         getAverage(readerTimes, numReaders), getAverage(writerTimes, numWriters), 
