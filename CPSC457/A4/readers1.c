@@ -13,9 +13,9 @@
 
 #define mutexSize 1
 #define resourceSize 1
-#define numWriters 5
+#define numWriters 10
 #define numReaders 10
-#define numCycles 1
+#define numCycles 1000
 
 // need to create an argument struct to actually pass those along
 typedef struct {
