@@ -10,11 +10,13 @@
 
 #define mutexSize 1
 #define resourceSize 1
-#define numWriters 6
-#define numReaders 10
-#define numCycles 10
 
-// need to create an argument struct to actually pass those along
+#define numWriters 5
+#define numReaders 10
+
+#define numCycles 100
+
+// creating an argument struct to actually pass args along
 typedef struct {
     semaphore* someSem;
     int threadId;
@@ -39,7 +41,7 @@ semaphore* mutex; semaphore* resource;
 // initializing all the threads id needed
 pthread_t tid[numReaders + numWriters];
 
-// sharedResource
+// sharedResource variables
 int sharedResource = 0xC0FFEE; // readers just read value directly
 int newResource = 0xFACADE; // writers will byte by byte change sharedResource to newResource
 int holder = 0x0;
@@ -50,11 +52,9 @@ int main() {
     mutex = createSemaphore(mutexSize);
     resource = createSemaphore(resourceSize);
 
-    // fill out rest of main section here
     // creating an args struct
     arg_struct* args;
 
-    // initializing readers
     int i;
     int check = 0;
     // initialzing readers
@@ -86,7 +86,6 @@ int main() {
         ( numReaders * getAverage(readerTimes, numReaders) + numWriters * getAverage(writerTimes, numWriters) ) / (numWriters + numReaders) );
 
 
-    // freeing all of the resources used
 
     return 0;
 }
@@ -117,9 +116,9 @@ void* reader(void* args) {
         printf("%x\n", sharedResource);
         
         // exit section
-        semaphoreWait(mutex, NULL);
+        semaphoreWait(mutex, &tid[actual_args->threadId]);
         readers--;
-        if (readers == 0) { // should i change this boolean condition?? ruminate
+        if (readers == 0) { 
             semaphoreSignal(resource);
         }
         semaphoreSignal(mutex);
@@ -129,7 +128,7 @@ void* reader(void* args) {
     // getting the approximate times when the reader ends
     end = clock();
     readerTimes[actual_args->threadId] = (double) (end - readerTimes[actual_args->threadId]);
-    readerTimes[actual_args->threadId] /= CLOCKS_PER_SEC;
+    readerTimes[actual_args->threadId] /= 10000;
 
     return NULL;
 }
@@ -146,7 +145,7 @@ void* writer(void* args) {
     for (i = 0; i < numCycles; i++) {
 
         // entry section
-        semaphoreWait(mutex, &tid[actual_args->threadId]); // insert method to get thread id into method, prolly using args struct
+        semaphoreWait(mutex, &tid[actual_args->threadId]); 
         writers++;
         semaphoreSignal(mutex);
         semaphoreWait(resource, &tid[actual_args->threadId]);
@@ -157,7 +156,7 @@ void* writer(void* args) {
         sharedResource |= holder;
 
         // exit section
-        semaphoreWait(mutex, &tid[actual_args->threadId]); // again, find a way to get threadId here
+        semaphoreWait(mutex, &tid[actual_args->threadId]); 
         writers--;
         semaphoreSignal(mutex);
         semaphoreSignal(resource);
@@ -167,7 +166,7 @@ void* writer(void* args) {
     // getting the approximate time the writer ends
     end = clock();
     writerTimes[actual_args->threadId - numReaders] = (double) (end - writerTimes[actual_args->threadId - numReaders]);
-    writerTimes[actual_args->threadId - numReaders] /= CLOCKS_PER_SEC;
+    writerTimes[actual_args->threadId - numReaders] /= 10000;
 
 
     return NULL;

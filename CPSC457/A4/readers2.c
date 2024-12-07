@@ -8,17 +8,21 @@
 #include <time.h>
 #include "calc.c"
 
+// defining the number of writers and readers
 #define numReaders 10
-#define numWriters 1
+#define numWriters 5
 
+// defining semaphore size
 #define resourceSize 1
 #define readtrySize 1
 #define wmutexSize 1
 #define rmutexSize 1
 #define rentrySize 1
-#define numCycles 10
 
-// need to create an argument struct to actually pass those along
+// getting the total number of cycles
+#define numCycles 100
+
+// creating an argument struct to actually pass  args along
 typedef struct {
     semaphore* someSem;
     int threadId;
@@ -43,7 +47,7 @@ semaphore* resource; semaphore* readtry; semaphore* wmutex; semaphore* rmutex; s
 // initializing all the threads id needed
 pthread_t tid[numReaders + numWriters];
 
-// sharedResource
+// sharedResource variables
 int sharedResource = 0xC0FFEE; // readers just read value directly
 int newResource = 0xFACADE; // writers will byte by byte change sharedResource to newResource
 int holder = 0x0;
@@ -96,8 +100,6 @@ int main() {
         ( numReaders * getAverage(readerTimes, numReaders) + numWriters * getAverage(writerTimes, numWriters) ) / (numWriters + numReaders) );
 
 
-    // freeing all of the resources
-
     return 0;
 }
 
@@ -113,7 +115,7 @@ void* reader(void* args) {
     for (i = 0; i < numCycles; i++) {
 
         // entry section
-        semaphoreWait(rentry, &tid[actual_args->threadId]); // insert method to get thread id into method, prolly using args struct
+        semaphoreWait(rentry, &tid[actual_args->threadId]); 
         semaphoreWait(readtry, &tid[actual_args->threadId]); 
         semaphoreWait(rmutex, &tid[actual_args->threadId]); 
         readers++;
@@ -128,7 +130,7 @@ void* reader(void* args) {
         printf("%x\n", sharedResource);
 
         // exit section
-        semaphoreWait(rmutex, &tid[actual_args->threadId]);  // again, find a way to get threadId here
+        semaphoreWait(rmutex, &tid[actual_args->threadId]);  
         readers--;
         if (readers == 0) {
             semaphoreSignal(resource);
@@ -140,7 +142,7 @@ void* reader(void* args) {
     // getting the approximate times when the reader ends
     end = clock();
     readerTimes[actual_args->threadId] = (double) (end - readerTimes[actual_args->threadId]);
-    readerTimes[actual_args->threadId] /= CLOCKS_PER_SEC;
+    readerTimes[actual_args->threadId] /= 10000; // the clock seems to deliver time in ms on this system
 
     return NULL;
 }
@@ -174,7 +176,7 @@ void* writer(void* args) {
         semaphoreSignal(resource);
         semaphoreWait(wmutex, &tid[actual_args->threadId]);
         writers--;
-        if (writers == 0) { // should i change this boolean condition?? ruminate
+        if (writers == 0) { 
             semaphoreSignal(readtry);
         }
         semaphoreSignal(wmutex);
@@ -184,6 +186,6 @@ void* writer(void* args) {
     // getting the approximate times when the reader ends
     end = clock();
     writerTimes[actual_args->threadId - numReaders] = (double) (end - writerTimes[actual_args->threadId - numReaders]);
-    writerTimes[actual_args->threadId - numReaders] /= CLOCKS_PER_SEC;
+    writerTimes[actual_args->threadId - numReaders] /= 10000;
     return NULL;
 }

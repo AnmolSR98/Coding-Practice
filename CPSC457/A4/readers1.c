@@ -7,17 +7,17 @@
 #include <time.h>
 #include "calc.c"
 
-// NEED TO MODIFY TO RUN FOR A 1000 TIMES EACH
-// numReaders can be fixed at 10
-// MODIFY THE AMOUNT OF numWriters for experimental data
-
+// setting both semaphores to be of size 1
 #define mutexSize 1
 #define resourceSize 1
-#define numWriters 10
-#define numReaders 10
-#define numCycles 1000
+// setting the number of cycles
+#define numCycles 100
 
-// need to create an argument struct to actually pass those along
+// defining the number of writers and readers
+#define numWriters 5
+#define numReaders 10
+
+// argument struct to pass through to function
 typedef struct {
     semaphore* someSem;
     int threadId;
@@ -41,7 +41,7 @@ semaphore* mutex; semaphore* resource;
 // initializing all the threads id needed
 pthread_t tid[numReaders + numWriters];
 
-// sharedResource
+// sharedResource variables
 int sharedResource = 0xC0FFEE; // readers just read value directly
 int newResource = 0xFACADE; // writers will byte by byte change C0FFEE to FACADE
 int holder = 0x0;
@@ -58,7 +58,6 @@ int main() {
     // creating an args struct
     arg_struct* args;
 
-    // fill out rest of main section here
     // initializing readers
     int check = 0;
     for (i = 0; i < numReaders; i++) {
@@ -127,7 +126,7 @@ void* reader(void* args) {
     // getting the approximate times when the reader ends
     end = clock();
     readerTimes[actual_args->threadId] = (double) (end - readerTimes[actual_args->threadId]);
-    readerTimes[actual_args->threadId] /= CLOCKS_PER_SEC;
+    readerTimes[actual_args->threadId] /= 10000;
 
     return NULL;
 
@@ -144,10 +143,8 @@ void* writer(void* args) {
     int i = 0;
     for (i = 0; i < numCycles; i++) {
 
-        //sleep(1); // needed to ensure readers get in before writers
-
         // entry section
-        semaphoreWait(resource, &tid[actual_args->threadId]); // insert method to get thread id into method, prolly using args struct
+        semaphoreWait(resource, &tid[actual_args->threadId]); 
         
         // insert test code here
         sharedResource &= ~(0xF << (actual_args->threadId % sharedLength) * 4);
@@ -155,14 +152,14 @@ void* writer(void* args) {
         sharedResource |= holder;
 
         // exit section
-        semaphoreSignal(resource); // again, find a way to get threadId here
+        semaphoreSignal(resource); 
 
     }
 
     // getting the approximate time the writer ends
     end = clock();
     writerTimes[actual_args->threadId - numReaders] = (double) (end - writerTimes[actual_args->threadId - numReaders]);
-    writerTimes[actual_args->threadId - numReaders] /= CLOCKS_PER_SEC;
+    writerTimes[actual_args->threadId - numReaders] /= 10000;
 
     return NULL;
     
