@@ -26,6 +26,7 @@ interleave(Xs, Ys, Zs) :-
 room(roomName).
 device(someDevice, someRoom).
 
+% added on my own
 room(living_room).
 room(bedroom).
 room(kitchen).
