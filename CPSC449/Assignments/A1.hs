@@ -81,6 +81,7 @@ data SF a = SS a | FF deriving Show
 -- integer version of factorial function
 factorialInteger :: Integer-> Integer
 factorialInteger n
+
             | (n > 0) = n * factorialInteger (n - 1)
             | (n == 0) = 1
             | otherwise = 0

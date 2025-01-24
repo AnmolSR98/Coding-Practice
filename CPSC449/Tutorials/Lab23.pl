@@ -99,9 +99,17 @@ find_high_earners(Salary, Name):-
 
 % Example 3: Calculate the total salary expense.
 
+sum_c([], 0).
+
+sum_c([Head|Tail], NewTotal):-
+    sum_c(Tail, Total), 
+    NewTotal is Total + Head.
 % Usage:
 % ?- total_salary(Total).
 % Total = 242000.
  % need to use findall
+total_salary(Total):-
+    findall(A, employee(_, _, A), SalaryList), 
+    sum_c(SalaryList, Total).
 
 

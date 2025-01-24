@@ -46,7 +46,7 @@ getEvens = filter (not.odd)
 
 -- 5. define a function curry3 that performs the analogue of curry but for three arguments
 curry3 :: ((a, b, c) -> d) -> a -> b -> c -> d
-curry3 f = \x y z -> f(x, y, z) 
+curry3 f = \x y z -> f (x, y, z) 
 -- draft: f . (\x y z -> (x, y, z)) 
 
 -- 6. define a function uncurry3 that performs the analogue of uncurry but for three arguments

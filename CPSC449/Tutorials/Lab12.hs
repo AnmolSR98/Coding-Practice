@@ -70,19 +70,26 @@ permSetFalse p x res | (not res) = False
                      | otherwise = p (x)
 
 -- 9. Using fold, define a function filterFirst so that filterFirst p xs removes the first element of xs which does not have the property p
-filterFirst :: (a -> Bool) -> [a] -> [a]
-filterFirst p xs = foldl (\x y -> checkIfRemoved p xs x y ++ x) [] xs
+filterFirst :: Eq a => (a -> Bool) -> [a] -> [a]
+filterFirst p xs = foldl (\x y -> x ++ checkIfRemovedAlready p xs x y) [] xs
 
-checkIfRemoved :: (a -> Bool) -> [a] -> [a] -> a -> [a]
-checkIfRemoved p xs ys x | ( (not (p x)) ) = []
-                         | otherwise = [x]
+checkListEquals :: Eq a => [a] -> [a] -> Bool
+checkListEquals [] [] = True 
+checkListEquals (x:xs) (y:ys) | (x == y) = checkListEquals xs ys
+                              | otherwise = False
+
+checkIfRemovedAlready :: Eq a => (a -> Bool) -> [a] -> [a] -> a -> [a]
+checkIfRemovedAlready p (head:xs) [] x | (x /= head) = [x]
+                                       | otherwise = []
+checkIfRemovedAlready p xs ys x | (not (p x) && (checkListEquals (ys) (take (length(ys)) xs))) = []
+                                | otherwise = [x]
 
 -- 10. Can you define a function filterLast which removes the last occurrence of an element of a list without property p?
 --filterLast :: (a -> Bool) -> [a] -> [a]
 --filterLast p xs = undefined
 
 -- 11. Can you define filterLast using filterFirst?
-filterLast' :: (a -> Bool) -> [a] -> [a]
+filterLast' :: Eq a => (a -> Bool) -> [a] -> [a]
 filterLast' p xs = reverse (filterFirst p (reverse xs))
 
 -- Sum Types

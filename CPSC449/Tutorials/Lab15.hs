@@ -15,8 +15,8 @@ class Describable a where
 -- Question 2: Create an instance of `Describable` for the `Int` type. 
 -- Describe integers and check if two numbers are within 10 units of each other to define "similarity".
 instance Describable Int where
-    describe x = undefined
-    similarTo x y = undefined
+    describe = show 
+    similarTo x y = abs(x - y) <= 10
 
 -- Example usage:
 -- For example, for `describe 42`, the output should be: "The number is 42"
@@ -24,8 +24,9 @@ instance Describable Int where
 
 -- Question 3: Create an instance of `Describable` for lists, where the description is "A list of length N" and similarity is based on having the same length.
 instance Describable [a] where
-    describe xs = undefined
-    similarTo xs ys = undefined
+
+    describe xs = "A list of length " ++ (show.length) xs
+    similarTo xs ys = length(xs) == length(ys)
 
 -- Example usage:
 -- For example, for `describe [1, 2, 3]`, the output should be: "A list of length 3"
@@ -33,7 +34,7 @@ instance Describable [a] where
 
 -- Question 4: Write a polymorphic function that uses type class constraints.
 areSimilar :: (Describable a) => a -> a -> Bool
-areSimilar x y = undefined
+areSimilar = similarTo
 
 -- Example usage:
 -- For example, for `areSimilar [1, 2] [3, 4]`, the output should be: True
@@ -51,8 +52,11 @@ areSimilar x y = undefined
 -- Question 5: Create a custom data type and implement the `Show` type class for it.
 data Person = Person String Int  -- Name and age
 
+walter :: Person
+walter = Person "Walter Hartwell White" 52
+
 instance Show Person where
-    show (Person name age) = undefined
+    show (Person name age) = "Person: " ++ name ++ ", Age: " ++ show age
 
 -- Example usage:
 -- For example, for `show (Person "Alice" 30)`, the output should be: "Person: Alice, Age: 30"
@@ -66,7 +70,8 @@ instance Show Person where
 data Rectangle = Rectangle Int Int  -- Width and height
 
 instance Ord Rectangle where
-    compare (Rectangle w1 h1) (Rectangle w2 h2) = undefined
+    compare :: Rectangle -> Rectangle -> Ordering
+    compare (Rectangle w1 h1) (Rectangle w2 h2) = compare (w1*h1) (w2*h2)
 
 -- Example usage:
 -- For example, for `compare (Rectangle 3 4) (Rectangle 2 6)`, the output should be: EQ (since both areas are 12)
@@ -78,7 +83,7 @@ instance Ord Rectangle where
 
 -- Question 7: Implement the `Eq` type class for the `Rectangle` data type from above.
 instance Eq Rectangle where
-    (Rectangle w1 h1) == (Rectangle w2 h2) = undefined
+    (Rectangle w1 h1) == (Rectangle w2 h2) = w1*h1 == w2*h2
 
 -- Example usage:
 -- For example, for `(Rectangle 3 4) == (Rectangle 2 6)`, the output should be: True
@@ -89,11 +94,25 @@ instance Eq Rectangle where
 -- This includes types like `Int`, `Char`, etc.
 
 -- Question 8: Create a custom data type representing days of the week and make it an instance of `Enum`.
-data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday
+data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday 
+instance Show Day where 
+    show _ = "Something"
 
 instance Enum Day where
-    toEnum n = undefined
-    fromEnum x = undefined
+    toEnum n | n `mod ` 7 == 0 = Sunday
+             | n `mod ` 7 == 1 = Monday
+             | n `mod ` 7 == 2 = Tuesday
+             | n `mod ` 7 == 3 = Wednesday
+             | n `mod ` 7 == 4 = Thursday
+             | n `mod ` 7 == 5 = Friday
+             | otherwise = Saturday
+    fromEnum Sunday = 0
+    fromEnum Monday = 1
+    fromEnum Tuesday = 2
+    fromEnum Wednesday = 3
+    fromEnum Thursday = 4
+    fromEnum Friday = 5
+    fromEnum Saturday = 6
 
 -- Example usage:
 -- For example, for `succ Monday`, the output should be: Tuesday

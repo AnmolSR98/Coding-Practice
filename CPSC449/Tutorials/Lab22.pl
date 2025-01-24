@@ -85,7 +85,7 @@ is_palindrome(List):- (reverse_list(List, List)).
 % Usage:
 nth_element(0, [Head|Tail], Head).
 nth_element(Position, [Head|Tail], Element):- 
-    Position > 0, 
+    Position >= 1, 
     NewPos is Position - 1,
     nth_element(NewPos, Tail, Element), !.
 % ?- nth_element(2, [a, b, c], Element).
@@ -111,4 +111,14 @@ remove_duplicates([Head|Tail], [Head|Result]):-
 % Usage:
 % ?- flatten_list([1, [2, [3, 4]], 5], Result).
 % Result = [1, 2, 3, 4, 5].
+flatten_list([], []).
+
+flatten_list([Head|Tail], Result) :-
+    flatten_list(Head, NewHead), 
+    flatten_list(Tail, NewTail), 
+    append_list(NewHead, NewTail, Result).
+
+flatten_list([Head|Tail], [Head|NewTail]) :-
+    \+ is_list(Head), 
+    flatten_list(Tail, NewTail).
 
