@@ -55,10 +55,12 @@ def canBePalindrome(inputString: str):
 # literally just the amount of swaps needed to make symmetric essentially
 def getPalindromeComplexity(inputString: str):
     
+    # get the filter string and check it until the middle
     filterString = filterForAlpha(inputString)
     middle = (len(filterString) + 1) // 2 
     numSwaps = 0
 
+    # manually check each character from one end and compare to the other end, incrementing a swap if needed
     for i in range(middle):
         if (filterString[i] != filterString[len(filterString) - 1 - i]):
             numSwaps += 1
