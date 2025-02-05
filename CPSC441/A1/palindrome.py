@@ -51,10 +51,11 @@ def canBePalindrome(inputString: str):
     # assuming 0 or 1 numOdds, then we can make a palindrome
     return True
 
-# palindrome complexity operation 
+# palindrome complexity operation, going to be very different for one odds vs no odds
 def getPalindromeComplexityOperation():
     return 0
 
+# test functionality here
 def main():
     print(
     canBePalindrome("civic")
