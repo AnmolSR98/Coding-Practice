@@ -1,5 +1,8 @@
 import socket
 
+# importing palindrome for use
+import palindrome
+
 # creating a socket for use
 mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 

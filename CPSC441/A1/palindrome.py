@@ -68,11 +68,5 @@ def getPalindromeComplexity(inputString: str):
     return numSwaps
 
 
-# test functionality here
-def main():
-    print(
-    getPalindromeComplexity("adviihvda")
-    )
-
 if __name__ == '__main__':
-    main() 
+    print('\0')
