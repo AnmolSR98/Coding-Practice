@@ -52,13 +52,24 @@ def canBePalindrome(inputString: str):
     return True
 
 # palindrome complexity operation, going to be very different for one odds vs no odds
-def getPalindromeComplexityOperation():
-    return 0
+# literally just the amount of swaps needed to make symmetric essentially
+def getPalindromeComplexity(inputString: str):
+    
+    filterString = filterForAlpha(inputString)
+    middle = (len(filterString) + 1) // 2 
+    numSwaps = 0
+
+    for i in range(middle):
+        if (filterString[i] != filterString[len(filterString) - 1 - i]):
+            numSwaps += 1
+    
+    return numSwaps
+
 
 # test functionality here
 def main():
     print(
-    canBePalindrome("civic")
+    getPalindromeComplexity("adviihvda")
     )
 
 if __name__ == '__main__':
