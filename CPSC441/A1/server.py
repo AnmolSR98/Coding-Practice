@@ -1,30 +1,38 @@
 import socket
+import os
 
 # importing palindrome for use
-import palindrome
+import palindrome as p
 
-# creating a socket for use
-mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+def main():
 
-# creating a port number to be whatevers
-port = 1976
+    # creating a socket for use
+    mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# binding the socket generated to the port
-mySocket.bind(('', port))
+    # creating a port number to be whatevers
+    port = 5000
 
-# put the socket into listening mode
-mySocket.listen(5)
+    try:
+        # binding the socket generated to the port
+        mySocket.bind(('', port))
 
-# setting up a loop where the server is forever listening until shutdown
-while True:
+        # put the socket into listening mode
+        mySocket.listen(1)
 
-    # get connection from some client
-    ction, addr = mySocket.accept()
+        # get connection from some client
+        ction, addr = mySocket.accept()
 
-    # acknowledge message from client
-    ction.send('Message received!'.encode())
+        # get a message
+        msg = ction.recv(1024)
 
-    # close the connection
-    ction.close()
+        # set the result of that message
+        ction.send(f"{p.isPalindrome(msg.decode())}".encode())
 
-    break
+        # close the connection
+        ction.close()
+
+    except Exception as e:
+        print(e)
+
+if __name__ == "__main__":
+    main()
