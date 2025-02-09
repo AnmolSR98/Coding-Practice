@@ -15,7 +15,7 @@ def main():
         mySocket.connect((host, port)) # always the address for the immediate LAN
 
         # get the input from the user
-        userin = input("Input the word you want to check is a palindrome or not.\n")
+        userin = input("\n")
 
         mySocket.send(userin.encode())
 
