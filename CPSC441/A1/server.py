@@ -22,13 +22,24 @@ def main():
         # get connection from some client
         ction, addr = mySocket.accept()
 
-        # get a message
-        msg = ction.recv(1024)
+        # setting up the server listening loop here
+        while True:
 
-        # set the result of that message
-        ction.send(f"{p.isPalindrome(msg.decode())}".encode())
+            # get a message
+            msg = ction.recv(1024)
 
-        # close the connection
+            # splitting the message after decoding it
+            mode, word = int( msg.decode().split(".")[0] ), msg.decode().split(".")
+
+            if mode == 1:
+                # set the result of that message
+                ction.send(f"{p.isPalindrome(word)}".encode())
+
+            else:
+                # set the result of that message
+                ction.send(f"{p.canBePalindrome(word)} {p.getPalindromeComplexity(word)}".encode())
+
+        # need some sort of condition here to close the connection
         ction.close()
 
     except Exception as e:
