@@ -8,7 +8,7 @@ def main():
 
     # defining the port and host to connect to
     port = 5000
-    host = '127.0.0.1'
+    host = 'localhost'
 
     mode = -1
 
@@ -31,6 +31,8 @@ def main():
 
             # close the connection if the user requests
             if (mode == 3):
+                # send a socket close message
+                mySocket.send(("{0}".format(mode)).encode())
                 mySocket.close()
                 break
 
