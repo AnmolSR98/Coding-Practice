@@ -1,7 +1,11 @@
+# for the socket which is the primary method by which this works
 import socket
+
+# for multithreading, which is the concurrency solution
 import threading
+
+# logging to assist with writing stuff down in the server log txt
 import logging
-from collections import Counter
 
 # importing palindrome for use
 import palindrome as p
@@ -14,15 +18,20 @@ def handleClient(ction, addr):
 
     try:
 
+        # insert a thing for logging the initial connection from here
+        logging.info("Server received connection from {0}\n".format(addr))
+
         # setting up the server listening loop here
         while True:
 
             # get a message
             msg = ction.recv(1024)
 
+            # need to add statement here about receiving a message from a specific connection
+            logging.info("Server received message <{0}> from connection {1}\n".format(msg.decode(), addr))
+
             # if msg is blank, break this whole damn loop
             if msg.decode() == "3":
-                print("whatevs")
                 break
 
             else:
@@ -41,6 +50,9 @@ def handleClient(ction, addr):
 
         # close the connection
         ction.close()
+
+        # insert a log thing for the connection being shut down
+        logging.info("Server connection from {0} has been shut down.\n".format(addr))
 
 
 
@@ -62,10 +74,15 @@ def main():
         # put the socket into listening mode
         mySocket.listen(5)
 
+        # log thing about server starting to listen
+        logging.info("Server is listening on (Host:{0}, Port:{1}).\n".format(host, port))
+
         # while 
         while True:
+
             # get connection from some client
             ction, addr = mySocket.accept()
+
             # enmeshing any potential connection into a thread
             threading.Thread(target = handleClient, args = (ction, addr)).start()
 

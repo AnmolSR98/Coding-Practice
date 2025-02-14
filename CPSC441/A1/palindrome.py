@@ -51,7 +51,6 @@ def canBePalindrome(inputString: str):
     # assuming 0 or 1 numOdds, then we can make a palindrome
     return True
 
-# palindrome complexity operation, going to be very different for one odds vs no odds
 # literally just the amount of swaps needed to make symmetric essentially
 def getPalindromeComplexity(inputString: str):
     

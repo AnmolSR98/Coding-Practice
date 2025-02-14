@@ -1,0 +1,24 @@
+2025-02-13 16:58:16,312 - Server is listening on (Host:localhost, Port:5000).
+
+2025-02-13 16:58:20,333 - Server received connection from ('127.0.0.1', 50829)
+
+2025-02-13 16:58:23,461 - Server received connection from ('127.0.0.1', 50830)
+
+2025-02-13 16:58:52,148 - Server connection from ('127.0.0.1', 50829) has been shut down.
+
+2025-02-13 16:58:54,148 - Server connection from ('127.0.0.1', 50830) has been shut down.
+
+2025-02-13 17:01:00,756 - Server is listening on (Host:localhost, Port:5000).
+
+2025-02-13 17:01:04,368 - Server received connection from ('127.0.0.1', 51343)
+
+2025-02-13 17:01:06,936 - Server received connection from ('127.0.0.1', 51344)
+
+2025-02-13 17:01:07,956 - Server received message <3> from connection ('127.0.0.1', 51344)
+
+2025-02-13 17:01:07,956 - Server connection from ('127.0.0.1', 51344) has been shut down.
+
+2025-02-13 17:01:09,783 - Server received message <3> from connection ('127.0.0.1', 51343)
+
+2025-02-13 17:01:09,783 - Server connection from ('127.0.0.1', 51343) has been shut down.
+

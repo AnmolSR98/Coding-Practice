@@ -10,6 +10,7 @@ def main():
     port = 5000
     host = 'localhost'
 
+    # setting mode to be undefined by default
     mode = -1
 
     try:
