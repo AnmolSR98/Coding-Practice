@@ -10,49 +10,56 @@ import logging
 # importing palindrome for use
 import palindrome as p
 
+# importing encrytion library
+import encryption as en
+
+# variable for decrypting messages
+encrypt = 5
+
 # Set up basic logging configuration
 logging.basicConfig(filename='server_log.txt', level=logging.INFO, format='%(asctime)s - %(message)s')
 
 # setting up a generalized handleClient function that will have to be enmeshed in a thread
 def handleClient(ction, addr):
 
-    try:
+    # insert a thing for logging the initial connection from here
+    logging.info("Server received connection from {0}\n".format(addr))
 
-        # insert a thing for logging the initial connection from here
-        logging.info("Server received connection from {0}\n".format(addr))
+    # setting up the server listening loop here
+    while True:
 
-        # setting up the server listening loop here
-        while True:
-
+        try:
             # get a message
             msg = ction.recv(1024)
 
             # need to add statement here about receiving a message from a specific connection
             logging.info("Server received message <{0}> from connection {1}\n".format(msg.decode(), addr))
 
-            # if msg is blank, break this whole damn loop
-            if msg.decode() == "3":
+            # if msg is blank, break this whole loop
+            if en.decrypt(msg.decode(), encrypt) == "3":
                 break
 
             else:
                 # splitting the message after decoding it
-                mode, word = int( msg.decode().split(".")[0] ), msg.decode().split(".")[1]
+                mode, word = int(  en.decrypt(msg.decode(), encrypt).split(".")[0] ), en.decrypt(msg.decode(), encrypt).split(".")[1]
 
             if mode == 1:
-                # set the result of that message
-                ction.send(f"{p.isPalindrome(word)}".encode())
+                # set the result in the message
+                ction.send(en.encrypt( "{0}".format(p.isPalindrome(word)), encrypt ).encode())
 
             elif mode == 2:
-                # set the result of that message
-                ction.send(f"{p.canBePalindrome(word)} {p.getPalindromeComplexity(word)}".encode())
+                # set the result in the message
+                ction.send(en.encrypt( "{0} {1}".format(p.canBePalindrome(word), p.getPalindromeComplexity(word)), encrypt ).encode())
+        
+        except Exception as e:
+            break
 
-    finally:
 
-        # close the connection
-        ction.close()
+    # close the connection
+    ction.close()
 
-        # insert a log thing for the connection being shut down
-        logging.info("Server connection from {0} has been shut down.\n".format(addr))
+    # insert a log thing for the connection being shut down
+    logging.info("Server connection from {0} has been shut down.\n".format(addr))
 
 
 

@@ -1,24 +1,26 @@
-2025-02-13 16:58:16,312 - Server is listening on (Host:localhost, Port:5000).
+2025-02-14 19:56:34,850 - Server is listening on (Host:localhost, Port:5000).
 
-2025-02-13 16:58:20,333 - Server received connection from ('127.0.0.1', 50829)
+2025-02-14 19:56:39,938 - Server received connection from ('127.0.0.1', 59862)
 
-2025-02-13 16:58:23,461 - Server received connection from ('127.0.0.1', 50830)
+2025-02-14 19:56:42,568 - Server received connection from ('127.0.0.1', 59863)
 
-2025-02-13 16:58:52,148 - Server connection from ('127.0.0.1', 50829) has been shut down.
+2025-02-14 19:56:48,615 - Server received message <73hn{nh> from connection ('127.0.0.1', 59862)
 
-2025-02-13 16:58:54,148 - Server connection from ('127.0.0.1', 50830) has been shut down.
+2025-02-14 19:56:53,208 - Server received message <63mfqqt> from connection ('127.0.0.1', 59863)
 
-2025-02-13 17:01:00,756 - Server is listening on (Host:localhost, Port:5000).
+2025-02-14 19:56:55,868 - Server received message <8> from connection ('127.0.0.1', 59863)
 
-2025-02-13 17:01:04,368 - Server received connection from ('127.0.0.1', 51343)
+2025-02-14 19:56:55,868 - Server connection from ('127.0.0.1', 59863) has been shut down.
 
-2025-02-13 17:01:06,936 - Server received connection from ('127.0.0.1', 51344)
+2025-02-14 19:57:00,201 - Server received message <73n{n> from connection ('127.0.0.1', 59862)
 
-2025-02-13 17:01:07,956 - Server received message <3> from connection ('127.0.0.1', 51344)
+2025-02-14 19:57:08,588 - Server received message <73hn{{n> from connection ('127.0.0.1', 59862)
 
-2025-02-13 17:01:07,956 - Server connection from ('127.0.0.1', 51344) has been shut down.
+2025-02-14 19:57:27,491 - Server received message <73onrrn~> from connection ('127.0.0.1', 59862)
 
-2025-02-13 17:01:09,783 - Server received message <3> from connection ('127.0.0.1', 51343)
+2025-02-14 19:57:31,801 - Server received message <73onrrn> from connection ('127.0.0.1', 59862)
 
-2025-02-13 17:01:09,783 - Server connection from ('127.0.0.1', 51343) has been shut down.
+2025-02-14 19:57:35,135 - Server received message <8> from connection ('127.0.0.1', 59862)
+
+2025-02-14 19:57:35,135 - Server connection from ('127.0.0.1', 59862) has been shut down.
 

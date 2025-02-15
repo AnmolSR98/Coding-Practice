@@ -1,6 +1,7 @@
 # string reverse function
 def reverseString(inputString: str):
 
+    # assemble the reverse string via use of a for loop
     reverseString = ""
     for i in range(len(inputString)):
         reverseString += inputString[len(inputString) - 1 - i]
@@ -10,6 +11,7 @@ def reverseString(inputString: str):
 # filtering out non alphabetical characters and converting to lower case for simplicity
 def filterForAlpha(inputString: str):
 
+    # use isalpha to filter out non alphabetical characters
     filteredString = ""
     for char in inputString:
         if char.isalpha():
@@ -48,7 +50,7 @@ def canBePalindrome(inputString: str):
             if (numOdds >= 2):
                 return False
 
-    # assuming 0 or 1 numOdds, then we can make a palindrome
+    # assuming 0 or 1 numOdds, then we can make a palindrome out of this string
     return True
 
 # literally just the amount of swaps needed to make symmetric essentially
@@ -66,6 +68,6 @@ def getPalindromeComplexity(inputString: str):
     
     return numSwaps
 
-
+# blocked out after testing was completed
 if __name__ == '__main__':
     print('\0')
