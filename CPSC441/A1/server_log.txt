@@ -24,3 +24,23 @@
 
 2025-02-14 19:57:35,135 - Server connection from ('127.0.0.1', 59862) has been shut down.
 
+2025-02-14 20:03:42,747 - Server is listening on (Host:localhost, Port:5000).
+
+2025-02-14 20:03:49,698 - Server received connection from ('127.0.0.1', 60110)
+
+2025-02-14 20:03:54,317 - Server received connection from ('127.0.0.1', 60111)
+
+2025-02-14 20:04:02,385 - Server received message <63hn{nh> from connection ('127.0.0.1', 60111)
+
+2025-02-14 20:04:16,515 - Server received message <73n{{{{in> from connection ('127.0.0.1', 60110)
+
+2025-02-14 20:04:21,561 - Server received message <8> from connection ('127.0.0.1', 60110)
+
+2025-02-14 20:04:21,561 - Server connection from ('127.0.0.1', 60110) has been shut down.
+
+2025-02-14 20:04:28,695 - Server received message <73n{h> from connection ('127.0.0.1', 60111)
+
+2025-02-14 20:04:35,162 - Server received message <8> from connection ('127.0.0.1', 60111)
+
+2025-02-14 20:04:35,162 - Server connection from ('127.0.0.1', 60111) has been shut down.
+
