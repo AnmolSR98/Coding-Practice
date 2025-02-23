@@ -44,3 +44,9 @@
 
 2025-02-14 20:04:35,162 - Server connection from ('127.0.0.1', 60111) has been shut down.
 
+2025-02-23 15:12:54,346 - Server is listening on (Host:localhost, Port:5000).
+
+2025-02-23 15:12:56,599 - Server received connection from ('127.0.0.1', 55433)
+
+2025-02-23 15:12:59,624 - Server connection from ('127.0.0.1', 55433) has been shut down.
+
