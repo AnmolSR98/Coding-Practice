@@ -6,7 +6,7 @@ def replaceMeme(imageName):
     repImage = (len(imageName) - 4) % 15
     newImage = f"./memes/{repImage}.jpg"
 
-    return newImage
+    return newImage.encode()
 
 def googleEasterEgg():
 

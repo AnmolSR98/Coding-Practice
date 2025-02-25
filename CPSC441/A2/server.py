@@ -55,13 +55,15 @@ def handleClient(ction):
         potentialIntercept = intercept(host, path)
 
         # cut the whole process out if it should be intercepted (ie image or google request)
-        if potentialIntercept is not None:
+        #if potentialIntercept is not None:
 
-            time.sleep(DELAY)
-            ction.send(potentialIntercept.encode())
-            ction.close()
-            print("Hoorah")
-            return
+        #    time.sleep(DELAY)
+        #    ction.send(potentialIntercept.encode())
+        #    ction.close()
+        #    print("Hoorah")
+        #    return
+
+        print(request)
 
         # create a new socket and forward the request through
         newSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -82,7 +84,7 @@ def handleClient(ction):
                         new_url = header.split(b'Location: ')[1].strip()
                         print(f"Redirecting to {new_url.decode('utf-8')}")
                         return handleClient(newSocket)  # Recursive call with new URL
-                        
+            
             ction.send(response)  # Forward to client
             time.sleep(DELAY)  # Slow down response
 
@@ -113,6 +115,9 @@ def startProxy():
 
             # check for any connections
             ction, addr = mySocket.accept()
+
+            # have the server print an accept message
+            print(f"Server has received a connection from <{ction}:{addr}>.")
 
             # enmeshing potential connections into their own handleClient thread
             threading.Thread(target= handleClient, args = (ction, )).start()
