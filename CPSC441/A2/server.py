@@ -1,6 +1,7 @@
 # meant to function as a proxy server
 import socket, threading, time
 from urllib.parse import urlparse
+import os
 
 # should probably just use meme directly here
 import meme
@@ -17,16 +18,16 @@ CHUNK_SIZE = 1024 # size of data to send (in bytes)
 # for replacing image requests if needed
 def intercept(host: str, path: str):
 
+    # special case for google
+    if (host == "www.google.ca"):
+        return meme.googleEasterEgg()
+
     # if the client isn't requesting an image do nothing
-    if not(path[:-4] == ".jpg"):
+    if not(path[-4:] == ".jpg"):
         return None
     
     # otherwise forward it along
     else:
-        # special case for google
-        if (host == "www.google.ca"):
-            return meme.googleEasterEgg
-
         # otherwise just replacement basic meme algorithm
         return meme.replaceMeme(path)
 
@@ -53,11 +54,14 @@ def handleClient(ction):
         # checking for any necessary intercepts
         potentialIntercept = intercept(host, path)
 
-        # cut the whole process out if it should be intercept
+        # cut the whole process out if it should be intercepted (ie image or google request)
         if potentialIntercept is not None:
 
             time.sleep(DELAY)
-            ction.send(potentialIntercept)
+            ction.send(potentialIntercept.encode())
+            ction.close()
+            print("Hoorah")
+            return
 
         # create a new socket and forward the request through
         newSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -68,22 +72,19 @@ def handleClient(ction):
         while True:
             # get the response
             response = newSocket.recv(CHUNK_SIZE)
-            # ction.send(response)
+            if not response:
+                break
 
-            parts = response.split(b'\r\n\r\n', 1)
-            if len(parts) == 2:
-                headers, body = parts
-                filename = os.path.basename(url)
-                if not filename:
-                    filename = "downloaded_file"
-
-                img_data = requests.get(url).content
-                #print(headers)
-                with open(filename, 'wb') as file:
-                    file.write(img_data)
-                    print(f"File has been saved as {filename}")
-            else:
-                print("Unexpected response format.")
+            if b'HTTP/1.1 301' in response:
+                headers = response.split(b'\r\n')
+                for header in headers:
+                    if b'Location: ' in header:
+                        new_url = header.split(b'Location: ')[1].strip()
+                        print(f"Redirecting to {new_url.decode('utf-8')}")
+                        return handleClient(newSocket)  # Recursive call with new URL
+                        
+            ction.send(response)  # Forward to client
+            time.sleep(DELAY)  # Slow down response
 
             # close the socket
             newSocket.close()

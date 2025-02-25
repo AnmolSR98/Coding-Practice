@@ -3,8 +3,8 @@
 def replaceMeme(imageName):
     
     # just take the name of the image in binary, convert it to a number and replace with appropriate jpeg
-    repImage = (len(imageName) - 3) % 15
-    newImage = f"/memes/{repImage}.jpg"
+    repImage = (len(imageName) - 4) % 15
+    newImage = f"./memes/{repImage}.jpg"
 
     return newImage
 
