@@ -13,4 +13,7 @@ def googleEasterEgg():
     return f"Federer_serving_Cropped.jpg"
 
 if __name__ == "__main__":
-    print(replaceMeme("Federer_serving_Cropped.jpg"))
+
+    with open('./memes/15.jpg', 'rb') as file:
+        rawdata = file.read()
+        print(rawdata)

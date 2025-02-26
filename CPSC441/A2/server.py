@@ -9,11 +9,14 @@ import meme
 # thing to get to download images
 import requests
 
+# getting a thing for gzipping so that firefox will accept it
+import gzip
+
 # going to define global variables to make for easier use
 HOST = '127.0.0.1'
 PORT = 8080
 DELAY = 1.0
-CHUNK_SIZE = 1024 # size of data to send (in bytes)
+CHUNK_SIZE = 1024 * 128 * 4 # size of data to send (in bytes)
 
 # for replacing image requests if needed
 def intercept(host: str, path: str):
@@ -30,6 +33,28 @@ def intercept(host: str, path: str):
     else:
         # otherwise just replacement basic meme algorithm
         return meme.replaceMeme(path)
+
+# construct a response, which for now doesn't contain an image
+def constructNewResponse(responseArray):
+
+    image = requests.get('https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/The_Great_Red_Dragon_and_the_Woman_Clothed_with_the_Sun.jpg/190px-The_Great_Red_Dragon_and_the_Woman_Clothed_with_the_Sun.jpg').content
+    print(image)
+
+    newResponse = b''
+    for portion in responseArray:
+        if portion != responseArray[len(responseArray) - 1]:
+            if b'Content-Length' in portion:
+                portion = 'Content-Length: {0}'.format(len(image)).encode()
+
+            newResponse += portion + b'\r\n'
+
+    #newResponse += responseArray[len(responseArray) - 1]
+    #newResponse += open('./memes/15.jpg', 'rb').read()
+
+    newResponse += image
+
+    return newResponse
+
 
 # holder function right now
 def handleClient(ction):
@@ -51,9 +76,6 @@ def handleClient(ction):
         if not path:
             path = '/'
 
-        # checking for any necessary intercepts
-        potentialIntercept = intercept(host, path)
-
         # cut the whole process out if it should be intercepted (ie image or google request)
         #if potentialIntercept is not None:
 
@@ -62,8 +84,6 @@ def handleClient(ction):
         #    ction.close()
         #    print("Hoorah")
         #    return
-
-        print(request)
 
         # create a new socket and forward the request through
         newSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -84,7 +104,17 @@ def handleClient(ction):
                         new_url = header.split(b'Location: ')[1].strip()
                         print(f"Redirecting to {new_url.decode('utf-8')}")
                         return handleClient(newSocket)  # Recursive call with new URL
+                    
+            #print(response)
             
+            # here is my acutal snippet of my own code
+            if b'HTTP/1.1 200 OK' in response:
+                responseArray = response.split(b'\r\n')
+                for section in responseArray:
+                    if b'Content-Type' in section:
+                        if b'image' in section:
+                            response = constructNewResponse(responseArray)
+
             ction.send(response)  # Forward to client
             time.sleep(DELAY)  # Slow down response
 
