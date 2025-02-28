@@ -1,36 +1,34 @@
-
-
+# the meme library contains all the functions needed to replace a potential request
 def replaceMeme(imageName):
-    
-    # just take the name of the image in binary, convert it to a number and replace with appropriate jpeg
+
+    # just take the name of the image and convert it to a random digit between 1 and 15
     repImage = ((len(imageName) - 4) % 15) + 1
     newImage = f"./memes/{repImage}.jpg"
-    exceptionOccured = True
+    
+    # error handling in case of wrong path or empty meme folder
+    try:
+        # read in binary mode, not utf-8
+        image = open(newImage, 'rb')
+        imageData = image.read()
 
-    while exceptionOccured:
-        try:
-            image = open(newImage, 'rb')
-            imageData = image.read()
+    except Exception:
+        print("Error with image reading.")
 
-        except Exception:
-            print("Error with image reading, will try again")
+    else:
+        image.close()
 
-        else:
-            exceptionOccured = False
-
-        finally:
-            image.close()
-
+    # return the image data
     return imageData
 
+# function for replacing the google home page
 def googleReplacement():
 
+    # open the html file, read it in binary
     page = open('zazu.html', 'rb')
     pageData = page.read()
-    print(pageData)
     page.close()
 
+    # then add onto response and return it
     response = f'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(pageData)}'.encode()
     response += pageData
-
     return response
