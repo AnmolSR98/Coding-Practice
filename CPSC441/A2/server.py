@@ -148,7 +148,7 @@ def startProxy():
 
     # exception handler
     except Exception as e:
-        print(e)
+        print("Server has encountered error: " + e)
 
 if __name__ == "__main__":
     startProxy()
