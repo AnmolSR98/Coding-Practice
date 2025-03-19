@@ -3,8 +3,13 @@ import socket
 # need to add multithreading here
 import threading
 
-# Panda facts and emojis (feel free to add more)
-PANDA_EMOJIS = ["", "", "", "", ""]
+# need to use random
+import random
+
+# add something to store the whole chat log up until this point??? MAYBE
+
+# Panda facts and emojis
+PANDA_EMOJIS = ["ʕ•ᴥ•ʔ", "ʕ>ᴥ<ʔ", "ʕOᴥOʔ", "ʕ-ᴥ-ʔ", "ʕ^ᴥ^ʔ"]
 PANDA_FACTS = [
  "Pandas spend around 14 hours a day eating bamboo! ",
  "Baby pandas are born pink and weigh only about 100 grams! ",
@@ -16,22 +21,21 @@ PANDA_FACTS = [
 # using a list to get all of the clients
 allClients = []
 
+# also have a dictionary that contains all the names
+clientNames = {}
+
+# these two functions just return randomly picked emojis/facts
 def getFact():
-    return "fact"
+    return random.choice(PANDA_FACTS)
 
-def getGrove():
-    return allClients
+def getEmoji():
+    return random.choice(PANDA_EMOJIS)
 
-def checkForCommands(message: str):
-    
-    if message.split(":")[1] == " @bamboo":
-        return getFact()
-
-    elif message.split(":")[1] == " @grove":
-        return getGrove()
-
-    elif message.split(":")[1] == " @leaves":
-        print() # change to do the same thing that exit does
+# to broadcast a message to all the other clients
+def clientBroadcast(conn, message):
+    for client in allClients:
+        if client != conn:
+            client.sendall(message.encode())
 
 # wrapping into a thread for handling multiple clients
 def handleClient(conn, addr):
@@ -39,25 +43,52 @@ def handleClient(conn, addr):
     while True:
 
         try:
-            # Step 1: Receive data from the client
+            # eeceive data from the client
             data = conn.recv(1024).decode()
-            if not data or data.lower().find(": exit") != -1:
+
+            # check for the exit command
+            if data.lower().find("@leaves") != -1:
+                conn.sendall("SHUTDOWN".encode())
+
+                # sends disconnect message to all clients
+                clientBroadcast(conn, f"{clientNames[conn]} has left the chat.")
+
+                allClients.remove(conn)
                 print("Client disconnected.")
                 break
 
-            # Step 2: Potentially replace the username
-            response = data
-            if response.find("has_no_name") != -1:
-                pieces = response.split(":")
-                response = f"client{addr}: " + pieces[1]
+            # check for the facts command
+            elif data.lower().find("@bamboo") != -1:
+                conn.sendall(getFact().encode())
 
+            # check for the grove command
+            elif data.lower().find("@grove") != -1:
+                names = []
+                for client in allClients:
+                    names.append(clientNames[client])
+                conn.sendall(f"{names}".encode())
 
-            # Step 3: Send to the remaining clients
-            for client in allClients:
-                if client is not conn:
-                    client.sendall(response.format(response).encode())
+            # miscellaneous for the other messages
+            else:
+                # replace the name with the addr if no unique name and add the panda emoji
+                response = data
+                if response.find("has_no_name") != -1:
+                    clientNames[conn] = addr
+                    pieces = response.split(":")
+                    response = f"client{addr}: " + pieces[1] + f" {getEmoji()}"
+
+                # otherwise just add the emoji at the end
+                else:
+                    clientNames[conn] = response.split(":")[0]
+                    response += f" {getEmoji()}"
+
+                # the above means that usernames wont update in the server database until message is sent with the new username
+
+                # send to the remaining clients
+                clientBroadcast(conn, response)
 
         except Exception:
+            allClients.remove(conn)
             break 
 
 
@@ -77,6 +108,7 @@ def main():
             print(f"Connected by {addr}")
 
             allClients.append(conn) # adding to the master client list
+            clientBroadcast(conn, f"client{addr} has joined the chat.") # broadcast to the other clients that someone has joined the chat room
 
             threading.Thread(target = handleClient, args = (conn, addr)).start() # encase each connection in its own thread
                     
