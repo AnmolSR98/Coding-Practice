@@ -6,7 +6,11 @@ import threading
 # need to use random
 import random
 
-# add something to store the whole chat log up until this point??? MAYBE
+# using logging for server log file
+import logging
+
+# Set up basic logging configuration
+logging.basicConfig(filename='server_log.txt', level=logging.INFO, format='%(asctime)s - %(message)s')
 
 # Panda facts and emojis
 PANDA_EMOJIS = ["ʕ•ᴥ•ʔ", "ʕ>ᴥ<ʔ", "ʕOᴥOʔ", "ʕ-ᴥ-ʔ", "ʕ^ᴥ^ʔ"]
@@ -31,11 +35,14 @@ def getFact():
 def getEmoji():
     return random.choice(PANDA_EMOJIS)
 
-# to broadcast a message to all the other clients
+# to broadcast a message to all the other clients, also logs all broadcasted messages
 def clientBroadcast(conn, message):
     for client in allClients:
         if client != conn:
             client.sendall(message.encode())
+    
+    # log all chat messages and broadcasts as well
+    logging.info(message)
 
 # wrapping into a thread for handling multiple clients
 def handleClient(conn, addr):
@@ -79,6 +86,8 @@ def handleClient(conn, addr):
 
                 # otherwise just add the emoji at the end
                 else:
+                    if clientNames[conn] == addr:
+                        clientBroadcast(conn, f"client{addr} changed their name to " + response.split(":")[0]+"!")
                     clientNames[conn] = response.split(":")[0]
                     response += f" {getEmoji()}"
 
@@ -87,7 +96,9 @@ def handleClient(conn, addr):
                 # send to the remaining clients
                 clientBroadcast(conn, response)
 
+        # if disconnect for some other reason, remove the connection and broadcast that client has left the chat
         except Exception:
+            clientBroadcast(conn, f"{clientNames[conn]} has left the chat.")
             allClients.remove(conn)
             break 
 
@@ -101,6 +112,7 @@ def main():
         server_socket.bind((host, port))
         server_socket.listen(1)  # Listen for 1 connection at a time
         print(f"Chatbot server is running on {host}:{port}...")
+        logging.info(f"Chatbot server is running on {host}:{port}...")
 
         while True:
 
@@ -109,6 +121,7 @@ def main():
 
             allClients.append(conn) # adding to the master client list
             clientBroadcast(conn, f"client{addr} has joined the chat.") # broadcast to the other clients that someone has joined the chat room
+            clientNames[conn] = addr
 
             threading.Thread(target = handleClient, args = (conn, addr)).start() # encase each connection in its own thread
                     

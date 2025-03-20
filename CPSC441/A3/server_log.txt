@@ -1,0 +1,15 @@
+2025-03-19 18:19:58,364 - Chatbot server is running on 127.0.0.1:12345...
+2025-03-19 18:20:01,977 - client('127.0.0.1', 51141) has joined the chat.
+2025-03-19 18:20:05,564 - client('127.0.0.1', 51142) has joined the chat.
+2025-03-19 18:20:23,484 - client('127.0.0.1', 51142) changed their name to jannik!
+2025-03-19 18:20:23,485 - jannik: hello \u0295O\u1d25O\u0294
+2025-03-19 18:20:49,103 - client('127.0.0.1', 51141) changed their name to holger!
+2025-03-19 18:20:49,103 - holger: sup \u0295^\u1d25^\u0294
+2025-03-19 18:21:00,620 - jannik has left the chat.
+2025-03-19 18:21:16,228 - client('127.0.0.1', 51145) has joined the chat.
+2025-03-19 18:21:20,217 - client('127.0.0.1', 51145):  hello \u0295表u1d25表u0294
+2025-03-19 18:21:42,320 - ('127.0.0.1', 51145) has left the chat.
+2025-03-19 18:21:53,558 - client('127.0.0.1', 51147) has joined the chat.
+2025-03-19 18:21:57,976 - holger: bye \u0295表u1d25表u0294
+2025-03-19 18:22:04,263 - holger has left the chat.
+2025-03-19 18:22:09,913 - ('127.0.0.1', 51147) has left the chat.

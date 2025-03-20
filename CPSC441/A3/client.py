@@ -19,11 +19,8 @@ def listen(socket):
                 break
 
             else:
-
-                # claers the previous line and print the new line
-                # print("\033[A                             \033[A")
-                print("\r" + response.decode())
-                print("You: ", end = "")
+                # clears the previous line and print the new line
+                print("\r" + response.decode() + "\nYou: ", end = "")
         
         # in the case of an error 
         except Exception as e:
@@ -52,6 +49,7 @@ def message(socket, clientName):
 
             elif user_input.lower() == "@rename":
                 clientName = input("Enter your new username: ")
+                print("\rYou: ", end = "")
 
             else:
 
@@ -60,7 +58,7 @@ def message(socket, clientName):
 
                 # Send the message to the server and come to a new line
                 socket.sendall(message.encode())
-                print("You: ", end = "")
+                print("\rYou: ", end = "")
 
         # If an error occurs, print the error message and exit
         except Exception as e:
@@ -82,13 +80,11 @@ def main():
             client_socket.connect((host, port))
             print(f"Connected to server at {host}:{port}")
 
-            # NEED TO ADD SOMETHING INCASE THE THREADS FAIL TO INITIALIZE PROPERLY
-
             # create the listen thread and start it up
             listenThread = threading.Thread(target = listen, args = (client_socket, ))
             listenThread.start()
 
-            # creating a global username for the client
+            # creating a username for the client
             clientName = "has_no_name"
 
             # create a message thread and start it up
