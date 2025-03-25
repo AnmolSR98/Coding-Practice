@@ -1,5 +1,7 @@
-def depthFirstSearch():
+# actual path finding functions
+
+def depthFirstSearch(adjMatrix):
     return 0
 
-def breadthFirstSearch():
+def breadthFirstSearch(adjMatrix):
     return 0

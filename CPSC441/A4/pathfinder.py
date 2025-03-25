@@ -1,12 +1,17 @@
+import search
+
 provNums = {"BritishColumbia": 0,
             "Alberta": 1,
-            "Saskwatchewan": 2,
+            "Saskatchewan": 2,
             "Ontario": 3,
             "Quebec": 4,
             "NovaScotia" : 5,
-            "NewfoundlandandLabrador": 6}
+            "NewfoundlandandLabrador": 6,
+            "Ottawa": 7}
 
-index = {"hops" : 2, 
+index = {  "sour" : 0,
+           "dest" : 1,
+           "hops" : 2, 
            "dist" : 3, 
            "time" : 4, 
            "deme" : 5}
@@ -37,16 +42,42 @@ def convertToAdjacencyMatrix(data, pathType):
             newRow.append(0)
         adjMatrix.append(newRow)
 
-    for i in range(data):
-        if 
+    # for each line, update the data if no path exists there or if this path is cheaper than the other one
+    for line in data:
+        sour = provNums[ line[index["sour"]] ] # plug the source into the provNums dictionary and do the same for the destination
+        dest = provNums[ line[index["dest"]] ]
+
+        if adjMatrix[sour][dest] == 0:
+            adjMatrix[sour][dest] = int( line[pathValIndex] )
             
-    print(adjMatrix)
+        else:
+            if int( line[pathValIndex] ) < adjMatrix[sour][dest]:
+                adjMatrix[sour][dest] = int( line[pathValIndex] )
+
+    # making the matrix symmetric
+    for i in range(len(provNums.keys())):
+        for j in range(len(provNums.keys())):
+            if adjMatrix[i][j] == 0:
+                adjMatrix[i][j] = adjMatrix[j][i]
+
+            elif adjMatrix[i][j] < adjMatrix[j][i]:
+                adjMatrix[i][j] = adjMatrix[j][i]
+
+    return adjMatrix
+
+def main():
+
+    data = getData("paths.txt")
+
+    # getting all of the various adjacency matrixes by each metric
+    hopsMatrix = convertToAdjacencyMatrix(data, "hops")
+    distMatrix = convertToAdjacencyMatrix(data, "dist")
+    timeMatrix = convertToAdjacencyMatrix(data, "time")
+    demeMatrix = convertToAdjacencyMatrix(data, "deme")
+
+    print(search.breadthFirstSearch(hopsMatrix))
         
 
 if __name__ == "__main__":
 
-    data = getData("paths.txt")
-
-    print(data)
-
-    convertToAdjacencyMatrix(data, "hops")
+    main()
