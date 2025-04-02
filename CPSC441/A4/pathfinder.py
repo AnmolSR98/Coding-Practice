@@ -67,6 +67,7 @@ def convertToAdjacencyMatrix(data, pathType):
 
 def main():
 
+    # get the data as an input
     data = getData("paths.txt")
 
     # getting all of the various adjacency matrixes by each metric
@@ -75,7 +76,29 @@ def main():
     timeMatrix = convertToAdjacencyMatrix(data, "time")
     demeMatrix = convertToAdjacencyMatrix(data, "deme")
 
-    print(search.breadthFirstSearch(hopsMatrix))
+    # getting the shortest hops between provinces 
+    provHopsArray = []
+    for prov in provNums.values():
+        provHopsArray.append(search.dijkstra(hopsMatrix, prov)[0])
+    
+    for line in provHopsArray:
+        print(line)
+
+    '''
+    # getting shortest distance path to ottawa
+    provDistArray = []
+    for prov in provNums.values():
+        provDistArray.append(search.dijkstra(distMatrix, prov))
+
+    # getting the least time paths
+    provTimeArray = []
+    for prov in provNums.values():
+        provTimeArray.append(search.dijkstra(timeMatrix, prov))
+
+    # getting the fewest dementor paths
+    provDemeArray = []
+    for prov in provNums.values():
+        provDemeArray.append(search.dijkstra(demeMatrix, prov)) '''
         
 
 if __name__ == "__main__":
