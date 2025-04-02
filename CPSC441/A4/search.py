@@ -41,29 +41,37 @@ def dijkstra(adjMatrix, source):
 
     return dist, prev
 
-# shortest path algorithm STILL NEED TO MODIFY AGAIN
-def breadthFirstSearch(adjMatrix, source, end):
-    queue = []
-    queue.append(source)
-    exploredNodes = [source]
-    pathLength = 0
+def bellmanFord(adjMatrix, source):
 
-    while len(queue) != 0:
-        vertex = queue[0]
-        queue.pop(0)
-        if vertex == end:
-            return pathLength
+    dist = [math.inf] * len(adjMatrix)
+    prev = [-1] * len(adjMatrix)
+    dist[source] = 0
 
-        # get a list of all the neighbouring nodes
-        neighbours = []
-        adjMatrix[vertex]
-        for i in range(len(adjMatrix[vertex])):
-            if adjMatrix[vertex][i] != 0:
-                neighbours.append(i)
+    # check through all edges FIX
+    for i in range(len(adjMatrix) - 1):
+        for j in range(len(adjMatrix)):
+            for k in range(len(adjMatrix[source])):
+                if adjMatrix[j][k] != 0:
+                    if dist[j] + adjMatrix[j][k] < dist[k]:
+                        dist[k] = dist[j] + adjMatrix[j][k]
+                        prev[k] = j
 
-        for neighbour in neighbours:
-            if neighbour not in exploredNodes:
-                exploredNodes.append(neighbour)
-                queue.append(neighbour)
+    # check for negative weight cycles
+    for j in range(len(adjMatrix)):
+        for k in range(len(adjMatrix[source])):
+            if adjMatrix[j][k] != 0:
+                if dist[j] + adjMatrix[j][k] < dist[k]:
+                        prev[k] = j
+                        # keeping track of visited nodes
+                        visited = [False] * len(adjMatrix)
+                        visited[k] = True
+                        while not visited[j]:
+                            visited[j] = True
+                            j = prev[j]
+                        negativeCycle = [j]
+                        k = prev[j]
+                        while k != j:
+                            negativeCycle = [k] + negativeCycle
+                            k = prev[k]        
 
-    return []
+    return dist, prev

@@ -79,7 +79,7 @@ def main():
     # getting the shortest hops between provinces 
     provHopsArray = []
     for prov in provNums.values():
-        provHopsArray.append(search.dijkstra(hopsMatrix, prov)[0])
+        provHopsArray.append(search.bellmanFord(hopsMatrix, prov)[0])
     
     for line in provHopsArray:
         print(line)
