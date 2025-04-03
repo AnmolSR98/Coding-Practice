@@ -1,4 +1,5 @@
 import search
+import visual
 
 provNums = {"BritishColumbia": 0,
             "Alberta": 1,
@@ -81,8 +82,13 @@ def main():
     for prov in provNums.values():
         provHopsArray.append(search.bellmanFord(hopsMatrix, prov)[0])
     
-    for line in provHopsArray:
-        print(line)
+    line = provHopsArray[0]
+
+    keys = list(provNums.keys())
+    print(line)
+    print(keys)
+
+    visual.getProvinceGraph(keys, line, f"Hops From {keys[0]}", keys[0], "Hops")
 
     '''
     # getting shortest distance path to ottawa
