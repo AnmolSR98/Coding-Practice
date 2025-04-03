@@ -17,3 +17,19 @@ def getProvinceGraph(xdata, ydata, title, source, var):
 
 
     return 0
+
+def altShowProvinceGraph():
+
+    xdata = ["BRI", "ALB", "SAS", "ONT", "OTT", "QUE", "NOV", "NEW"]
+    ydata = [5, 4, 2, 1, -1, 1, 3, 5]
+
+    plot.title("Map of Provinces")
+    plot.xlabel("Provinces")
+    plot.ylim(ymin = -5, ymax = 2 * max(ydata))
+    plot.scatter(xdata, ydata)
+    plot.grid()
+    plot.savefig('Test.png')
+
+if __name__ == "__main__":
+
+    altShowProvinceGraph()

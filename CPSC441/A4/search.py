@@ -13,8 +13,6 @@ def dijkstra(adjMatrix, source):
 
     while len(vertices) != 0:
 
-        print(vertices)
-
         minDistVertex = -1
         minDist = math.inf
 
@@ -23,7 +21,6 @@ def dijkstra(adjMatrix, source):
                 minDist = dist[vertex]
                 minDistVertex = vertex
 
-        print(minDistVertex)
         vertices.remove(minDistVertex)
 
         # now getting the values for all the neighbours
@@ -75,3 +72,17 @@ def bellmanFord(adjMatrix, source):
                             k = prev[k]        
 
     return dist, prev
+
+def getPath(prev, source, dest):
+    if source == dest:
+        return [source]
+    
+    path = []
+    currentNode = dest
+    while currentNode != source:
+        path = [currentNode] + path
+        currentNode = prev[currentNode]
+
+    path = [source] + path
+
+    return path
