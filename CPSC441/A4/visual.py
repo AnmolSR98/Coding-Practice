@@ -1,35 +1,46 @@
-import matplotlib.pyplot as plot
+import matplotlib.pyplot as plt
+import networkx as nx
+import matplotlib.patches as patch
 
 
-def getProvinceGraph(xdata, ydata, title, source, var):
+def getNodeGraph(paths, source, title):
 
-    for i in range(len(xdata)):
-        xdata[i] = xdata[i][0:3].upper()
+    # actually create the figure, and set its title
+    fig = plt.figure(figsize=(8,8))
+    ax = plt.subplot(111)
+    ax.set_title(f'Provinces and Paths for Source {source}', fontsize=10)
 
-    plot.title(title)
-    plot.xlabel("Provinces")
-    plot.ylim(ymin = -1, ymax = max(ydata) + 1)
-    plot.ylabel(f"{var} Values")
-    plot.scatter(xdata, ydata, label = f"{var} From {source}")
-    plot.legend(loc="upper left")
-    plot.grid()
-    plot.savefig(f'{title}.png')
+    # add all of the nodes (provinces)
+    G = nx.DiGraph()
+    G.add_nodes_from(['BRI', 'ALB', 'SAS', 'ONT','OTT','QUE','NOV','NEW'])
 
+    # adding the paths and giving them specific colors and labels based on their position in paths
+    for path in paths:
+        for i in range(len(path) - 1):            
+            if path == paths[0]:
+                G.add_edge(path[i], path[i+1], color = 'red', label = 'Hops')
+            elif path == paths[1]:
+                G.add_edge(path[i], path[i+1], color = 'yellow', label = 'Distance')
+            elif path == paths[2]:
+                G.add_edge(path[i], path[i+1], color = 'blue', label = 'Time')
+            else:
+                G.add_edge(path[i], path[i+1], color = 'green', label = 'Dementors')
 
-    return 0
+    # drawing the nodes and edges with appropriate colors
+    edges = G.edges()
+    colors = [G[u][v]['color'] for u,v in edges]
+    pos = nx.shell_layout(G)
+    nx.draw(G, pos, node_size=1500, node_color='yellow', edge_color = colors, font_size=8, font_weight='bold')
+    nx.draw_networkx_labels(G, pos)
 
-def altShowProvinceGraph():
+    # writing stuff for the legend, patch will render a patch of that color which can be used to manually create a legend
+    r = patch.Patch(color='red', label='Hops')
+    y = patch.Patch(color='yellow', label='Distance')
+    b = patch.Patch(color='blue', label='Time')
+    g = patch.Patch(color='green', label='Dementors')
 
-    xdata = ["BRI", "ALB", "SAS", "ONT", "OTT", "QUE", "NOV", "NEW"]
-    ydata = [5, 4, 2, 1, -1, 1, 3, 5]
-
-    plot.title("Map of Provinces")
-    plot.xlabel("Provinces")
-    plot.ylim(ymin = -5, ymax = 2 * max(ydata))
-    plot.scatter(xdata, ydata)
-    plot.grid()
-    plot.savefig('Test.png')
-
-if __name__ == "__main__":
-
-    altShowProvinceGraph()
+    plt.tight_layout()
+    plt.legend(handles = [r, y, b, g], loc = "upper left")
+    
+    # saving the figure
+    plt.savefig(f"{title}.png")

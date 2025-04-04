@@ -1,8 +1,0 @@
-BRI : 5 : ['BRI', 'ALB', 'OTT']
-ALB : 3 : ['ALB', 'OTT']
-SAS : 7 : ['SAS', 'ONT', 'ALB', 'OTT']
-ONT : 5 : ['ONT', 'ALB', 'OTT']
-OTT : 0 : ['OTT']
-QUE : 6 : ['QUE', 'ALB', 'OTT']
-NOV : 6 : ['NOV', 'ALB', 'OTT']
-NEW : 6 : ['NEW', 'ALB', 'OTT']

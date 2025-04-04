@@ -1,8 +1,0 @@
-BRI : 20 : ['BRI', 'QUE', 'ONT', 'OTT']
-ALB : 9 : ['ALB', 'OTT']
-SAS : 12 : ['SAS', 'ALB', 'OTT']
-ONT : 12 : ['ONT', 'OTT']
-OTT : 0 : ['OTT']
-QUE : 13 : ['QUE', 'ONT', 'OTT']
-NOV : 15 : ['NOV', 'QUE', 'ONT', 'OTT']
-NEW : 18 : ['NEW', 'ALB', 'OTT']

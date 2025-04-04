@@ -1,5 +1,8 @@
+# importing both search and visual, search is for dijsktra + bellman ford, visual is for creating graphs with networkx
 import search
+import visual
 
+# dicitonaries for the indexes used throughout the code, along with the provinces
 provNums = {"BritishColumbia": 0,
             "Alberta": 1,
             "Saskatchewan": 2,
@@ -30,6 +33,7 @@ def getData(path):
 
     return data
 
+# converting the input data into adjacency matrixes depending on input
 def convertToAdjacencyMatrix(data, pathType):
     
     pathValIndex = index[pathType]
@@ -65,6 +69,7 @@ def convertToAdjacencyMatrix(data, pathType):
 
     return adjMatrix
 
+# converts the raw input of numbers into the appropriate province 3 letter strins
 def convertPathToProvinces(path):
 
     newPath = []
@@ -88,37 +93,59 @@ def main():
     f = open("hops.txt", mode = 'w')
     for prov in provNums.values():
         dest = provNums["Ottawa"]
-        provHops, provPrev = search.dijkstra(hopsMatrix, prov)
-        f.write(f"{list(provNums.keys())[prov][0:3].upper()} : {provHops[dest]} : {convertPathToProvinces(search.getPath(provPrev, prov, dest))}\n")
+        provHops, provPrev = search.bellmanFord(hopsMatrix, prov)
+        provPath = convertPathToProvinces(search.getPath(provPrev, prov, dest))
+        f.write(f"{list(provNums.keys())[prov][0:3].upper()} : {provHops[dest]} : {provPath}\n")
 
     f.close()
 
-     # getting the shortest dist between provinces 
+    # getting the shortest dist between provinces 
     f = open("dist.txt", mode = 'w')
     for prov in provNums.values():
         dest = provNums["Ottawa"]
         provDist, provPrev = search.dijkstra(distMatrix, prov)
-        f.write(f"{list(provNums.keys())[prov][0:3].upper()} : {provDist[dest]} : {convertPathToProvinces(search.getPath(provPrev, prov, dest))}\n")
-
+        provPath = convertPathToProvinces(search.getPath(provPrev, prov, dest))
+        f.write(f"{list(provNums.keys())[prov][0:3].upper()} : {provDist[dest]} : {provPath}\n")
     f.close()
 
-     # getting the shortest time between provinces 
+    # getting the shortest time between provinces 
     f = open("time.txt", mode = 'w')
     for prov in provNums.values():
         dest = provNums["Ottawa"]
-        provTime, provPrev = search.dijkstra(timeMatrix, prov)
-        f.write(f"{list(provNums.keys())[prov][0:3].upper()} : {provTime[dest]} : {convertPathToProvinces(search.getPath(provPrev, prov, dest))}\n")
-
+        provTime, provPrev = search.bellmanFord(timeMatrix, prov)
+        provPath = convertPathToProvinces(search.getPath(provPrev, prov, dest))
+        f.write(f"{list(provNums.keys())[prov][0:3].upper()} : {provTime[dest]} : {provPath}\n")
     f.close()
 
-     # getting the shortest hops between provinces 
+    # getting the shortest dementors between provinces 
     f = open("deme.txt", mode = 'w')
     for prov in provNums.values():
         dest = provNums["Ottawa"]
         provDeme, provPrev = search.dijkstra(demeMatrix, prov)
-        f.write(f"{list(provNums.keys())[prov][0:3].upper()} : {provDeme[dest]} : {convertPathToProvinces(search.getPath(provPrev, prov, dest))}\n")
-
+        provPath = convertPathToProvinces(search.getPath(provPrev, prov, dest))
+        f.write(f"{list(provNums.keys())[prov][0:3].upper()} : {provDeme[dest]} : {provPath}\n")
     f.close()
+
+    # now assembling the graphs
+    for prov in provNums.values():
+        paths = []
+        # adding the hopsMatrix
+        provPrev = search.dijkstra(hopsMatrix, prov)[1]
+        provPath = convertPathToProvinces(search.getPath(provPrev, prov, provNums["Ottawa"]))
+        paths.append(provPath)
+        # adding the distMatrix
+        provPrev = search.dijkstra(distMatrix, prov)[1]
+        provPath = convertPathToProvinces(search.getPath(provPrev, prov, provNums["Ottawa"]))
+        paths.append(provPath)
+        # adding the timeMatrix
+        provPrev = search.dijkstra(timeMatrix, prov)[1]
+        provPath = convertPathToProvinces(search.getPath(provPrev, prov, provNums["Ottawa"]))
+        paths.append(provPath)
+        # adding the demeMatrix
+        provPrev = search.dijkstra(demeMatrix, prov)[1]
+        provPath = convertPathToProvinces(search.getPath(provPrev, prov, provNums["Ottawa"]))
+        paths.append(provPath)
+        visual.getNodeGraph(paths, list(provNums.keys())[prov], list(provNums.keys())[prov][0:3].upper())
         
 
 if __name__ == "__main__":

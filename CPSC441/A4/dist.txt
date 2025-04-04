@@ -1,8 +1,0 @@
-BRI : 3700 : ['BRI', 'QUE', 'OTT']
-ALB : 2400 : ['ALB', 'OTT']
-SAS : 3000 : ['SAS', 'ALB', 'OTT']
-ONT : 1450 : ['ONT', 'OTT']
-OTT : 0 : ['OTT']
-QUE : 1800 : ['QUE', 'OTT']
-NOV : 2900 : ['NOV', 'QUE', 'OTT']
-NEW : 3750 : ['NEW', 'ONT', 'OTT']
